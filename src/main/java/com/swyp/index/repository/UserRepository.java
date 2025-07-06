@@ -8,6 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    //이메일로 사용자를 찾는 메서드
     Optional<User> findByEmail(String email);
+    //이메일로 사용자의 존재 여부를 확인하는 메서드
     boolean existsByEmail(String email);
 }

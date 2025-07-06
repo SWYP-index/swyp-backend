@@ -20,11 +20,18 @@ public class User {
     private String password;
     @Column(nullable = false, length = 50)
     private String name;
+    @Column(name = "refresh_token")
+    private String refreshToken;
 
     @Builder
     public User(String email, String password, String name){
         this.email = email;
         this.password = password;
         this.name = name;
+    }
+
+    //refresh token을 업데이트하는 메서드
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
     }
 }
