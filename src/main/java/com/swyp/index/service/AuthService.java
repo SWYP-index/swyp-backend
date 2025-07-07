@@ -3,6 +3,7 @@ package com.swyp.index.service;
 import com.swyp.index.dto.LoginRequest;
 import com.swyp.index.dto.SignUpRequest;
 import com.swyp.index.entity.User;
+import com.swyp.index.exception.TokenException;
 import com.swyp.index.jwt.JwtProvider;
 import com.swyp.index.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +54,34 @@ public class AuthService {
         tokens.put("refreshToken", refreshToken);
         return tokens;
 
+    }
+    //토큰 재발급 비즈니스 로직
+    @Transactional
+    public Map<String, String> reissueTokens(String refreshToken){
+        //유효성 검증
+        if(!jwtProvider.validateToken(refreshToken)){
+            throw new TokenException("유효하지 않은 리프레시 토큰입니다.");
+        }
+        //토큰에서 사용자 이메일 추출
+        String email = jwtProvider.getEmailFromToken(refreshToken);
+        // db에서 사용자 찾아서 저장된 리프레시 토큰과 일치하는지 확인
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new TokenException("사용자를 찾을 수 없습니다."));
+
+        if(!refreshToken.equals(user.getRefreshToken())){
+            throw new TokenException("토큰이 일치하지 않습니다.");
+        }
+        //검증 통과한 후, 새로운 토큰 생성
+        String newAccessToken = jwtProvider.generateAccessToken(email);
+        String newRefreshToken = jwtProvider.generateRefreshToken(email);
+
+        //db에 새로운 리프레시 토큰 저장
+        user.updateRefreshToken(newRefreshToken);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", newAccessToken);
+        tokens.put("refreshToken", newRefreshToken);
+
+        return tokens;
     }
 }

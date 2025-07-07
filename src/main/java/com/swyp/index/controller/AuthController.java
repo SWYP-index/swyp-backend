@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -49,6 +46,19 @@ public class AuthController {
 
         return ResponseEntity.ok().build();
     }
+    //토큰 재발급 처리
+    @PostMapping("/reissue")
+    public ResponseEntity<Void> reissue(
+            @CookieValue("refreshToken") String refreshToken,
+            HttpServletResponse response
+    ){
+        Map<String, String> newTokens = authService.reissueTokens(refreshToken);
+
+        addCookie(response, "accessToken", newTokens.get("accessToken"), accessTokenExpirationMs);
+        addCookie(response, "refreshToken", newTokens.get("refreshToken"), refreshTokenExpirationMs);
+
+        return ResponseEntity.ok().build();
+    }
 
     //쿠키를 생성하고 응답에 추가하는 메서드
     private void addCookie(HttpServletResponse response, String name, String value, long maxAgeMs){
@@ -60,5 +70,7 @@ public class AuthController {
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
+
+
 
 }
