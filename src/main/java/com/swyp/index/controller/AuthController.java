@@ -11,6 +11,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -46,6 +47,18 @@ public class AuthController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(Principal principal, HttpServletResponse response){
+
+        authService.logout(principal.getName());
+        //클라이언트의 브라우저에서 토큰 쿠키 삭제
+        expireCookie(response, "accessToken");
+        expireCookie(response, "refreshToken");
+
+        return ResponseEntity.ok().build();
+    }
+
     //토큰 재발급 처리
     @PostMapping("/reissue")
     public ResponseEntity<Void> reissue(
@@ -71,6 +84,14 @@ public class AuthController {
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
-
-
+    //쿠키 만료시키는 메서드
+    private void expireCookie(HttpServletResponse response, String name){
+        ResponseCookie cookie = ResponseCookie.from(name, "")
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
 }

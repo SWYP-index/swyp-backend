@@ -84,4 +84,12 @@ public class AuthService {
 
         return tokens;
     }
+
+    @Transactional
+    public void logout(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        user.updateRefreshToken(null);
+    }
 }
