@@ -11,6 +11,6 @@ public record SignUpRequest(
         @Size(min=8, message= "비밀번호는 8자 이상이어야 합니다.")
         String password,
         @NotBlank
-        String name
+        String nickname
 ) {
 }

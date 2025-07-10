@@ -18,16 +18,16 @@ public class User {
     private String email;
     @Column(nullable=false)
     private String password;
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column(nullable = false, unique =true, length = 50)
+    private String nickname;
     @Column(name = "refresh_token")
     private String refreshToken;
 
     @Builder
-    public User(String email, String password, String name){
+    public User(String email, String password, String nickname){
         this.email = email;
         this.password = password;
-        this.name = name;
+        this.nickname = nickname;
     }
 
     //refresh token을 업데이트하는 메서드

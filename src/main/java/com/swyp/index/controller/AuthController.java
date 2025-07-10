@@ -1,6 +1,7 @@
 package com.swyp.index.controller;
 
 import com.swyp.index.dto.LoginRequest;
+import com.swyp.index.dto.LoginResponse;
 import com.swyp.index.dto.SignUpRequest;
 import com.swyp.index.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,19 +34,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
     ){
-        Map<String, String> tokens = authService.login(request);
-        String accessToken = tokens.get("accessToken");
-        String refreshToken = tokens.get("refreshToken");
+        //서비스에서 로그인 처리 후 토큰과 사용자 정보를 모두 받아옴.
+        Map<String, Object> result = authService.login(request);
+        Map<String, String> tokens = (Map<String, String>) result.get("tokens");
+        LoginResponse userInfo = (LoginResponse) result.get("userInfo");
 
-        //각각의 토큰을 HttpOnly 쿠키로 만들어 응답에 추가
-        addCookie(response, "accessToken", accessToken, accessTokenExpirationMs);
-        addCookie(response, "refreshToken", refreshToken, refreshTokenExpirationMs);
+        //토큰을 쿠키에 설정한다.
+        addCookie(response, "accessToken", tokens.get("accessToken"), accessTokenExpirationMs);
+        addCookie(response, "refreshToken", tokens.get("refreshToken"), refreshTokenExpirationMs);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userInfo);
     }
 
     @PostMapping("/logout")
@@ -74,8 +76,8 @@ public class AuthController {
     }
 
     //쿠키를 생성하고 응답에 추가하는 메서드
-    private void addCookie(HttpServletResponse response, String name, String value, long maxAgeMs){
-        ResponseCookie cookie = ResponseCookie.from(name, value)
+    private void addCookie(HttpServletResponse response, String nickname, String value, long maxAgeMs){
+        ResponseCookie cookie = ResponseCookie.from(nickname, value)
                 .path("/")
                 .httpOnly(true)
                 .secure(true)
@@ -85,8 +87,8 @@ public class AuthController {
     }
 
     //쿠키 만료시키는 메서드
-    private void expireCookie(HttpServletResponse response, String name){
-        ResponseCookie cookie = ResponseCookie.from(name, "")
+    private void expireCookie(HttpServletResponse response, String nickname){
+        ResponseCookie cookie = ResponseCookie.from(nickname, "")
                 .path("/")
                 .httpOnly(true)
                 .secure(true)

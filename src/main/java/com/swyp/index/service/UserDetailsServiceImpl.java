@@ -12,7 +12,7 @@ import java.util.Collections;
 //로그인 과정에서 인증에 필요한 사용자 정보를 데이터베이스에서 가져옴
 @Service
 @RequiredArgsConstructor
-public class UserDetailServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
