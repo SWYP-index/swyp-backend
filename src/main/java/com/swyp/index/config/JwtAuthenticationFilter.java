@@ -35,18 +35,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //요청의 쿠키에서 accessToken을 찾아 토큰 추출
         String token = resolveTokenFromCookie(request);
 
+        //토큰이 존재하고 jwtProvider를 통해 검사했을 때 유효성 검사 통과했다면
         if(StringUtils.hasText(token) && jwtProvider.validateToken(token)){
+            //토큰에서 이메일을 꺼내 db에 해당 사용자가 실제로 존재하는지 다시 한번 확인
             String email = jwtProvider.getEmailFromToken(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
+            //인증완료 했으므로, 인증완료 증표에는 사용자 정보와 권한이 담겨있음.
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                  userDetails, null, userDetails.getAuthorities()
+                    userDetails, null, userDetails.getAuthorities()
             );
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            //SecurityContext에 인증 정보를 저장하여, 해당 요청 동안 사용자가 인증된 상태임을 유지
+            //SecurityContext에 인증완료 증표를 저장하여, 해당 요청 동안 사용자가 인증된 상태임을 유지
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
+        // 다음 필터로 요청을 그대로 전달
         filterChain.doFilter(request, response);
     }
 

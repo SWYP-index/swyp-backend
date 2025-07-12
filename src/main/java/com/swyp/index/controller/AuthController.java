@@ -50,6 +50,8 @@ public class AuthController {
         return ResponseEntity.ok(userInfo);
     }
 
+    //@param principal: 스프링 시큐리티가 현재 인증된 사용자의 정보를 담아주는 객체
+    //JwtAuthenticationFilter에서 인증 정보를 securitycontext에 저장했기 때문에 여기서 사용함.
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(Principal principal, HttpServletResponse response){
 
