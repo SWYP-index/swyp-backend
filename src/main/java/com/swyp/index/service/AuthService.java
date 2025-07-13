@@ -83,6 +83,7 @@ public class AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .nickname(request.nickname())
+                .provider("LOCAL")
                 .build();
         userRepository.save(user);
     }

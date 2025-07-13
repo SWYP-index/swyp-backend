@@ -24,10 +24,6 @@ public record SignUpRequest(
 
         //이메일 인증이 완료되면, 이 필드에 인증 코드를 담아 보냅니다.
         @NotBlank(message = "이메일 인증 코드는 필수입니다.")
-        String authCode,
-
-        //true인지 검증, 반드시 체크해야 하는 항목에 사용됨.
-        @AssertTrue(message = "약관에 동의해야 회원가입이 가능합니다.")
-        boolean termsAgreed
+        String authCode
 ) {
 }

@@ -45,7 +45,7 @@ public class SecurityConfig {
                         exception.authenticationEntryPoint(customAuthenticationEntryPoint))
                 //URL 경로별 접근 권한 설정
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/api/auth/**").permitAll() // '/api/auth/'로 시작하는 모든 경로는 인증 없이 허용
+                        .requestMatchers("/api/auth/**", "/api/auth/verification/**").permitAll() // '/api/auth/'로 시작하는 모든 경로는 인증 없이 허용
                         .anyRequest().authenticated() // 그 외 모든 요청은 반드시 인증 필요
                 )
                 //커스텀 필터를 spring security의 기본 인증 필터보다 먼저 검증해야함
