@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -31,14 +30,18 @@ public class User {
 
     @Column(nullable = false, unique =true, length = 50)
     private String nickname;
+
     @Column(name = "social_id", unique = true)
     private String socialId;
 
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    @Column(nullable = false, length = 20)
-    private String provider;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private ProviderType provider; //"kakao, "google" 등 구분용
+
+    private String role;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -50,12 +53,13 @@ public class User {
 
     //빌더 패턴은 필요한 필드만 선택적으로 사용할 수 있음.
     @Builder
-    public User(String email, String password, String nickname, String provider, String socialId){
+    public User(String email, String password, String nickname, ProviderType provider, String socialId, String role){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.provider = provider;
         this.socialId = socialId;
+        this.role = role;
     }
 
     //refresh token을 업데이트하는 메서드

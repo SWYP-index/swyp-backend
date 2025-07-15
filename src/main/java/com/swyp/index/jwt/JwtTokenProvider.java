@@ -1,24 +1,28 @@
 package com.swyp.index.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Date;
 
 @Slf4j // 클래스에 로그를 찍을 수 있는 기능을 자동으로 추가해줌.
 @Component
-public class JwtProvider {
+public class JwtTokenProvider {
     private final SecretKey secretKey;
     private final long accessTokenExpirationMs;
     private final long refreshTokenExpirationMs;
 
-    public JwtProvider(
+    public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access-token-expiration-ms}") long accessTokenExpirationMs,
             @Value("${jwt.refresh-token-expiration-ms}") long refreshTokenExpirationMs
@@ -75,4 +79,6 @@ public class JwtProvider {
                 .parseSignedClaims(token)// 서명된 토큰을 파싱
                 .getPayload();
     }
+
+
 }

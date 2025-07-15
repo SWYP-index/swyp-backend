@@ -7,7 +7,7 @@ import com.swyp.index.entity.User;
 import com.swyp.index.exception.DuplicateEmailException;
 import com.swyp.index.exception.DuplicateNicknameException;
 import com.swyp.index.exception.TokenException;
-import com.swyp.index.jwt.JwtProvider;
+import com.swyp.index.jwt.JwtTokenProvider;
 import com.swyp.index.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -29,7 +29,7 @@ import java.util.Map;
 public class AuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
-    private final JwtProvider jwtProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     private final MailService mailService;
@@ -83,7 +83,6 @@ public class AuthService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .nickname(request.nickname())
-                .provider("LOCAL")
                 .build();
         userRepository.save(user);
     }
@@ -101,13 +100,14 @@ public class AuthService {
                 .orElseThrow(()->new UsernameNotFoundException("인증된 사용자를 DB에서 찾을 수 없습니다."));
 
 
-        String accessToken = jwtProvider.generateAccessToken(email);
-        String refreshToken = jwtProvider.generateRefreshToken(email);
+        String accessToken = jwtTokenProvider.generateAccessToken(email);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(email);
 
         user.updateRefreshToken(refreshToken);
 
         //컨트롤러에 전달할 사용자 정보와 토큰들을 Map에 담아 반환한다.
         LoginResponse userInfo = new LoginResponse(user.getEmail(), user.getNickname());
+
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
@@ -122,12 +122,13 @@ public class AuthService {
     @Transactional
     public Map<String, String> reissueTokens(String refreshToken){
         //토큰 자체 유효성 검증
-        if(!jwtProvider.validateToken(refreshToken)){
+        if(!jwtTokenProvider.validateToken(refreshToken)){
             throw new TokenException("유효하지 않은 리프레시 토큰입니다.");
         }
         //토큰에서 사용자 이메일 추출
+
         // db에서 사용자 찾아서 저장된 리프레시 토큰과 일치하는지 확인
-        String email = jwtProvider.getEmailFromToken(refreshToken);
+        String email = jwtTokenProvider.getEmailFromToken(refreshToken);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new TokenException("사용자를 찾을 수 없습니다."));
 
@@ -135,8 +136,8 @@ public class AuthService {
             throw new TokenException("토큰이 일치하지 않습니다.");
         }
         //검증 통과한 후, 새로운 토큰 생성
-        String newAccessToken = jwtProvider.generateAccessToken(email);
-        String newRefreshToken = jwtProvider.generateRefreshToken(email);
+        String newAccessToken = jwtTokenProvider.generateAccessToken(email);
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(email);
 
         //db에 새로운 리프레시 토큰 저장
         user.updateRefreshToken(newRefreshToken);

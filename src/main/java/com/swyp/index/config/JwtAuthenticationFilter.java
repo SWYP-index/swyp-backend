@@ -1,6 +1,6 @@
 package com.swyp.index.config;
 
-import com.swyp.index.jwt.JwtProvider;
+import com.swyp.index.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -22,7 +22,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtProvider jwtProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -36,9 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveTokenFromCookie(request);
 
         //토큰이 존재하고 jwtProvider를 통해 검사했을 때 유효성 검사 통과했다면
-        if(StringUtils.hasText(token) && jwtProvider.validateToken(token)){
+        if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)){
             //토큰에서 이메일을 꺼내 db에 해당 사용자가 실제로 존재하는지 다시 한번 확인
-            String email = jwtProvider.getEmailFromToken(token);
+            String email = jwtTokenProvider.getEmailFromToken(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             //인증완료 했으므로, 인증완료 증표에는 사용자 정보와 권한이 담겨있음.

@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -29,27 +29,24 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-  #security:
-    #oauth2:
-      #client:
-        #registration:
-          #kakao:
-            #client-id: ${KAKAO_CLIENT_ID}
-            #redirect-uri: ${KAKAO_REDIRECT_URI}
-            #authorization-grant-type: authorization_code
-            #client-authentication-method: client_secret_post
-            #scope:
-              #- profile_nickname
-              #- account_email
-        #provider:
-          #kakao:
-            #authorization-uri: https://kauth.kakao.com/oauth/authorize
-            #token-uri: https://kauth.kakao.com/oauth/token
-            #user-info-uri: https://kapi.kakao.com/v2/user/me
-            #user-name-attribute: id
-
-
-
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 61cf89fa2035903342eff0bb36944aa8
+            client-authentication-method: none
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            #            scope:
+            #              - profile_nickname
+            client-name: Kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 
 
 jwt:
