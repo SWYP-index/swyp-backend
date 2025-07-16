@@ -38,9 +38,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-		System.out.println(oauthUser);
-		System.out.println(user.toString());
-
 		String accessToken = jwtProvider.generateAccessToken(user);
 		String refreshToken = jwtProvider.generateRefreshToken(user);
 
