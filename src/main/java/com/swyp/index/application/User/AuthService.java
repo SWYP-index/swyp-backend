@@ -61,10 +61,10 @@ public class AuthService {
 
 	@Transactional
 	//사용자가 입력한 이메일 인증 코드를 검증
-	public void verifyEmailAndMarkAsVerified(String email, String code){
+	public void verifyEmailAndMarkAsVerified(String email, String authCode){
 		String storedCode = redisTemplate.opsForValue().get(AUTH_CODE_PREFIX + email);
 
-		if(storedCode == null || !storedCode.equals(code)){
+		if(storedCode == null || !storedCode.equals(authCode)){
 			throw new BadCredentialsException("인증코드가 일치하지 않거나 만료되었습니다.");
 		}
 		// 인증 성공 시, 임시로 '인증됨' 상태를 Redis에 5분간 저장합니다.
@@ -94,15 +94,16 @@ public class AuthService {
 		}
 
 		User user = User.ofLocal(
-			request.email(),
-			passwordEncoder.encode(request.password()),
-			request.nickname(),
-			"local"
+				request.email(),
+				request.nickname(),
+				passwordEncoder.encode(request.password()),
+				"local"
 		);
 
 		userRepository.save(user);
 
 		redisTemplate.delete(VERIFIED_EMAIL_PREFIX + request.email());
+		redisTemplate.delete(AUTH_CODE_PREFIX + request.email());
 	}
 
 	//로컬 사용자의 로그인을 처리하고, 토큰과 사용자 정보 반환
@@ -142,7 +143,8 @@ public class AuthService {
 	private Map<String, String> issueTokensForUser(User user) {
 		String newAccessToken = jwtTokenProvider.generateAccessToken(user);
 		String newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
-		tokenService.refreshAccessToken(newRefreshToken);
+		//tokenService.refreshAccessToken(newRefreshToken);
+		redisTemplate.opsForValue().set(user.getEmail(), newRefreshToken, Duration.ofDays(7));
 
 		Map<String, String> tokens = new HashMap<>();
 		tokens.put("accessToken", newAccessToken);

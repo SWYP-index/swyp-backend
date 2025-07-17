@@ -26,9 +26,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 		User user = userRepository.findByEmail(email)
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+		String password = user.getPassword();
+		// 2. 소셜 로그인 사용자인 경우(비밀번호가 null), 임의의 값을 설정
+		if (password == null) {
+			password = ""; // 또는 UUID.randomUUID().toString() 등 임의의 값
+		}
+
 		return new org.springframework.security.core.userdetails.User(
 			user.getEmail(),
-			"",
+			password,
 			List.of(new SimpleGrantedAuthority("ROLE_USER"))
 		);
 	}

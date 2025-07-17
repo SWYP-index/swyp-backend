@@ -60,11 +60,11 @@ public class User {
 		return user;
 	}
 
-	public static User ofLocal(String email, String name, String password, String provider) {
+	public static User ofLocal(String email, String nickname, String password, String provider) {
 		User user = new User();
 
 		user.email = email;
-		user.nickname = name;
+		user.nickname = nickname;
 		user.password = password;
 		user.provider = ProviderType.valueOf(provider.toUpperCase());
 

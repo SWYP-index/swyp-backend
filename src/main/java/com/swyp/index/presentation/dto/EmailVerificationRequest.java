@@ -8,6 +8,6 @@ public record EmailVerificationRequest(
 	String email,
 
 	@NotBlank
-	String code
+	String authCode
 ) {
 }
