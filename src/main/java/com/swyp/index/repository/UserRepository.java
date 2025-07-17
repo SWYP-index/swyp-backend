@@ -1,6 +1,6 @@
 package com.swyp.index.repository;
 
-import com.swyp.index.entity.User;
+import com.swyp.index.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
