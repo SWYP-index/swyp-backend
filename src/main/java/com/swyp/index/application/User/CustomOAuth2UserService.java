@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import com.swyp.index.domain.User.GoogleUserInfo;
+import com.swyp.index.domain.User.KakaoUserInfo;
 import com.swyp.index.domain.User.NaverUserInfo;
 import com.swyp.index.domain.User.OAuth2UserInfo;
 import com.swyp.index.domain.User.User;
@@ -60,6 +61,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		return switch (registrationId) {
 			case "google" -> new GoogleUserInfo(attributes);
 			case "naver" -> new NaverUserInfo(attributes);
+			case "kakao" -> new KakaoUserInfo(attributes);
 
 			default -> throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인입니다: " + registrationId);
 		};
