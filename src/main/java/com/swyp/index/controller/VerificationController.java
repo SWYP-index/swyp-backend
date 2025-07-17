@@ -27,8 +27,8 @@ public class VerificationController {
 
     //이메일과 인증 코드를 받아 유효한지 검증 api
     @PostMapping("/verify-code")
-    public ResponseEntity<Void> verifyCode(@Valid @RequestBody EmailVerificationRequest request){
-        authService.verifyCode(request.email(), request.code());
+    public ResponseEntity<Void> verifyEmailAndMarkAsVerified(@Valid @RequestBody EmailVerificationRequest request){
+        authService.verifyEmailAndMarkAsVerified(request.email(), request.code());
         return ResponseEntity.ok().build();
     }
 }

@@ -57,7 +57,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 });
         //5. Spring Security 인증 객체로 변환 후 리턴
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(user.getRole())),
+                Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),
                 attributes,
                 "id" //attributes에서 사용자 ID로 사용할 키
         );

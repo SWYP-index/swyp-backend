@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+//Spring Security에서 인증되지 않은 사용자가 보호된 리소스에 접근하려고 할 때
+//호출되는 커스텀 진입점
+//api 서버 환경에 맞게 json 형태의 에러 응답을 반환
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper = new ObjectMapper();

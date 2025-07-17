@@ -18,7 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-//모든 api 요청에 대해 jwt 토큰을 검사하여 인증을 처리하는 필터
+//모든 api 요청에 대해 jwt 액세스 토큰을 검사하여 인증을 처리하는 필터
+//spring security의 기본 필터 체인에 추가되어 컨트롤러에 도달하기 전에 실행된다.
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -37,16 +38,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         //토큰이 존재하고 jwtProvider를 통해 검사했을 때 유효성 검사 통과했다면
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)){
-            //토큰에서 이메일을 꺼내 db에 해당 사용자가 실제로 존재하는지 다시 한번 확인
+            //토큰에서 사용자 이메일 추출.
             String email = jwtTokenProvider.getEmailFromToken(token);
+            //이메일을 사용하여 데이터베이스에서 전체 사용자 정보를 조회
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            //인증완료 했으므로, 인증완료 증표에는 사용자 정보와 권한이 담겨있음.
+            //조회된 사용자 정보를 기반으로 인증 객체를 생성. 이 객체는 spring security가 현재 사용자를 식별하는 데 사용.
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities()
             );
+
+            //요청에 대한 세부 정보를 인증 객체에 설정
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            //SecurityContext에 인증완료 증표를 저장하여, 해당 요청 동안 사용자가 인증된 상태임을 유지
+
+            // securityContextHolder에 인증 객체를 저장. 해당 요청 동안 사용자는 인증된 상태가 됨.
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         // 다음 필터로 요청을 그대로 전달

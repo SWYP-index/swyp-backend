@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +20,10 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; //내부용 id
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private String userId; //외부용 id 추가
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -38,10 +42,10 @@ public class User {
     private String refreshToken;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column(nullable = false)
     private ProviderType provider; //"kakao, "google" 등 구분용
 
-    private String role;
+    private Role role;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -51,15 +55,18 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+
+
     //빌더 패턴은 필요한 필드만 선택적으로 사용할 수 있음.
     @Builder
     public User(String email, String password, String nickname, ProviderType provider, String socialId, String role){
+        this.userId = UUID.randomUUID().toString(); //생성 시 랜덤 UUID 할당
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.provider = provider;
         this.socialId = socialId;
-        this.role = role;
+        this.role = Role.USER;
     }
 
     //refresh token을 업데이트하는 메서드

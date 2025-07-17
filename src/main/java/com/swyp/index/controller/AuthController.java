@@ -3,6 +3,7 @@ package com.swyp.index.controller;
 import com.swyp.index.dto.LoginRequest;
 import com.swyp.index.dto.LoginResponse;
 import com.swyp.index.dto.SignUpRequest;
+import com.swyp.index.dto.UserInfoResponse;
 import com.swyp.index.entity.User;
 import com.swyp.index.jwt.JwtTokenProvider;
 import com.swyp.index.repository.UserRepository;
@@ -62,45 +63,55 @@ public class AuthController {
         return ResponseEntity.ok(userInfo);
     }
 
-    //OAuth2 세션 기반으로 로그인된 사용자 정보 확인(로그인 직후)
-    @GetMapping("/oauth2-me")
-    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal OAuth2User oAuth2User){
-        if(oAuth2User == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증된 사용자가 없습니다.");
-        }
-
-        String email = oAuth2User.getAttribute("email");
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("유저 정보 없음"));
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("email", user.getEmail());
-        result.put("nickname", user.getNickname());
-        result.put("role", user.getRole());
-
-        return ResponseEntity.ok(result);
-    }
-
-    //JWT AccessToken 기반으로 로그인된 사용자 정보 확인(쿠키로 인증 유지)
     @GetMapping("/me")
-    public ResponseEntity<?> getUserFromJwt(HttpServletRequest request){
-        String token = extractCookie(request, "ACCESS_TOKEN");
-
-        if(token == null || !jwtTokenProvider.validateToken(token)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+    public ResponseEntity<UserInfoResponse> getCurrentUser(Principal principal){
+        if(principal == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String email = jwtTokenProvider.getEmailFromToken(token);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않음"));
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("userid", "미구현");
-        result.put("email", user.getEmail());
-        result.put("nickname", user.getNickname());
-        result.put("role", user.getRole());
-
-        return ResponseEntity.ok(result);
+        UserInfoResponse userInfo = authService.getCurrentUserInfo(principal.getName());
+        return ResponseEntity.ok(userInfo);
     }
+
+//    //OAuth2 세션 기반으로 로그인된 사용자 정보 확인(로그인 직후)
+//    @GetMapping("/oauth2-me")
+//    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal OAuth2User oAuth2User){
+//        if(oAuth2User == null){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증된 사용자가 없습니다.");
+//        }
+//
+//        String email = oAuth2User.getAttribute("email");
+//        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("유저 정보 없음"));
+//
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("email", user.getEmail());
+//        result.put("nickname", user.getNickname());
+//        result.put("role", user.getRole());
+//
+//        return ResponseEntity.ok(result);
+//    }
+//
+//    //JWT AccessToken 기반으로 로그인된 사용자 정보 확인(쿠키로 인증 유지)
+//    @GetMapping("/me")
+//    public ResponseEntity<?> getUserFromJwt(HttpServletRequest request){
+//        String token = extractCookie(request, "ACCESS_TOKEN");
+//
+//        if(token == null || !jwtTokenProvider.validateToken(token)){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+//        }
+//
+//        String email = jwtTokenProvider.getEmailFromToken(token);
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않음"));
+//
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("userid", "미구현");
+//        result.put("email", user.getEmail());
+//        result.put("nickname", user.getNickname());
+//        result.put("role", user.getRole());
+//
+//        return ResponseEntity.ok(result);
+//    }
 
     //@param principal: 스프링 시큐리티가 현재 인증된 사용자의 정보를 담아주는 객체
     //JwtAuthenticationFilter에서 인증 정보를 securitycontext에 저장했기 때문에 여기서 사용함.
