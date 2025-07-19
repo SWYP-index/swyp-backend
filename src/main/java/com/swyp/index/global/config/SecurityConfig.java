@@ -18,9 +18,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.swyp.index.application.User.CustomOAuth2UserService;
-import com.swyp.index.infrastructure.security.JwtAuthenticationFilter;
-import com.swyp.index.infrastructure.security.OAuth2SuccessHandler;
+import com.swyp.index.application.user.CustomOAuth2UserService;
+import com.swyp.index.global.security.JwtAuthenticationFilter;
+import com.swyp.index.global.security.OAuth2SuccessHandler;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class SecurityConfig {
 				.logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
 				.logoutSuccessUrl("/")
 				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID"));
+				.deleteCookies("JSESSIONID", "refreshToken"));
 		;
 
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -77,8 +77,7 @@ public class SecurityConfig {
 		return source;
 	}
 
-	//로컬 로그인을 처리하는 AuthenticationManager를 spring 컨테이너에 빈으로 등록
-	//아이디,비밀번호 인증 요청 처리
+	// 아이디,비밀번호 인증 요청 처리
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 		return configuration.getAuthenticationManager();
