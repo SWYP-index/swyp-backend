@@ -18,6 +18,8 @@ import com.swyp.index.global.common.CookieUtil;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.security.JwtProvider;
+import com.swyp.index.presentation.dto.user.EmailRequest;
+import com.swyp.index.presentation.dto.user.EmailVerificationRequest;
 import com.swyp.index.presentation.dto.user.LoginRequest;
 import com.swyp.index.presentation.dto.user.LoginResponse;
 import com.swyp.index.presentation.dto.user.SignUpRequest;
@@ -55,5 +57,19 @@ public class AuthApi {
 		response.addHeader(HttpHeaders.SET_COOKIE,CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
 		return ResponseEntity.ok(LoginResponse.from(jwtProvider.generateAccessToken(user), user));
+	}
+
+	// 지정된 이메일로 인증 코드를 발송 api
+	@PostMapping("/verification/send-code")
+	public ResponseEntity<Void> sendVerificationCode(@Valid @RequestBody EmailRequest request){
+		authService.sendVerificationCode(request.email());
+		return ResponseEntity.ok().build();
+	}
+
+	// 이메일과 인증 코드를 받아 유효한지 검증 api
+	@PostMapping("/verification/verify-code")
+	public ResponseEntity<Void> verifyEmailAndMarkAsVerified(@Valid @RequestBody EmailVerificationRequest request){
+		authService.verifyEmailAndMarkAsVerified(request.email(), request.authCode());
+		return ResponseEntity.ok().build();
 	}
 }
