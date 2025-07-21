@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.Objects;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -44,11 +45,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		redisTemplate.opsForValue().set(id, refreshToken, Duration.ofDays(7));
 
-		String redirectUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect")
+		String redirectUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/login/oauth2/success")
 			.fragment("accessToken=" + accessToken)
 			.build().toUriString();
 
-		response.addCookie(CookieUtil.createRefreshTokenCookie(refreshToken));
+		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createAccessTokenCookie(accessToken).toString());
+		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
 		response.sendRedirect(redirectUrl);
 	}

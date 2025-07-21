@@ -1,4 +1,4 @@
-package com.swyp.index.presentation.dto.user.user;
+package com.swyp.index.presentation.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
