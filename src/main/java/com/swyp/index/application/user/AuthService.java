@@ -15,8 +15,8 @@ import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.security.JwtProvider;
 import com.swyp.index.infrastructure.user.UserRepository;
-import com.swyp.index.presentation.dto.user.user.LoginRequest;
-import com.swyp.index.presentation.dto.user.user.SignUpRequest;
+import com.swyp.index.presentation.dto.user.LoginRequest;
+import com.swyp.index.presentation.dto.user.SignUpRequest;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class AuthService {
 
 	// 회원가입을 위한 이메일 인증 코드를 생성하고 발송한다.
 	public void sendVerificationCode(String email) {
-		if (userRepository.existsByEmail(email)) {
+		if (userRepository.existsByEmailAndProvider(email, Provider.LOCAL)) {
 			throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
 		}
 
@@ -80,7 +80,7 @@ public class AuthService {
 		}
 
 		// 인증번호 발송 시 이메일 중복을 확인했지만, 그 사이에 다른 사람이 가입했을 수 있으니 한번 더 확인한다.
-		if (userRepository.existsByEmail(request.email())) {
+		if (userRepository.existsByEmailAndProvider(request.email(), Provider.LOCAL)) {
 			throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
 		}
 

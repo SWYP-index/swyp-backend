@@ -33,16 +33,17 @@ public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final OAuth2SuccessHandler oAuth2SuccessHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final CorsConfigurationSource corsConfigurationSource;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
-			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/", "/oauth2/**", "/login/**", "/login", "/api/auth/**", "/oauth2/**").permitAll()
+				.requestMatchers("/", "/oauth2/**", "/login/**", "/login", "/api/auth/**", "/oauth2/**",  "/favicon.ico", "/error", "css/**", "js/**", "/images/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2 -> oauth2
@@ -60,21 +61,6 @@ public class SecurityConfig {
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
-	}
-
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration config = new CorsConfiguration();
-
-		config.setAllowedOrigins(List.of("http://localhost:3000"));
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(List.of("*"));
-		config.setAllowCredentials(true);
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", config);
-
-		return source;
 	}
 
 	// 아이디,비밀번호 인증 요청 처리
