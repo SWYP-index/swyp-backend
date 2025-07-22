@@ -2,6 +2,13 @@ package com.swyp.index.presentation.api.user;
 
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,6 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Tag(name = "사용자 API", description = "인증된 사용자의 정보 조회 및 토큰 관리 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -36,6 +44,13 @@ public class UserApi {
 	private final JwtProvider jwtProvider;
 	private final TokenService tokenService;
 
+	@Operation(summary = "내 정보 조회", description = "현재 로그인된 사용자의 정보를 조회합니다. 요청 성공 시, 새로운 refresh token이 쿠키에 재설정될 수 있습니다.")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공"),
+			@ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content),
+			@ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음", content = @Content)
+	})
+	@SecurityRequirement(name = "JWT Authentication") //이 API는 JWt 인증이 필요함.
 	@GetMapping("/me")
 	public ResponseEntity<?> getUser(Authentication authentication, HttpServletResponse response) {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -54,6 +69,12 @@ public class UserApi {
 		return ResponseEntity.ok(UserResponse.from(user));
 	}
 
+	@Operation(summary = "Access Token 재발급", description = "쿠키에 담긴 Refresh Token을 사용하여 만료된 Access Token을 재발급받습니다.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Access Token 재발급 성공",
+					content = @Content(schema = @Schema(type = "object", example = "{\"accessToken\": \"new_token_string...\"}"))),
+			@ApiResponse(responseCode = "401", description = "Refresh Token이 없거나 유효하지 않음", content = @Content)
+	})
 	@PostMapping("/refresh")
 	public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
