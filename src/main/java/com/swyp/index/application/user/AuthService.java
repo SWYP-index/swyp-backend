@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.swyp.index.domain.user.Provider;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.exception.CustomException;
