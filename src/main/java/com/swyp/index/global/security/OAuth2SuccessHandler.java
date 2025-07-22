@@ -1,21 +1,14 @@
 package com.swyp.index.global.security;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Objects;
 
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.swyp.index.domain.user.User;
-import com.swyp.index.global.common.CookieUtil;
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.user.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 	private final JwtProvider jwtProvider;
-	private final RedisTemplate<String, String> redisTemplate;
 	private final UserRepository userRepository;
 
 	@Override
@@ -35,22 +27,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		Authentication authentication) throws IOException {
 		DefaultOAuth2User oauthUser = (DefaultOAuth2User)authentication.getPrincipal();
 
-		String id = oauthUser.getAttribute("id");
+		Long userId = Long.valueOf(Objects.requireNonNull(oauthUser.getAttribute("id")));
 
-		User user = userRepository.findById(Long.valueOf(Objects.requireNonNull(id)))
-			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-		String accessToken = jwtProvider.generateAccessToken(user);
-		String refreshToken = jwtProvider.generateRefreshToken(user);
-
-		redisTemplate.opsForValue().set(id, refreshToken, Duration.ofDays(7));
+		String accessToken = jwtProvider.generateAccessToken(userId);
 
 		String redirectUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/login/oauth2/success")
 			.fragment("accessToken=" + accessToken)
 			.build().toUriString();
-
-		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createAccessTokenCookie(accessToken).toString());
-		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
 		response.sendRedirect(redirectUrl);
 	}

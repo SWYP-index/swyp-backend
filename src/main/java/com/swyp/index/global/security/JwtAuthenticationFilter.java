@@ -1,18 +1,14 @@
 package com.swyp.index.global.security;
 
-import java.io.CharConversionException;
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private final UserDetailsService userDetailsService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -40,9 +35,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
+		log.info("JWT 인증 필터 시작: {}", requestURI);
+
 		String token = jwtProvider.extractToken(request);
 
-		if (token == null) {
+		if (token == null || token.isBlank()) {
 			throw new BadCredentialsException("토큰이 존재하지 않습니다.");
 		}
 
@@ -52,14 +49,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		log.info("JWT 토큰 검증 성공: {}", token);
 
-		UserDetails userDetails = userDetailsService.loadUserByUsername(jwtProvider.getId(token));
+		Long userId = Long.valueOf(jwtProvider.getId(token));
+		CustomPrincipal principal = new CustomPrincipal(userId);
 
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
-			null, userDetails.getAuthorities());
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal,
+			null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-		log.info("인증 정보 설정 완료: {}", userDetails.getUsername());
+		log.info("인증 정보 설정 완료: userId={}", principal.id());
 
 		filterChain.doFilter(request, response);
 	}

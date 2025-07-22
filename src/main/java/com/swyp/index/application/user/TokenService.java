@@ -34,6 +34,6 @@ public class TokenService {
 		User user = userRepository.findById(Long.valueOf(id))
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-		return jwtProvider.generateAccessToken(user);
+		return jwtProvider.generateAccessToken(user.getId());
 	}
 }

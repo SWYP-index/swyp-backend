@@ -5,7 +5,6 @@ import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,7 @@ import com.swyp.index.domain.user.User;
 import com.swyp.index.global.common.CookieUtil;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
+import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.global.security.JwtProvider;
 import com.swyp.index.infrastructure.user.UserRepository;
 import com.swyp.index.presentation.dto.user.UserResponse;
@@ -38,18 +38,14 @@ public class UserApi {
 
 	@GetMapping("/me")
 	public ResponseEntity<?> getUser(Authentication authentication, HttpServletResponse response) {
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
 
-		User user = userRepository.findById(Long.valueOf(userDetails.getUsername()))
+		User user = userRepository.findById(principal.getId())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-		log.info("User found: {}", user.getEmail());
-
-		String refreshToken = jwtProvider.generateRefreshToken(user);
+		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
-
-		log.info("Refresh token set in response header: {}", refreshToken);
 
 		return ResponseEntity.ok(UserResponse.from(user));
 	}
