@@ -39,4 +39,4 @@ out/
 
 # Environment files
 .env
-.env.*
+.env.local
