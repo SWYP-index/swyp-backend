@@ -1,7 +1,5 @@
 package com.swyp.index.global.config;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,9 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.swyp.index.application.user.CustomOAuth2UserService;
 import com.swyp.index.global.security.JwtAuthenticationFilter;
@@ -43,8 +39,8 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/", "/oauth2/**", "/login/**", "/login", "/api/auth/**", "/oauth2/**",  "/favicon.ico", "/error", "css/**", "js/**", "/images/**").permitAll()
-				.anyRequest().authenticated()
+				.requestMatchers("/api/users/**").authenticated()
+				.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
@@ -53,10 +49,8 @@ public class SecurityConfig {
 			.logout(logout -> logout
 				.logoutUrl("/logout")
 				.logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
-				.logoutSuccessUrl("/")
-				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID", "refreshToken"));
-		;
+				.deleteCookies("accessToken", "refreshToken")
+			);
 
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -70,7 +64,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public PasswordEncoder passwordEncoder(){
+	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 }
