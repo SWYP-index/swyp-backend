@@ -60,7 +60,7 @@ public class UserApi {
 
 		log.info("User found: {}", user.getEmail());
 
-		String refreshToken = jwtProvider.generateRefreshToken(user);
+		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 

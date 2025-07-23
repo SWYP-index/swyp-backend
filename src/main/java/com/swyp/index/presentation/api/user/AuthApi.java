@@ -67,13 +67,13 @@ public class AuthApi {
 	public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
 		User user = authService.login(request);
 
-		String refreshToken = jwtProvider.generateRefreshToken(user);
+		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
 		redisTemplate.opsForValue().set(String.valueOf(user.getId()), refreshToken, Duration.ofDays(7));
 
 		response.addHeader(HttpHeaders.SET_COOKIE,CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
-		return ResponseEntity.ok(LoginResponse.from(jwtProvider.generateAccessToken(user), user));
+		return ResponseEntity.ok(LoginResponse.from(jwtProvider.generateAccessToken(user.getId()), user));
 	}
 
 	@Operation(summary = "이메일 인증 코드 발송", description = "지정된 이메일로 6자리 인증 코드를 발송합니다.")
