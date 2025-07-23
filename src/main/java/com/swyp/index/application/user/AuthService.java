@@ -47,11 +47,7 @@ public class AuthService {
 		smtpMailService.sendAuthMail(email, authCode);
 
 		// Redis에 인증 코드 저장
-		redisTemplate.opsForValue().set(
-			AUTH_CODE_PREFIX + email,
-			authCode,
-			AUTH_CODE_EXPIRATION
-		);
+		redisTemplate.opsForValue().set(AUTH_CODE_PREFIX + email, authCode, AUTH_CODE_EXPIRATION);
 	}
 
 	// 사용자가 입력한 이메일 인증 코드를 검증
@@ -88,12 +84,8 @@ public class AuthService {
 			throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
 		}
 
-		User user = User.ofLocal(
-			request.email(),
-			request.nickname(),
-			passwordEncoder.encode(request.password()),
-			"local"
-		);
+		User user = User.ofLocal(request.email(), request.nickname(), passwordEncoder.encode(request.password()),
+			"local");
 
 		userRepository.save(user);
 
@@ -107,12 +99,10 @@ public class AuthService {
 		// 시큐리티가 내부적으로 UserDetailsService를 통해 사용자를 조회, passwordEncoder로 비밀번호를 비교하는 과정을 모두 처리
 		// 실패하면 BadCredentialsException이 발생.
 		Authentication authentication = authenticationManager.authenticate(
-			new UsernamePasswordAuthenticationToken(request.email(), request.password())
-		);
+			new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-		String email = authentication.getName();
+		Long userId = Long.valueOf(authentication.getName());
 
-		return userRepository.findByEmailAndProvider(email, Provider.LOCAL)
-			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+		return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 	}
 }

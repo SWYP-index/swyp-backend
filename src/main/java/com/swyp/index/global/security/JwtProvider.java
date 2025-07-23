@@ -7,8 +7,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.swyp.index.domain.user.User;
-
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,18 +30,18 @@ public class JwtProvider {
 		return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String generateAccessToken(User user) {
+	public String generateAccessToken(Long userId) {
 		return Jwts.builder()
-			.setSubject(String.valueOf(user.getId()))
+			.setSubject(String.valueOf(userId))
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
 			.compact();
 	}
 
-	public String generateRefreshToken(User user) {
+	public String generateRefreshToken(Long userId) {
 		return Jwts.builder()
-			.setSubject(String.valueOf(user.getId()))
+			.setSubject(String.valueOf(userId))
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)

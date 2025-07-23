@@ -20,14 +20,12 @@ Thumbs.db
 .sts4-cache
 bin/
 
-
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 out/
-
 
 ### NetBeans ###
 /nbproject/private/
@@ -39,6 +37,6 @@ out/
 ### VS Code ###
 .vscode/
 
+# Environment files
 .env
-
-src/main/resources/application.yml
+.env.local
