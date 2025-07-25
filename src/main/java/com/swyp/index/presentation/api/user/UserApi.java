@@ -24,7 +24,7 @@ import com.swyp.index.global.common.CookieUtil;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.security.JwtProvider;
-import com.swyp.index.infrastructure.user.UserRepository;
+import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.user.UserResponse;
 
 import jakarta.servlet.http.Cookie;
