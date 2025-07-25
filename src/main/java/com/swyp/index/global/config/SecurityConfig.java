@@ -39,7 +39,8 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/api/users/**, /api/books/**").authenticated()
+				.requestMatchers("/api/users/**").authenticated()
+				// .requestMatchers("/api/books/**").authenticated() // 인가 필요한 URL 추가
 				.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth2 -> oauth2
