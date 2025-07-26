@@ -15,7 +15,10 @@ public class WebConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
 
-		config.setAllowedOrigins(List.of("*"));
+		config.setAllowedOrigins(List.of(
+				"http://localhost:3000",
+				"https://index-pi-nine-40.vercel.app/login/oauth2"
+		));
 		config.addAllowedMethod("*");
 		config.addAllowedHeader("*");
 		config.setAllowCredentials(true);
