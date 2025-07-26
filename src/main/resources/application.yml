@@ -3,6 +3,10 @@ jwt:
   access-token-expiration: ${JWT_ACCESS_EXPIRATION}
   refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
 
+app:
+  redirect-url:
+    local: http://localhost:3000/login/oauth2/success
+    prod: https://index-pi-nine-40.vercel.app/login/oauth2/success
 spring:
   datasource:
     url: ${DB_URL}

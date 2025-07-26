@@ -1,8 +1,11 @@
 package com.swyp.index.global.security;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -21,6 +24,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 	private final JwtProvider jwtProvider;
 	private final UserRepository userRepository;
+	private final Environment environment;
+
+	@Value("${app.redirect-url.local}")
+	private String localRedirectUrl;
+
+	@Value("${app.redirect-url.prod}")
+	private String prodRedirectUrl;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -31,10 +41,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		String accessToken = jwtProvider.generateAccessToken(userId);
 
-		String redirectUrl = UriComponentsBuilder.fromUriString("https://index-pi-nine-40.vercel.app/login/oauth2/success")
+		String baseUrl = isProdProfileActive() ? prodRedirectUrl : localRedirectUrl;
+
+		String redirectUrl = UriComponentsBuilder.fromUriString(baseUrl)
 			.fragment("accessToken=" + accessToken)
 			.build().toUriString();
 
 		response.sendRedirect(redirectUrl);
+	}
+
+	private boolean isProdProfileActive() {
+		return Arrays.stream(environment.getActiveProfiles())
+				.anyMatch("prod"::equalsIgnoreCase);
 	}
 }
