@@ -57,13 +57,9 @@ public class UserApi {
 		User user = userRepository.findById(principal.getId())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-		log.info("User found: {}", user.getEmail());
-
 		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
-
-		log.info("Refresh token set in response header: {}", refreshToken);
 
 		return ResponseEntity.ok(UserResponse.from(user));
 	}
