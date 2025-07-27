@@ -14,13 +14,13 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
-		ErrorCode code = ex.getErrorCode();
-		ErrorResponse response = new ErrorResponse(code.getHttpStatus().value(), code.getMessage());
-		log.warn("CustomException Occurred: status={}, message={}",
-				response.getStatus(), response.getMessage());
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+
+		log.warn("CustomException Occurred: status={}, code={}, message={}",
+			response.getStatus(), ex.getErrorCode().name(), response.getMessage());
 
 		return ResponseEntity
-				.status(code.getStatusCode())
+				.status(response.getStatus())
 				.body(response);
 	}
 
@@ -30,19 +30,22 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 		String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-		ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
+
+		// 에러 메시지를 담은 커스텀 BAD_REQUEST 코드가 없다면 INVALID_INPUT_VALUE를 쓰는게 일반적입니다.
+		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_INPUT_VALUE);
+
 		log.warn("MethodArgumentNotValidException Occurred: {}", errorMessage);
 
-		// 빌더 패턴 방식으로 수정
 		return ResponseEntity
-				.status(HttpStatus.BAD_REQUEST)
-				.body(response);
+			.status(HttpStatus.BAD_REQUEST)
+			.body(response);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
 		log.error("Unhandled Exception Occurred: {}", ex.getMessage(), ex);
-		ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 내부 오류가 발생했습니다.");
+
+		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
 
 		return ResponseEntity
 			.status(HttpStatus.INTERNAL_SERVER_ERROR)

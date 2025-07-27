@@ -7,6 +7,10 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
+
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -55,7 +59,10 @@ public class JwtProvider {
 				.build()
 				.parseClaimsJws(token);
 			return true;
-		} catch (JwtException | IllegalArgumentException e) {
+		} catch (ExpiredJwtException e) {
+			throw new CustomException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+		}
+		catch (JwtException | IllegalArgumentException e) {
 			return false;
 		}
 	}
