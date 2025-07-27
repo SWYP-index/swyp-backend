@@ -46,30 +46,4 @@ public class RedisConfig {
 
 		return template;
 	}
-
-	// @Bean
-	// public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
-	// 	RedisTemplate<String, String> template = new RedisTemplate<>();
-	//
-	// 	template.setConnectionFactory(connectionFactory);
-	// 	template.setKeySerializer(new StringRedisSerializer());
-	// 	template.setValueSerializer(new StringRedisSerializer());
-	//
-	// 	return template;
-	// }
-	//
-	// @Bean
-	// public RedisTemplate<String, List<String>> listRedisTemplate(RedisConnectionFactory connectionFactory) {
-	// 	RedisTemplate<String, List<String>> template = new RedisTemplate<>();
-	//
-	// 	template.setConnectionFactory(connectionFactory);
-	// 	template.setKeySerializer(new StringRedisSerializer());
-	//
-	// 	Jackson2JsonRedisSerializer<List> serializer = new Jackson2JsonRedisSerializer<>(List.class);
-	//
-	// 	template.setValueSerializer(serializer);
-	// 	template.afterPropertiesSet();
-	//
-	// 	return template;
-	// }
 }
