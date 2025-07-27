@@ -19,7 +19,7 @@ public class TokenService {
 	private final RedisTemplate<String, String> redisTemplate;
 	private final UserRepository userRepository;
 
-	public String reissueAccessToken(String refreshToken) {
+	public void validateRefreshToken(String refreshToken) {
 		if (!jwtProvider.validateToken(refreshToken)) {
 			throw new CustomException(ErrorCode.TOKEN_INVALID);
 		}
@@ -28,9 +28,12 @@ public class TokenService {
 		String storedRefreshToken = redisTemplate.opsForValue().get(id);
 
 		if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-			throw new CustomException(ErrorCode.TOKEN_EXPIRED);
+			throw new CustomException(ErrorCode.TOKEN_INVALID);
 		}
+	}
 
+	public String reissueAccessToken(String refreshToken) {
+		String id = jwtProvider.getId(refreshToken);
 		User user = userRepository.findById(Long.valueOf(id))
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
