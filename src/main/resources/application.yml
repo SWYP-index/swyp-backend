@@ -1,3 +1,72 @@
+spring:
+  config:
+    import: optional:file:.env
+
+  datasource:
+      url: ${DB_URL}
+      username: ${DB_USERNAME}
+      password: ${DB_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+  redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      timeout: ${REDIS_TIMEOUT}
+
+  jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+
+  mail:
+      host: smtp.gmail.com
+      port: 587
+      username: ${MAIL_USERNAME}
+      password: ${MAIL_PASSWORD}
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+
+  security:
+      oauth2:
+        client:
+          registration:
+            google:
+              client-id: ${GOOGLE_CLIENT_ID}
+              client-secret: ${GOOGLE_CLIENT_SECRET}
+              redirect-uri: ${GOOGLE_REDIRECT_URI}
+              scope: profile, email
+            naver:
+              client-id: ${NAVER_CLIENT_ID}
+              client-secret: ${NAVER_CLIENT_SECRET}
+              redirect-uri: ${NAVER_REDIRECT_URI}
+              authorization-grant-type: authorization_code
+              scope: name, email
+            kakao:
+              client-id: ${KAKAO_CLIENT_ID}
+              client-authentication-method: none
+              authorization-grant-type: authorization_code
+              redirect-uri: ${KAKAO_REDIRECT_URI}
+
+          provider:
+            naver:
+              authorization-uri: https://nid.naver.com/oauth2.0/authorize
+              token-uri: https://nid.naver.com/oauth2.0/token
+              user-info-uri: https://openapi.naver.com/v1/nid/me
+              user-name-attribute: response
+            kakao:
+              authorization-uri: https://kauth.kakao.com/oauth/authorize
+              token-uri: https://kauth.kakao.com/oauth/token
+              user-info-uri: https://kapi.kakao.com/v2/user/me
+              user-name-attribute: id
+
+
 jwt:
   secret: ${JWT_SECRET}
   access-token-expiration: ${JWT_ACCESS_EXPIRATION}
@@ -7,71 +76,10 @@ app:
   redirect-url:
     local: http://localhost:3000/login/oauth2/success
     prod: https://index-pi-nine-40.vercel.app/login/oauth2/success
-spring:
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
-    timeout: ${REDIS_TIMEOUT}
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${GOOGLE_REDIRECT_URI}
-            scope: profile, email
-          naver:
-            client-id: ${NAVER_CLIENT_ID}
-            client-secret: ${NAVER_CLIENT_SECRET}
-            redirect-uri: ${NAVER_REDIRECT_URI}
-            authorization-grant-type: authorization_code
-            scope: name, email
-          kakao:
-            client-id: ${KAKAO_CLIENT_ID}
-            client-authentication-method: none
-            authorization-grant-type: authorization_code
-            redirect-uri: ${KAKAO_REDIRECT_URI}
-
-        provider:
-          naver:
-            authorization-uri: https://nid.naver.com/oauth2.0/authorize
-            token-uri: https://nid.naver.com/oauth2.0/token
-            user-info-uri: https://openapi.naver.com/v1/nid/me
-            user-name-attribute: response
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
 
 logging:
   level:
     org.springframework.security: DEBUG
+
+server:
+  forward-headers-strategy: framework
