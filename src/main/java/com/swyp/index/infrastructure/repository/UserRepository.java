@@ -1,4 +1,4 @@
-package com.swyp.index.infrastructure.user;
+package com.swyp.index.infrastructure.repository;
 
 import java.util.Optional;
 
@@ -8,11 +8,7 @@ import com.swyp.index.domain.user.Provider;
 import com.swyp.index.domain.user.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-	Optional<User> findById(Long id);
-
 	Optional<User> findByEmailAndProvider(String email, Provider provider);
-
-	boolean existsByEmail(String email);
 
 	boolean existsByEmailAndProvider(String email, Provider provider);
 

@@ -68,6 +68,10 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+aladin:
+  api:
+    ttbkey: ${ALADIN_API_KEY}
+
 logging:
   level:
     org.springframework.security: DEBUG
