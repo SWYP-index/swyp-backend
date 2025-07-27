@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.infrastructure.api.AladinApiClient;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class BookSearchService {
 
 	private final BookRepository bookRepository;

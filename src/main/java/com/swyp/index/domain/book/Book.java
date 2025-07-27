@@ -31,6 +31,7 @@ public class Book {
 
 	private String author;
 
+	@Column(length = 1000)
 	private String description;
 
 	private String publisher;
