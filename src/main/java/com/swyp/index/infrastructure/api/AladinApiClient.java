@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class AladinApiClient {
-
 	private static final String API_KEY = "ttbleednj01131320001";
 	private static final String QUERY_TYPE = "Title";
 	private static final String SORT_TYPE = "SalesPoint";

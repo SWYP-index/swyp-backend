@@ -9,11 +9,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.swyp.index.domain.user.Provider;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
-import com.swyp.index.global.security.JwtProvider;
 import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.user.LoginRequest;
 import com.swyp.index.presentation.dto.user.SignUpRequest;
@@ -25,9 +25,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class AuthService {
+
 	private final UserRepository userRepository;
 	private final AuthenticationManager authenticationManager;
-	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
 	private final SmtpMailService smtpMailService;
 	private final StringRedisTemplate redisTemplate;
@@ -60,7 +60,7 @@ public class AuthService {
 		// 인증 성공 시, 임시로 '인증됨' 상태를 Redis에 5분간 저장합니다.
 		redisTemplate.opsForValue().set(VERIFIED_EMAIL_PREFIX + email, "true", AUTH_CODE_EXPIRATION);
 
-		//인증 성공 시, 재사용을 막기 위해 Redis에서 해당 코드를 즉시 삭제
+		// 인증 성공 시, 재사용을 막기 위해 Redis에서 해당 코드를 즉시 삭제
 		redisTemplate.delete(email);
 	}
 

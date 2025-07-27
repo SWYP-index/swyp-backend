@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
 public class BookApi {
-
 	private final BookSearchService bookSearchService;
 
 	@GetMapping("/search")

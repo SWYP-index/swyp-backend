@@ -45,13 +45,10 @@ public class BookSearchService {
 			return BookSearchResponse.empty();
 		}
 
-		// API 응답으로 ISBN 리스트 추출
 		List<String> isbns = extractIsbns(response);
 
-		// 제목 + 페이지번호, 총 검색 결과 수 로 캐시 저장
 		saveCache(response, isbns);
 
-		// API 응답 중 DB에 존재 하지 않는 정보 DB 저장
 		saveBooksIfNotExists(response);
 
 		List<Book> books = bookRepository.findAllByIsbnIn(isbns);
@@ -59,12 +56,14 @@ public class BookSearchService {
 		return BookSearchResponse.of(books, startIndex, response.totalResults());
 	}
 
+	// ISBN 리스트 추출
 	private List<String> extractIsbns(AladinSearchResponse aladinSearchResponse) {
 		return aladinSearchResponse.items().stream()
 			.map(AladinSearchResponse.BookItem::isbn)
 			.toList();
 	}
 
+	// DB에 존재하지 않는 책 정보만 필터링 후  저장
 	private void saveBooksIfNotExists(AladinSearchResponse aladinSearchResponse) {
 		List<String> isbnList = aladinSearchResponse.items().stream()
 			.map(AladinSearchResponse.BookItem::isbn)
@@ -81,6 +80,7 @@ public class BookSearchService {
 		bookRepository.saveAll(newBooks);
 	}
 
+	// 제목 + 페이지번호, 총 검색 결과 수 로 캐시 저장
 	private void saveCache(AladinSearchResponse response, List<String> isbns) {
 		cacheAdapter.saveIsbnsCache(response.title(), response.startIndex(), isbns);
 		cacheAdapter.saveTotalResultsCache(response.title(), response.totalResults());

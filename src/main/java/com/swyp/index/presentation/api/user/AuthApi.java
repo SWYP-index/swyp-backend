@@ -1,13 +1,7 @@
 package com.swyp.index.presentation.api.user;
 
 import java.time.Duration;
-import java.util.Map;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swyp.index.application.user.AuthService;
-import com.swyp.index.application.user.TokenService;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.common.CookieUtil;
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.security.JwtProvider;
 import com.swyp.index.presentation.dto.user.EmailRequest;
 import com.swyp.index.presentation.dto.user.EmailVerificationRequest;
@@ -29,8 +20,11 @@ import com.swyp.index.presentation.dto.user.LoginRequest;
 import com.swyp.index.presentation.dto.user.LoginResponse;
 import com.swyp.index.presentation.dto.user.SignUpRequest;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthApi {
-	
 	private final AuthService authService;
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;

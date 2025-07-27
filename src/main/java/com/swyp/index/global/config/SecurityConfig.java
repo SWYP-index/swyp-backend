@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final OAuth2SuccessHandler oAuth2SuccessHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
