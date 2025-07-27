@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TokenService {
-
+	
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final UserRepository userRepository;

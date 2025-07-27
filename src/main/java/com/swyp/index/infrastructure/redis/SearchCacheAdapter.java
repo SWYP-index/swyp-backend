@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class SearchCacheAdapter {
+	private static final long CACHE_TTL_SECONDS = 24 * 3600; // 24시간
 
 	private final ValueOperations<String, Object> valueOperations;
 
-	private static final long CACHE_TTL_SECONDS = 24 * 3600; // 24시간
 
 	public SearchCacheAdapter(RedisTemplate<String, Object> redisTemplate) {
 		this.valueOperations = redisTemplate.opsForValue();

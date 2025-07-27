@@ -15,15 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class SmtpMailService {
+
 	private final JavaMailSender mailSender;
 
-	//6자리 랜덤 인증번호 생성
+	// 6자리 랜덤 인증번호 생성
 	public String createAuthCode() {
 		Random random = new Random();
 		return String.valueOf(111111 + random.nextInt(888889));
 	}
 
-	//지정된 이메일 주소로 인증 메일을 발송하는 메서드
+	// 지정된 이메일 주소로 인증 메일을 발송하는 메서드
 	public void sendAuthMail(String toEmail, String authCode) {
 		String subject = "[Index] 회원가입 인증번호 안내";
 		String text = "Index 회원가입을 위한 인증번호는 <strong>" + authCode + "</strong> 입니다.";
