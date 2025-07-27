@@ -105,4 +105,12 @@ public class AuthService {
 
 		return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 	}
+
+	public boolean isNicknameAvailable(String nickname) {
+		return !userRepository.existsByNickname(nickname);
+	}
+
+	public boolean isEmailAvailable(String email) {
+		return !userRepository.existsByEmail(email);
+	}
 }

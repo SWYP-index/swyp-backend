@@ -1,14 +1,12 @@
 package com.swyp.index.presentation.api.user;
 
 import java.time.Duration;
+import java.util.Map;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.swyp.index.application.user.AuthService;
 import com.swyp.index.domain.user.User;
@@ -30,7 +28,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 
-@Tag(name= "인증 API", description = "사용자 회원가입, 로그인, 이메일 인증 관련 API입니다.")
+@Tag(name= "인증 API", description = "사용자 회원가입, 로그인, 이메일 인증, 중복 확인 기능을 제공합니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -89,5 +87,25 @@ public class AuthApi {
 	public ResponseEntity<Void> verifyEmailAndMarkAsVerified(@Valid @RequestBody EmailVerificationRequest request){
 		authService.verifyEmailAndMarkAsVerified(request.email(), request.authCode());
 		return ResponseEntity.ok().build();
+	}
+
+	@Operation(summary = "닉네임 중복 확인", description = "가입 가능한 닉네임인지 검사합니다.")
+	@ApiResponse(responseCode = "200", description = "available: true(가능), false(불가능)")
+	@GetMapping("/check/nickname")
+	public ResponseEntity<Map<String, Boolean>> checkNickname(
+			@RequestParam String nickname
+	){
+		boolean available = authService.isNicknameAvailable(nickname);
+		return ResponseEntity.ok(Map.of("available", available));
+	}
+
+	@Operation(summary = "이메일 중복 확인", description = "가입 가능한 이메일인지 검사합니다.")
+	@ApiResponse(responseCode = "200", description = "available: true(가능), false(불가능)")
+	@GetMapping("/check/email")
+	public ResponseEntity<Map<String, Boolean>> checkEmail(
+			@RequestParam String email
+	){
+		boolean available = authService.isEmailAvailable(email);
+		return ResponseEntity.ok(Map.of("available", available));
 	}
 }
