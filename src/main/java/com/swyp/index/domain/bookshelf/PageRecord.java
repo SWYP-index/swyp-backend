@@ -1,11 +1,6 @@
-package com.swyp.index.domain.pagerecord;
+package com.swyp.index.domain.bookshelf;
 
-import com.swyp.index.domain.book.Book;
-import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.domain.recordemotion.RecordEmotion;
-import com.swyp.index.domain.user.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,13 +49,33 @@ public class PageRecord {
         this.content = content;
     }
 
-    /**
-     * 연관관계 편의 메서드. PageRecord에 여러 RecordEmotion을 한 번에 추가합니다.
-     * @param recordEmotions 추가할 감정/점수 목록
-     */
-    public void addRecordEmotions(List<RecordEmotion> recordEmotions) {
-        this.recordEmotions.addAll(recordEmotions);
-        recordEmotions.forEach(recordEmotion -> recordEmotion.setPageRecord(this));
+    // 페이지 기록과 감정 목록을 한 번에 생성
+    public static PageRecord create(
+            Bookshelf bookshelf,
+            int page,
+            String content,
+            List<RecordEmotion> recordEmotions
+    ) {
+        //완독된 책장에는 기록 불가
+        bookshelf.validateNotFinished();
+
+        //기록 인스턴스 생성
+        PageRecord pr = PageRecord.builder()
+                .bookshelf(bookshelf)
+                .page(page)
+                .content(content)
+                .build();
+
+        //감정 연관관계 연결
+        pr.addRecordEmotions(recordEmotions);
+
+        return pr;
     }
 
+    public void addRecordEmotions(List<RecordEmotion> recordEmotions) {
+        this.recordEmotions.addAll(recordEmotions);
+        recordEmotions.forEach(re -> re.setPageRecord(this));
+    }
 }
+
+

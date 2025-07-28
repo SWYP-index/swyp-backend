@@ -1,7 +1,6 @@
-package com.swyp.index.domain.recordemotion;
+package com.swyp.index.domain.bookshelf;
 
 import com.swyp.index.domain.emotion.Emotion;
-import com.swyp.index.domain.pagerecord.PageRecord;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
