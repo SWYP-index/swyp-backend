@@ -71,6 +71,10 @@ public class PageRecord {
 
         return pr;
     }
+    //Bookshelf와 양방향 연관관계 설정용 메서드
+    public void setBookshelf(Bookshelf bookshelf) {
+        this.bookshelf = bookshelf;
+    }
 
     public void addRecordEmotions(List<RecordEmotion> recordEmotions) {
         this.recordEmotions.addAll(recordEmotions);

@@ -38,14 +38,14 @@ public class RecordResponse {
 
 
     public static RecordResponse of(PageRecord pr) {
-        RecordResponse rr = new RecordResponse();
-        rr.recordId  = pr.getId();
-        rr.page      = pr.getPage();
-        rr.content   = pr.getContent();
-        rr.createdAt = pr.getCreatedAt();
-        rr.emotions  = pr.getRecordEmotions().stream()
+        RecordResponse dto = new RecordResponse();
+        dto.recordId  = pr.getId();
+        dto.page      = pr.getPage();
+        dto.content   = pr.getContent();
+        dto.createdAt = pr.getCreatedAt();
+        dto.emotions  = pr.getRecordEmotions().stream()
                 .map(EmotionResponse::of)
                 .collect(Collectors.toList());
-        return rr;
+        return dto;
     }
 }

@@ -29,11 +29,11 @@ public class RecordService {
 
     //새로운 페이지 기록을 생성
     //사용자와 책에 대한 Bookshelf가 없으면 새로 생성하고, 있으면 기존 bookshelf에 기록 추가
-    public PageRecord createPageRecord(Long userId, RecordCreateRequest requestDto) {
+    public PageRecord createPageRecord(Long userId, RecordCreateRequest request) {
         // 1. 요청에 필요한 사용자, 책 엔티티를 조회합니다.
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Book book = bookRepository.findByIsbn(requestDto.getIsbn())
+        Book book = bookRepository.findByIsbn(request.getIsbn())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ISBN의 책을 찾을 수 없습니다."));
 
         //책장 조회 혹은 생성
@@ -41,11 +41,9 @@ public class RecordService {
                 .orElseGet(()-> bookshelfRepository.save(
                         Bookshelf.startReading(user,book)
                 ));
-        //완독 검증 위임
-        bookshelf.validateNotFinished();
 
-        //dto-> recordEmotion 리스트 변환
-        List<RecordEmotion> recordEmotions = requestDto.getEmotions().stream()
+        //RecordEmotion 리스트 변환
+        List<RecordEmotion> recordEmotions = request.getEmotions().stream()
                 .map(emotionDto -> {
                     Emotion emotion = emotionRepository.findById(emotionDto.getEmotionId())
                             .orElseThrow(()->new IllegalArgumentException(
@@ -58,16 +56,17 @@ public class RecordService {
 
         PageRecord pageRecord = PageRecord.create(
                 bookshelf,
-                requestDto.getPage(),
-                requestDto.getContent(),
+                request.getPage(),
+                request.getContent(),
                 recordEmotions
         );
-        PageRecord saved = pageRecordRepository.save(pageRecord);
+        bookshelf.addPageRecord(pageRecord);
+        bookshelfRepository.save(bookshelf);
 
         //finished 상태 호출 시 완독 처리
-        if (requestDto.getStatus() == ReadingStatus.FINISHED) {
+        if (request.getStatus() == ReadingStatus.FINISHED) {
             bookshelf.finish();
         }
-        return saved;
+        return pageRecord;
     }
 }
