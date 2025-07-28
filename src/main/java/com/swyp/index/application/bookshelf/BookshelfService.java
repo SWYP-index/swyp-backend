@@ -28,19 +28,11 @@ public class BookshelfService {
         Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ISBN의 책을 찾을 수 없습니다."));
 
-        // 2. 이미 책장에 추가된 책인지 확인하여 중복을 방지합니다.
-        bookshelfRepository.findByUserAndBook(user, book).ifPresent(b -> {
+        if(bookshelfRepository.findByUserAndBook(user, book).isPresent()){
             throw new IllegalStateException("이미 책장에 추가된 책입니다.");
-        });
+        }
 
-        // 3. 새로운 Bookshelf 엔티티를 'READING' 상태로 생성합니다.
-        Bookshelf newBookshelf = Bookshelf.builder()
-                .user(user)
-                .book(book)
-                .status(ReadingStatus.READING)
-                .build();
-
-        // 4. 생성된 Bookshelf를 저장하고 반환합니다.
-        return bookshelfRepository.save(newBookshelf);
+        Bookshelf shelf = Bookshelf.startReading(user, book);
+        return bookshelfRepository.save(shelf);
     }
 }

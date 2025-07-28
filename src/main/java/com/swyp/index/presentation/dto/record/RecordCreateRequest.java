@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class RecordCreateRequestDto {
+public class RecordCreateRequest {
 
     @NotNull(message = "ISBN은 필수입니다.")
     private String isbn;
