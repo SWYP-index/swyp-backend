@@ -12,6 +12,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 //사용자와 특정 책 사이의 관계를 나타내는 엔티티
 //한 사용자가 한 책에 대해 가지는 독서 상태를 관리
@@ -28,6 +30,9 @@ public class Bookshelf {
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "book_id", nullable = false)
     private Book book;
+
+    @OneToMany(mappedBy = "bookshelf", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PageRecord> pageRecords = new ArrayList<>();
 
 
     @Enumerated(EnumType.STRING) @Column(nullable = false)
@@ -52,6 +57,13 @@ public class Bookshelf {
                 .book(book)
                 .status(ReadingStatus.READING)
                 .build();
+    }
+
+    /** PageRecord 추가 + 도메인 검증 */
+    public void addPageRecord(PageRecord pageRecord) {
+        validateNotFinished();
+        this.pageRecords.add(pageRecord);
+        pageRecord.setBookshelf(this);
     }
 
     /** 완독 후 기록 금지 */
