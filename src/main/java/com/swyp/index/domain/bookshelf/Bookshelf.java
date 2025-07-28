@@ -54,10 +54,10 @@ public class Bookshelf {
                 .build();
     }
 
-    /** 완독 후에는 기록 금지 */
+    /** 완독 후 기록 금지 */
     public void validateNotFinished() {
         if (this.status == ReadingStatus.FINISHED) {
-            throw new IllegalStateException("이미 다 읽은 책에는 작업을 수행할 수 없습니다.");
+            throw new IllegalStateException("이미 다 읽은 책에는 기록을 추가할 수 없습니다.");
         }
     }
 

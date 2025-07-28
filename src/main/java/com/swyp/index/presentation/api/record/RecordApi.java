@@ -29,8 +29,7 @@ public class RecordApi {
             ){
         Long currentUserId = principal.getId();
         PageRecord saved = recordService.createPageRecord(currentUserId, request);
-        RecordResponse response = RecordResponse.of(saved);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(RecordResponse.of(saved));
     }
 
 

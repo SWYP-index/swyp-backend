@@ -24,14 +24,10 @@ public class BookshelfApi {
     @PostMapping
     public ResponseEntity<BookshelfResponse> addBookToBookshelf(
             @AuthenticationPrincipal CustomPrincipal principal,
-            @Valid @RequestBody BookshelfCreateRequest requestDto
+            @Valid @RequestBody BookshelfCreateRequest request
     ) {
         Long currentUserId = principal.getId();
-        Bookshelf savedBookshelf = bookshelfService.addBookToBookshelf(currentUserId, requestDto.getIsbn());
-
-        BookshelfResponse responseDto = BookshelfResponse.of(savedBookshelf);
-
-        // 201 Created 대신 200 OK를 반환하도록 수정
-        return ResponseEntity.ok(responseDto);
+        Bookshelf savedBookshelf = bookshelfService.addBookToBookshelf(currentUserId, request.getIsbn());
+        return ResponseEntity.ok(BookshelfResponse.of(savedBookshelf));
     }
 }

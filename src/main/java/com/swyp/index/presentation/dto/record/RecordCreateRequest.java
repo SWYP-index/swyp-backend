@@ -2,6 +2,8 @@ package com.swyp.index.presentation.dto.record;
 
 
 import com.swyp.index.domain.bookshelf.ReadingStatus;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -34,6 +36,6 @@ public class RecordCreateRequest {
     public static class EmotionDto {
         @NotNull
         private Long emotionId; // 어떤 감정인지
-        private int score;      // 몇 점인지
+        @Min(1) @Max(10) private int score;      // 1~10
     }
 }
