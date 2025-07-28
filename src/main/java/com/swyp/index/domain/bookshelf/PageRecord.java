@@ -1,6 +1,7 @@
 package com.swyp.index.domain.bookshelf;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,7 +43,7 @@ public class PageRecord {
     @OneToMany(mappedBy = "pageRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordEmotion> recordEmotions = new ArrayList<>();
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public PageRecord(Bookshelf bookshelf, int page, String content) {
         this.bookshelf = bookshelf;
         this.page = page;
@@ -76,9 +77,10 @@ public class PageRecord {
         this.bookshelf = bookshelf;
     }
 
+    //연관된 감정 엔티티 연결
     public void addRecordEmotions(List<RecordEmotion> recordEmotions) {
         this.recordEmotions.addAll(recordEmotions);
-        recordEmotions.forEach(re -> re.setPageRecord(this));
+        recordEmotions.forEach(e -> e.setPageRecord(this));
     }
 }
 
