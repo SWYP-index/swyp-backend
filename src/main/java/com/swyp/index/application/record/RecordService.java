@@ -41,6 +41,8 @@ public class RecordService {
                 .orElseGet(()-> bookshelfRepository.save(
                         Bookshelf.startReading(user,book)
                 ));
+        //완독 검증 위임
+        bookshelf.validateNotFinished();
 
         //dto-> recordEmotion 리스트 변환
         List<RecordEmotion> recordEmotions = requestDto.getEmotions().stream()
@@ -60,11 +62,10 @@ public class RecordService {
                 requestDto.getContent(),
                 recordEmotions
         );
-        pageRecordRepository.save(pageRecord);
         PageRecord saved = pageRecordRepository.save(pageRecord);
 
         //finished 상태 호출 시 완독 처리
-        if(requestDto.getStatus() == ReadingStatus.FINISHED) {
+        if (requestDto.getStatus() == ReadingStatus.FINISHED) {
             bookshelf.finish();
         }
         return saved;

@@ -17,12 +17,12 @@ public class BookshelfResponse {
     private BookResponse book;       // 책 정보
 
     public static BookshelfResponse of(Bookshelf shelf) {
-        BookshelfResponse dto = new BookshelfResponse();
-        dto.bookshelfId = shelf.getId();
-        dto.status      = shelf.getStatus().name();
-        dto.addedAt     = shelf.getCreatedAt();
-        dto.finishedAt  = shelf.getFinishedAt();
-        dto.book        = BookResponse.from(shelf.getBook());
-        return dto;
+        BookshelfResponse br = new BookshelfResponse();
+        br.bookshelfId = shelf.getId();
+        br.status      = shelf.getStatus().name();
+        br.addedAt     = shelf.getCreatedAt();
+        br.finishedAt  = shelf.getFinishedAt();
+        br.book        = BookResponse.from(shelf.getBook());
+        return br;
     }
 }
