@@ -12,13 +12,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor //빌더가 모든 필드를 받는 생성자를 사용할 수 있도록 추가
+@Builder // 테스트에서 객체 생성을 쉽게 하기 위해 빌더 추가
 public class Book {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

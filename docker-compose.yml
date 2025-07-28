@@ -1,17 +1,5 @@
-version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-local
-    environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: index
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-    restart: unless-stopped
 
   redis:
     image: redis:latest
@@ -23,5 +11,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  mysql-data:
+  #mysql-data:
   redis-data:
