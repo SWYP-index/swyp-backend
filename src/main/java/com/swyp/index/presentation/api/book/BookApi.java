@@ -21,7 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class BookApi {
 	private final BookSearchService bookSearchService;
 
-	@Operation(summary = "제목 검색", description = "책 제목과 시작 인덱스를 기반으로 도서 목록 반환, 시작 인덱스 기준으로 페이지네이션")
+	@Operation(summary = "제목 검색", description = "책 제목과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
+		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
 	@GetMapping("/search")
 	public ResponseEntity<BookSearchResponse> searchBooks(String title, int startIndex) {
 		BookSearchResponse bookSearchResponse = bookSearchService.searchBooks(title, startIndex);
