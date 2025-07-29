@@ -29,6 +29,7 @@ public enum ErrorCode {
 	// 404
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
 	BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 책을 찾을 수 없습니다."),
+	BOOK_STATS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 책의 통계 정보를 찾을 수 없습니다."),
 	BOOKSHELF_NOT_FOUND(HttpStatus.NOT_FOUND, "책장에 해당 책이 존재하지 않습니다."),
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 기록을 찾을 수 없습니다."),
 

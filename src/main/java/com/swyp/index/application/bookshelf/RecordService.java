@@ -1,26 +1,34 @@
 package com.swyp.index.application.bookshelf;
 
-import com.swyp.index.domain.book.Book;
-import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.domain.emotion.Emotion;
-import com.swyp.index.domain.bookshelf.PageRecord;
-import com.swyp.index.domain.bookshelf.ReadingStatus;
-import com.swyp.index.domain.bookshelf.RecordEmotion;
-import com.swyp.index.domain.user.User;
-import com.swyp.index.infrastructure.repository.*;
-import com.swyp.index.presentation.dto.record.RecordCreateRequest;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.swyp.index.domain.book.Book;
+import com.swyp.index.domain.bookshelf.Bookshelf;
+import com.swyp.index.domain.bookshelf.PageRecord;
+import com.swyp.index.domain.bookshelf.ReadingStatus;
+import com.swyp.index.domain.bookshelf.RecordCreatedEvent;
+import com.swyp.index.domain.bookshelf.RecordEmotion;
+import com.swyp.index.domain.emotion.Emotion;
+import com.swyp.index.domain.user.User;
+import com.swyp.index.infrastructure.repository.BookRepository;
+import com.swyp.index.infrastructure.repository.BookshelfRepository;
+import com.swyp.index.infrastructure.repository.EmotionRepository;
+import com.swyp.index.infrastructure.repository.UserRepository;
+import com.swyp.index.presentation.dto.record.RecordCreateRequest;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class RecordService {
 
+	private final ApplicationEventPublisher eventPublisher;
     private final BookshelfRepository bookshelfRepository;
     private final EmotionRepository emotionRepository;
     private final UserRepository userRepository;
@@ -50,6 +58,10 @@ public class RecordService {
         if (request.getStatus() == ReadingStatus.FINISHED) {
             bookshelf.finish();
         }
+
+		eventPublisher.publishEvent(
+			RecordCreatedEvent.from(book.getId(), pageRecord.getRecordEmotions()));
+
         return pageRecord;
     }
 }
