@@ -30,7 +30,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		String accessToken = jwtProvider.generateAccessToken(userId);
 
-		String redirectUrl = UriComponentsBuilder.fromUriString("https://index-pi-nine-40.vercel.app/login/oauth2/success")
+		// String redirectUrl = UriComponentsBuilder.fromUriString("https://index-pi-nine-40.vercel.app/login/oauth2/success")
+		String redirectUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/login/oauth2/success")
 			.fragment("accessToken=" + accessToken)
 			.build().toUriString();
 
