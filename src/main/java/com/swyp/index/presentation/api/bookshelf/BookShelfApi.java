@@ -7,6 +7,7 @@ import com.swyp.index.domain.user.User;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.exception.ErrorResponse;
+import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfBookDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +33,6 @@ import java.util.List;
 @Tag(name = "책장 API", description = "완독 도서 관리 API입니다.")
 public class BookShelfApi {
     private final BookshelfService bookshelfService;
-    private final UserRepository userRepository;
 
     @Operation(
             summary = "완독 도서 목록 조회",
@@ -54,26 +54,10 @@ public class BookShelfApi {
 
     //FINISHED에 해당하는 도서 목록 조회
     @GetMapping("/finished")
-    public ResponseEntity<List<BookshelfBookDto>> getFinishedBooks(@AuthenticationPrincipal OAuth2User oAuth2User){
+    public ResponseEntity<List<BookshelfBookDto>> getFinishedBooks(@AuthenticationPrincipal CustomPrincipal principal){
 
-        //인증된 사용자 이메일 추출
-        if(oAuth2User == null){
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
-        String email = oAuth2User.getAttribute("email");
-        Provider provider = oAuth2User.getAttribute("provider");
-        if(email == null || email.isEmpty() || provider == null){
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
-
-        //유저 정보 조회
-        User user = userRepository.findByEmailAndProvider(email, provider)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        //완독한 책 조회
-        List<BookshelfBookDto> finishedBooks = bookshelfService.getFinishedBooks(user.getId());
-
-        return ResponseEntity.ok(finishedBooks);
+        Long userId = principal.getId();
+        return ResponseEntity.ok(bookshelfService.getFinishedBooks(userId));
 
     }
 }
