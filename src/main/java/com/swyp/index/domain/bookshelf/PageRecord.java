@@ -62,7 +62,7 @@ public class PageRecord {
 
         //기록 인스턴스 생성
         PageRecord pr = PageRecord.builder()
-                .bookshelf(bookshelves)
+                .bookshelves(bookshelves)
                 .page(page)
                 .content(content)
                 .build();
