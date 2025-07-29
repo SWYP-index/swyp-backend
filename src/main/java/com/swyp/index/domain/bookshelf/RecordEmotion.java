@@ -36,9 +36,7 @@ public class RecordEmotion {
         this.emotionScore = emotionScore;
     }
 
-    /**
-     이 감정 기록이 속할 '기록 카드'
-     */
+    // 연관관계 설정 pagerecord - recordemotion
     public void setPageRecord(PageRecord pageRecord) {
         this.pageRecord = pageRecord;
     }

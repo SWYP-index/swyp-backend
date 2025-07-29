@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,9 @@ public class Bookshelf {
     @CreatedDate @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
     private LocalDateTime finishedAt;
 
 
@@ -51,6 +55,7 @@ public class Bookshelf {
         this.status = status;
     }
 
+    //사용자가 책을 읽기 시작할 때 호출됨.
     public static Bookshelf startReading(User user, Book book) {
         return Bookshelf.builder()
                 .user(user)
@@ -59,21 +64,20 @@ public class Bookshelf {
                 .build();
     }
 
-    /** PageRecord 추가 + 도메인 검증 */
+    //페이지 기록을 추가
     public void addPageRecord(PageRecord pageRecord) {
-        validateNotFinished();
         this.pageRecords.add(pageRecord);
         pageRecord.setBookshelf(this);
     }
 
-    /** 완독 후 기록 금지 */
+
     public void validateNotFinished() {
         if (this.status == ReadingStatus.FINISHED) {
             throw new IllegalStateException("이미 다 읽은 책에는 기록을 추가할 수 없습니다.");
         }
     }
 
-    /** 완독 처리 */
+    //독서를 완료 처리
     public void finish() {
         this.status = ReadingStatus.FINISHED;
         this.finishedAt = LocalDateTime.now();
