@@ -17,7 +17,8 @@ public class WebConfig {
 
 		config.setAllowedOrigins(List.of(
 				"http://localhost:3000",
-				"https://index-pi-nine-40.vercel.app"));
+				"https://index-pi-nine-40.vercel.app",
+				"https://api-index.store"));
 		config.addAllowedMethod("*");
 		config.addAllowedHeader("*");
 		config.setAllowCredentials(true);
