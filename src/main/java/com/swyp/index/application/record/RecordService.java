@@ -1,7 +1,7 @@
 package com.swyp.index.application.record;
 
 import com.swyp.index.domain.book.Book;
-import com.swyp.index.domain.bookshelf.Bookshelf;
+import com.swyp.index.domain.bookshelf.Bookshelves;
 import com.swyp.index.domain.emotion.Emotion;
 import com.swyp.index.domain.bookshelf.PageRecord;
 import com.swyp.index.domain.bookshelf.ReadingStatus;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class RecordService {
 
     private final PageRecordRepository pageRecordRepository;
-    private final BookshelfRepository bookshelfRepository;
+    private final BookshelvesRepository bookshelvesRepository;
     private final EmotionRepository emotionRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
@@ -37,9 +37,9 @@ public class RecordService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ISBN의 책을 찾을 수 없습니다."));
 
         //책장 조회 혹은 생성
-        Bookshelf bookshelf = bookshelfRepository.findByUserAndBook(user, book)
-                .orElseGet(()-> bookshelfRepository.save(
-                        Bookshelf.startReading(user,book)
+        Bookshelves bookshelves = bookshelvesRepository.findByUserAndBook(user, book)
+                .orElseGet(()-> bookshelvesRepository.save(
+                        Bookshelves.startReading(user,book)
                 ));
 
         //RecordEmotion 리스트 변환
@@ -55,17 +55,17 @@ public class RecordService {
                 }).collect(Collectors.toList());
 
         PageRecord pageRecord = PageRecord.create(
-                bookshelf,
+                bookshelves,
                 request.getPage(),
                 request.getContent(),
                 recordEmotions
         );
-        bookshelf.addPageRecord(pageRecord);
-        bookshelfRepository.save(bookshelf);
+        bookshelves.addPageRecord(pageRecord);
+        bookshelvesRepository.save(bookshelves);
 
         //finished 상태 호출 시 완독 처리
         if (request.getStatus() == ReadingStatus.FINISHED) {
-            bookshelf.finish();
+            bookshelves.finish();
         }
         return pageRecord;
     }
