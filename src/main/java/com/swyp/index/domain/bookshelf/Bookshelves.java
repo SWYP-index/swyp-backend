@@ -32,7 +32,7 @@ public class Bookshelves {
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
-    @OneToMany(mappedBy = "bookshelf", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "bookshelves", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PageRecord> pageRecords = new ArrayList<>();
 
 
