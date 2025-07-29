@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,19 +51,13 @@ public class UserApi {
 	})
 	@SecurityRequirement(name = "JWT Authentication") //이 API는 JWt 인증이 필요함.
 	@GetMapping("/me")
-	public ResponseEntity<?> getUser(Authentication authentication, HttpServletResponse response) {
-		CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-
+	public ResponseEntity<?> getUser(@AuthenticationPrincipal CustomPrincipal principal, HttpServletResponse response) {
 		User user = userRepository.findById(principal.getId())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-		log.info("User found: {}", user.getEmail());
 
 		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
-
-		log.info("Refresh token set in response header: {}", refreshToken);
 
 		return ResponseEntity.ok(UserResponse.from(user));
 	}

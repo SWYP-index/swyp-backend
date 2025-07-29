@@ -1,24 +1,24 @@
 package com.swyp.index.domain.book;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.swyp.index.infrastructure.api.AladinSearchResponse;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.*;
+import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor //빌더가 모든 필드를 받는 생성자를 사용할 수 있도록 추가
-@Builder // 테스트에서 객체 생성을 쉽게 하기 위해 빌더 추가
 public class Book {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +42,8 @@ public class Book {
 
 	private String category;
 
-	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<BookStats> bookStats;
+	@OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private BookStats bookStats;
 
 	public static Book from(AladinSearchResponse.BookItem bookItem) {
 		Book book = new Book();

@@ -1,11 +1,8 @@
 package com.swyp.index.presentation.api.bookshelf;
 
 import com.swyp.index.application.bookshelf.DeskService;
-import com.swyp.index.domain.user.Provider;
-import com.swyp.index.domain.user.User;
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.exception.ErrorResponse;
+import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.bookshelf.DeskBookDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,27 +51,9 @@ public class DeskApi {
 
     //현재 읽고 있는 책(READING)에 해당하는 도서 목록 조회
     @GetMapping("/reading")
-    public ResponseEntity<List<DeskBookDto>> getReadingBooks(@AuthenticationPrincipal OAuth2User oAuth2User){
-
-        //인증된 사용자 이메일 추출
-        if(oAuth2User == null){
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
-        String email = oAuth2User.getAttribute("email");
-        Provider provider = oAuth2User.getAttribute("provider");
-        if(email == null || email.isEmpty() || provider == null){
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
-
-        //유저 정보 조회
-        User user = userRepository.findByEmailAndProvider(email, provider)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-
-        //현재 읽고 있는 책 조회
-        List<DeskBookDto> readingBooks = deskService.getReadingBooks(user.getId());
-
-        return ResponseEntity.ok(readingBooks);
+    public ResponseEntity<List<DeskBookDto>> getReadingBooks(@AuthenticationPrincipal CustomPrincipal principal){
+        Long userId = principal.getId();
+        return ResponseEntity.ok(deskService.getReadingBooks(userId));
 
     }
 }
