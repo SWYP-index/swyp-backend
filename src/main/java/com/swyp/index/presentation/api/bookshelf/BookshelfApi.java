@@ -21,6 +21,8 @@ public class BookshelfApi {
 
     private final BookshelfService bookshelfService;
 
+    //상세페이지에서 읽기 시작 요청을 보내면, READING 상태의 Bookshelf 에그리거트를 생성하여 반환
+
     @PostMapping
     public ResponseEntity<BookshelfResponse> addBookToBookshelf(
             @AuthenticationPrincipal CustomPrincipal principal,
