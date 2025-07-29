@@ -4,6 +4,7 @@ import com.swyp.index.application.bookshelf.DeskService;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.infrastructure.repository.UserRepository;
+import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
 import com.swyp.index.presentation.dto.bookshelf.DeskBookDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -31,27 +32,13 @@ public class DeskApi {
     private final DeskService deskService;
     private final UserRepository userRepository;
 
-    @Operation(
-            summary = "읽고 있는 책 목록 조회",
-            description = "현재 '읽고 있음(READING)' 상태로 책상에 등록된 도서들을 조회합니다.\n" +
-                    "사용자는 JWT 쿠키 인증을 기반으로 식별됩니다."
-    )
+    @Operation(summary = "읽고 있는 책 목록 조회", description = "현재 '읽고 있음(READING)' 상태로 책상에 등록된 도서들을 조회합니다.\n" + "사용자는 JWT 쿠키 인증을 기반으로 식별됩니다.")
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = DeskBookDto.class))
-                    )),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "유저 정보 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DeskBookDto.class)))), @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class))), @ApiResponse(responseCode = "404", description = "유저 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))})
 
     //현재 읽고 있는 책(READING)에 해당하는 도서 목록 조회
     @GetMapping("/reading")
-    public ResponseEntity<List<DeskBookDto>> getReadingBooks(@AuthenticationPrincipal CustomPrincipal principal){
+    public ResponseEntity<List<DeskBookDto>> getReadingBooks(@AuthenticationPrincipal CustomPrincipal principal) {
         Long userId = principal.getId();
         return ResponseEntity.ok(deskService.getReadingBooks(userId));
 
