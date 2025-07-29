@@ -1,6 +1,6 @@
 package com.swyp.index.presentation.api.bookshelf;
 
-import com.swyp.index.application.bookshelf.BookshelvesService;
+import com.swyp.index.application.bookshelf.ReadingStartService;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfCreateRequest;
@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "내 서재 관리 API", description = "사용자 본인의 서재에 책을 추가하고 상태 변경 API입니다.")
 @RestController
-@RequestMapping("/api/me/bookshelves")
+@RequestMapping("/api/addBookshelf")
 @RequiredArgsConstructor
-public class BookshelvesApi {
+public class ReadingStartApi {
 
-    private final BookshelvesService bookshelvesService;
+    private final ReadingStartService readingStartService;
 
     //상세페이지에서 읽기 시작 요청을 보내면, READING 상태의 Bookshelf 에그리거트를 생성하여 반환
     @Operation(
@@ -50,7 +50,7 @@ public class BookshelvesApi {
             @Valid @RequestBody BookshelfCreateRequest request
     ) {
         Long currentUserId = principal.getId();
-        BookshelfResponse responseDto = bookshelvesService.addBookToBookshelf(currentUserId, request.getIsbn());
+        BookshelfResponse responseDto = readingStartService.addBookToBookshelf(currentUserId, request.getIsbn());
         return ResponseEntity.ok(responseDto);
     }
 
