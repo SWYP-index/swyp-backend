@@ -1,10 +1,6 @@
 package com.swyp.index.presentation.api.bookshelf;
 
 import com.swyp.index.application.bookshelf.DeskService;
-import com.swyp.index.domain.user.Provider;
-import com.swyp.index.domain.user.User;
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.infrastructure.repository.UserRepository;

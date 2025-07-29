@@ -2,13 +2,8 @@ package com.swyp.index.presentation.api.bookshelf;
 
 
 import com.swyp.index.application.bookshelf.BookshelfService;
-import com.swyp.index.domain.user.Provider;
-import com.swyp.index.domain.user.User;
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
-import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfBookDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
