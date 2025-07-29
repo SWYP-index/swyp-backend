@@ -26,10 +26,10 @@ public record SignUpRequest(
 				regexp = "^[가-힣a-zA-Z0-9]*$",
 				message = "닉네임에는 특수문자를 사용할 수 없습니다."
 		)
-		String nickname,
+		String nickname
 
-		@Schema(description = "이메일 인증 완료 후 받은 인증 코드", requiredMode = Schema.RequiredMode.REQUIRED, example = "A4B2C1")
-		@NotBlank(message = "이메일 인증 코드는 필수입니다.")
-		String authCode
+//		@Schema(description = "이메일 인증 완료 후 받은 인증 코드", requiredMode = Schema.RequiredMode.REQUIRED, example = "A4B2C1")
+//		@NotBlank(message = "이메일 인증 코드는 필수입니다.")
+//		String authCode
 ) {
 }

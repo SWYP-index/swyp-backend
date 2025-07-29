@@ -37,7 +37,7 @@ public class AuthApi {
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 
-	@Operation(summary = "회원가입", description = "이메일, 비밀번호, 닉네임, 이메일 인증 코드를 받아 회원가입을 처리합니다.")
+	@Operation(summary = "회원가입", description = "이메일 인증 코드 부분을 이메일,비밀번호,닉네임을 받아 회원가입을 처리합니다.")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "회원가입 성공"),
 			@ApiResponse(responseCode = "400", description = "입력값 유효성 검사 실패 또는 이메일 미인증", content = @Content),
