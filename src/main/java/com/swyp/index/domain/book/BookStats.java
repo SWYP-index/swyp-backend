@@ -12,11 +12,10 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -27,17 +26,14 @@ public class BookStats {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@OneToOne
-	@JoinColumn(name = "book_id")
-	private Book book;
+	@Setter
+	private Long emotionId;
 
-	// private Emotion emotion;
+	private Long count = 0L;
 
-	private Long totalScore;
+	private Long totalScore = 0L;
 
-	private Long count;
-
-	private Double averageScore;
+	private Double averageScore = 0.0;
 
 	@CreatedDate
 	@Column(updatable = false)
@@ -45,4 +41,10 @@ public class BookStats {
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
+
+	public void record(int score) {
+		this.count += 1;
+		this.totalScore += score;
+		this.averageScore = (double) this.totalScore / this.count;
+	}
 }
