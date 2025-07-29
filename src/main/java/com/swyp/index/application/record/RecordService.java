@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class RecordService {
 
-    private final PageRecordRepository pageRecordRepository;
     private final BookshelvesRepository bookshelvesRepository;
     private final EmotionRepository emotionRepository;
     private final UserRepository userRepository;
