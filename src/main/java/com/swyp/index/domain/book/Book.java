@@ -1,17 +1,17 @@
 package com.swyp.index.domain.book;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.swyp.index.infrastructure.api.AladinSearchResponse;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,8 +42,8 @@ public class Book {
 
 	private String category;
 
-	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<BookStats> bookStats;
+	@OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private BookStats bookStats;
 
 	public static Book from(AladinSearchResponse.BookItem bookItem) {
 		Book book = new Book();
