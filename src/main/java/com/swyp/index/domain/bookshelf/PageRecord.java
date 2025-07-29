@@ -25,7 +25,7 @@ public class PageRecord {
     /** 이 기록이 속한 책장(사용자와 책의 관계) */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookshelf_id", nullable = false)
-    private Bookshelf bookshelf;
+    private Bookshelves bookshelves;
 
     /** 기록을 남긴 페이지 */
     private int page;
@@ -44,25 +44,25 @@ public class PageRecord {
     private List<RecordEmotion> recordEmotions = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    public PageRecord(Bookshelf bookshelf, int page, String content) {
-        this.bookshelf = bookshelf;
+    public PageRecord(Bookshelves bookshelves, int page, String content) {
+        this.bookshelves = bookshelves;
         this.page = page;
         this.content = content;
     }
 
     // 페이지 기록과 감정 목록을 한 번에 생성
     public static PageRecord create(
-            Bookshelf bookshelf,
+            Bookshelves bookshelves,
             int page,
             String content,
             List<RecordEmotion> recordEmotions
     ) {
         //완독된 책장에는 기록 불가
-        bookshelf.validateNotFinished();
+        bookshelves.validateNotFinished();
 
         //기록 인스턴스 생성
         PageRecord pr = PageRecord.builder()
-                .bookshelf(bookshelf)
+                .bookshelf(bookshelves)
                 .page(page)
                 .content(content)
                 .build();
@@ -73,8 +73,8 @@ public class PageRecord {
         return pr;
     }
     //Bookshelf와 양방향 연관관계 설정용 메서드
-    public void setBookshelf(Bookshelf bookshelf) {
-        this.bookshelf = bookshelf;
+    public void setBookshelves(Bookshelves bookshelves) {
+        this.bookshelves = bookshelves;
     }
 
     //연관된 감정 엔티티 연결
