@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class BookResponse {
+public class BookInfoDto {
 	private Long bookId;
 	private String title;
 	private String isbn;
@@ -19,9 +19,10 @@ public class BookResponse {
 	private String description;
 	private String publisher;
 	private String category;
+	private Long totalCount;
 
-	public static BookResponse from(Book book) {
-		BookResponse response = new BookResponse();
+	public static BookInfoDto from(Book book) {
+		BookInfoDto response = new BookInfoDto();
 
 		response.bookId = book.getId();
 		response.title = book.getTitle();
@@ -32,6 +33,7 @@ public class BookResponse {
 		response.description = book.getDescription();
 		response.publisher = book.getPublisher();
 		response.category = book.getCategory();
+		response.totalCount = book.getTotalCount();
 
 		return response;
 	}

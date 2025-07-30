@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class BookSearchResponse {
+public class BookTitleSearchResponse {
 	private int page;
 	private int totalResults;
 
-	private List<BookResponse> items;
+	private List<BookInfoDto> items;
 
-	public static BookSearchResponse of(List<Book> books, int page, int totalResults) {
-		BookSearchResponse response = new BookSearchResponse();
+	public static BookTitleSearchResponse of(List<Book> books, int page, int totalResults) {
+		BookTitleSearchResponse response = new BookTitleSearchResponse();
 
 		response.items = books.stream()
-				.map(BookResponse::from)
+				.map(BookInfoDto::from)
 				.toList();
 
 		response.page = page;
@@ -28,8 +28,8 @@ public class BookSearchResponse {
 		return response;
 	}
 
-	public static BookSearchResponse empty() {
-		BookSearchResponse response = new BookSearchResponse();
+	public static BookTitleSearchResponse empty() {
+		BookTitleSearchResponse response = new BookTitleSearchResponse();
 
 		response.items = List.of();
 		response.page = 0;

@@ -1,8 +1,8 @@
 package com.swyp.index.presentation.dto.bookshelf;
 
 import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.presentation.dto.book.BookResponse;
-import lombok.AccessLevel;
+import com.swyp.index.presentation.dto.book.BookInfoDto;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +15,7 @@ public class BookshelfResponse {
     private String status;           // WISH, READING, FINISHED
     private LocalDateTime createdAt;   // createdAt
     private LocalDateTime finishedAt; // finishedAt (완독 시 기록)
-    private BookResponse book;       // 책 정보
+    private BookInfoDto book;       // 책 정보
 
     public static BookshelfResponse of(Bookshelf shelf) {
         BookshelfResponse br = new BookshelfResponse();
@@ -23,7 +23,7 @@ public class BookshelfResponse {
         br.status = shelf.getStatus().name();
         br.createdAt = shelf.getCreatedAt();
         br.finishedAt = shelf.getFinishedAt();
-        br.book = BookResponse.from(shelf.getBook());
+        br.book = BookInfoDto.from(shelf.getBook());
         return br;
     }
 }
