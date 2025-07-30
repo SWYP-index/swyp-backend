@@ -2,7 +2,6 @@ package com.swyp.index.domain.book;
 
 import static com.swyp.index.domain.bookshelf.RecordCreatedEvent.*;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import com.swyp.index.infrastructure.api.AladinSearchResponse.BookItem;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,20 +40,8 @@ public class Book {
 	@Column(unique = true, nullable = false)
 	private String isbn;
 
-	private String title;
-
-	private String author;
-
-	@Column(length = 1000)
-	private String description;
-
-	private String publisher;
-
-	private String coverImageUrl;
-
-	private LocalDate publishedDate;
-
-	private String category;
+	@Embedded
+	private BookInfo bookInfo;
 
 	private Long totalCount = 0L;
 
@@ -63,13 +51,15 @@ public class Book {
 		Book book = new Book();
 
 		book.isbn = bookItem.isbn();
-		book.title = bookItem.title();
-		book.author = bookItem.author();
-		book.description = bookItem.description();
-		book.publisher = bookItem.publisher();
-		book.coverImageUrl = bookItem.coverImageUrl();
-		book.publishedDate = bookItem.pubDate();
-		book.category = bookItem.categoryName();
+		book.bookInfo = new BookInfo(
+			bookItem.title(),
+			bookItem.author(),
+			bookItem.description(),
+			bookItem.publisher(),
+			bookItem.coverImageUrl(),
+			bookItem.pubDate(),
+			bookItem.categoryName()
+		);
 
 		book.initializeBookStats();
 
@@ -95,16 +85,10 @@ public class Book {
 				throw new CustomException(ErrorCode.BOOK_STATS_NOT_FOUND);
 			}
 
-			System.out.println("책 통계 업데이트: " + bookStats.getId() + ", 감정 ID: " + emotion.emotionId() + ", 점수: " + emotion.score());
-
 			totalCount += 1;
 			totalEmotionScoreSum += emotion.score();
 
-			System.out.println("루프 안 - 총 카운트: " + totalCount + ", 총 감정 점수 합계: " + totalEmotionScoreSum);
-
 			bookStats.record(emotion.score());
 		});
-
-		System.out.println("총 카운트: " + totalCount + ", 총 감정 점수 합계: " + totalEmotionScoreSum);
 	}
 }
