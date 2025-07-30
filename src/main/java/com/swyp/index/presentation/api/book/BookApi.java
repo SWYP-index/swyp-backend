@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swyp.index.application.book.BookSearchService;
-import com.swyp.index.presentation.dto.book.BookSearchResponse;
+import com.swyp.index.presentation.dto.book.BookEmotionSearchResponse;
+import com.swyp.index.presentation.dto.book.BookTitleSearchResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,14 +20,26 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
 public class BookApi {
+
 	private final BookSearchService bookSearchService;
 
 	@Operation(summary = "제목 검색", description = "책 제목과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
 		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
-	@GetMapping("/search")
-	public ResponseEntity<BookSearchResponse> searchBooks(String title, int startIndex) {
-		BookSearchResponse bookSearchResponse = bookSearchService.searchBooks(title, startIndex);
+	@GetMapping("/search/title")
+	public ResponseEntity<BookTitleSearchResponse> searchBooks(String keyword, int startIndex) {
+		BookTitleSearchResponse bookTitleSearchResponse = bookSearchService.searchBooks(keyword, startIndex);
 
-		return ResponseEntity.ok(bookSearchResponse);
+		return ResponseEntity.ok(bookTitleSearchResponse);
+	}
+
+
+	@Operation(summary = "감정 검색", description = "책 제목과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
+		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
+	@GetMapping("/search/emotion")
+	public ResponseEntity<BookEmotionSearchResponse> searchBooksByEmotion(String keyword, int startIndex) {
+		BookEmotionSearchResponse bookEmotionSearchResponse = bookSearchService.searchBooksByEmotion(keyword,
+			startIndex);
+
+		return ResponseEntity.ok(bookEmotionSearchResponse);
 	}
 }
