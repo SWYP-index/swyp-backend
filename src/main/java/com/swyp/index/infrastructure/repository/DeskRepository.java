@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface DeskRepository extends JpaRepository<Desk, Long> {
     @Query("SELECT new com.swyp.index.presentation.dto.bookshelf.DeskBookDto(" +
-            "b.id, b.title, b.author, b.coverImageUrl, d.createdAt) " +
+            "b.id, b.title, b.author, b.coverImageUrl, d.createdAt, b.publisher, b.category, b.publishedDate) " +
             "FROM Desk d JOIN d.book b " +
             "WHERE d.user.id = :userId AND d.status = com.swyp.index.domain.bookshelf.ReadingStatus.READING " +
             "ORDER BY d.createdAt DESC")

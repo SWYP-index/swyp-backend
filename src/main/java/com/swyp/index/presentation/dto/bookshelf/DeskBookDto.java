@@ -3,7 +3,7 @@ package com.swyp.index.presentation.dto.bookshelf;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -25,5 +25,14 @@ public class DeskBookDto {
 
     @Schema(description = "책상에 등록된 시점", example = "2025-07-25T16:00:00")
     private LocalDateTime createdAt; //status가 Reading으로 바뀐 시점(책상에 올라간 시점)
-    //private Status status;
+
+    @Schema(description = "출판사", example = "수오서재")
+    private String publisher;
+
+    @Schema(description = "장르/카테고리", example = "문학")
+    private String category;
+
+    @Schema(description = "발행일", example = "2020-05-01")
+    private LocalDate publishedDate;
+
 }

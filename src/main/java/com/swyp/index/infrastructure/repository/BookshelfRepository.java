@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BookshelfRepository extends JpaRepository<Bookshelf, Long> {
     @Query("SELECT new com.swyp.index.presentation.dto.bookshelf.BookshelfBookDto(" +
-            "b.id, b.title, b.author, b.coverImageUrl, bs.createdAt) " +
+            "b.id, b.title, b.author, b.coverImageUrl, bs.createdAt, b.publisher, b.category, b.publishedDate) " +
             "FROM Bookshelf bs JOIN bs.book b " +
             "WHERE bs.user.id = :userId AND bs.status = com.swyp.index.domain.bookshelf.ReadingStatus.FINISHED " +
             "AND bs.createdAt >= :sixMonthsAgo " +

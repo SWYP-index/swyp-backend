@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +50,7 @@ public class DeskApi {
 
     //현재 읽고 있는 책(READING)에 해당하는 도서 목록 조회
     @GetMapping("/reading")
-    public ResponseEntity<List<DeskBookDto>> getReadingBooks(@AuthenticationPrincipal CustomPrincipal principal){
+    public ResponseEntity<List<DeskBookDto>> getReadingBooks(@AuthenticationPrincipal CustomPrincipal principal) {
         Long userId = principal.getId();
         return ResponseEntity.ok(deskService.getReadingBooks(userId));
 
