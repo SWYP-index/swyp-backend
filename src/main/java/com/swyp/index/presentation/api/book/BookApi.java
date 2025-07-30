@@ -27,7 +27,7 @@ public class BookApi {
 		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
 	@GetMapping("/search/title")
 	public ResponseEntity<BookTitleSearchResponse> searchBooks(String keyword, int startIndex) {
-		BookTitleSearchResponse bookTitleSearchResponse = bookSearchService.searchBooks(keyword, startIndex);
+		BookTitleSearchResponse bookTitleSearchResponse = bookSearchService.searchBooksByTitle(keyword, startIndex);
 
 		return ResponseEntity.ok(bookTitleSearchResponse);
 	}

@@ -8,6 +8,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+import com.swyp.index.infrastructure.api.AladinSearchResponse;
+
 @Repository
 public class SearchCacheAdapter {
 	private static final long CACHE_TTL_SECONDS = 24 * 3600; // 24시간
@@ -27,6 +29,12 @@ public class SearchCacheAdapter {
 	// totalResults용 키 생성 (페이지 제외)
 	private String buildTotalResultsKey(String totalResults) {
 		return "search:totalResults:" + totalResults;
+	}
+
+	public void saveCache(AladinSearchResponse response, List<String> isbns) {
+		saveIsbnsCache(response.title(), response.startIndex(), isbns);
+
+		saveTotalResultsCache(response.title(), response.totalResults());
 	}
 
 	// ISBN 리스트 조회
