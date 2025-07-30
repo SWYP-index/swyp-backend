@@ -15,9 +15,9 @@ import java.util.Set;
 public class CalendarResponse {
 
     @Schema(description = "독서 시작일 목록")
-    private Set<LocalDateTime> startDates;
+    private Set<LocalDate> startDates;
     @Schema(description = "독서 완료일 목록")
-    private Set<LocalDateTime> finishDates;
+    private Set<LocalDate> finishDates;
 
     @Schema(description = "날짜별 기록된 감정 이름 목록")
     private Map<LocalDate, Set<String>> emotionsByDate;
