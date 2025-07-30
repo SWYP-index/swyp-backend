@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-//감정 종류를 정의하는 엔티티
+// 감정 종류를 정의하는 엔티티
 @Entity
 @Getter
 @NoArgsConstructor
@@ -15,4 +15,7 @@ public class Emotion {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    private EmotionCategory category;
 }

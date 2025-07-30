@@ -1,6 +1,7 @@
 package com.swyp.index.application.book;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.swyp.index.domain.book.Book;
@@ -17,10 +18,10 @@ public class BookStatsEventListener {
 
 	private final BookRepository bookRepository;
 
-	@TransactionalEventListener
+	@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
 	public void handleBookRecordCreated(RecordCreatedEvent event) {
 		Book book = bookRepository.findById(event.bookId()).orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
-		book.updateStats(event.emotions());
+		book.addRecordToStats(event.emotions());
 	}
 }

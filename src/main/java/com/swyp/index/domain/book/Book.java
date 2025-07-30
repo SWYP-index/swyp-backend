@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.swyp.index.domain.bookshelf.RecordCreatedEvent;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.api.AladinSearchResponse.BookItem;
@@ -56,6 +55,10 @@ public class Book {
 
 	private String category;
 
+	private Long totalCount = 0L;
+
+	private Long totalEmotionScoreSum = 0L;
+
 	public static Book from(BookItem bookItem) {
 		Book book = new Book();
 
@@ -84,7 +87,7 @@ public class Book {
 		}
 	}
 
-	public void updateStats(List<RecordCreatedEventEmotion> emotions) {
+	public void addRecordToStats(List<RecordCreatedEventEmotion> emotions) {
 		emotions.forEach(emotion -> {
 			BookStats bookStats = bookStatsMap.get(emotion.emotionId());
 
@@ -92,7 +95,16 @@ public class Book {
 				throw new CustomException(ErrorCode.BOOK_STATS_NOT_FOUND);
 			}
 
+			System.out.println("책 통계 업데이트: " + bookStats.getId() + ", 감정 ID: " + emotion.emotionId() + ", 점수: " + emotion.score());
+
+			totalCount += 1;
+			totalEmotionScoreSum += emotion.score();
+
+			System.out.println("루프 안 - 총 카운트: " + totalCount + ", 총 감정 점수 합계: " + totalEmotionScoreSum);
+
 			bookStats.record(emotion.score());
 		});
+
+		System.out.println("총 카운트: " + totalCount + ", 총 감정 점수 합계: " + totalEmotionScoreSum);
 	}
 }
