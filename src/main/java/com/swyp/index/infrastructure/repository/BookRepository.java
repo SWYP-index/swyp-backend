@@ -15,33 +15,17 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findAllByIsbnIn(List<String> isbns);
 
-    // @Query("SELECT b FROM Book b JOIN FETCH b.bookStats WHERE b.isbn IN :isbns")
-    // List<Book> findAllWithStats(@Param("isbns") List<String> isbns);
-
     @Query("SELECT b.isbn FROM Book b WHERE b.isbn IN :isbns")
     List<String> findExistingIsbns(@Param("isbns") List<String> isbns);
 
     //기록하기 기능을 위해 새로 추가
     Optional<Book> findByIsbn(String isbn);
 
-    // 책의 감정 통계에 따라 책을 정렬하여 페이지네이션
-    // @Query(value = """
-    //     SELECT b.*
-    //     FROM book b
-    //     JOIN book_stats_map bs ON bs.book_id = b.id
-    //     WHERE bs.emotion_id = :emotionId
-    //     ORDER BY bs.total_emotion_score DESC
-    //     LIMIT :pageSize OFFSET :offset
-    //     """, nativeQuery = true)
-    // List<Book> findBooksByEmotionIdOrderByTotalEmotionScoreDesc(
-    //     @Param("emotionId") Long emotionId,
-    //     @Param("pageSize") int pageSize,
-    //     @Param("offset") int offset
-    // );
-
+    // 감정별로 책을 조회하고, 해당 감정의 총 감정 점수로 내림차순 정렬
     @Query("SELECT b FROM Book b JOIN b.bookStatsMap bs WHERE KEY(bs) = :emotionId ORDER BY bs.totalEmotionScore DESC")
     List<Book> findBooksByEmotionIdOrderByTotalEmotionScoreDesc(@Param("emotionId") Long emotionId, Pageable pageable);
 
+    // 책 ID로 감정 통계 조회, 총 감정 점수별로 감정 TOP3 내림차순 정렬
     @Query("SELECT bs FROM Book b JOIN b.bookStatsMap bs WHERE b.id = :bookId ORDER BY bs.totalEmotionScore DESC")
     List<BookStats> findTopByBookIdOrderByTotalEmotionScoreDesc(@Param("bookId") Long bookId, Pageable pageable);
 }
