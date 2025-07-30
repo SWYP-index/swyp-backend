@@ -33,27 +33,24 @@ public class RecordService {
     public PageRecord createPageRecord(Long userId, RecordCreateRequest request) {
 
         //유효성 검증 로직 추가
-        if(request.getEmotions() == null || request.getEmotions().isEmpty()){
-            throw new CustomException(ErrorCode.EMOTIONS_NOT_PROVIED);
+        if(request.getStatus() == ReadingStatus.READING && request.getPage() == null) {
+            //읽는 중 일때 페이지 번호가 없으면 에러 발생
+            throw new CustomException(ErrorCode.PAGE_NUMBER_REQUIRED);
         }
-        //내용도 없고 감정도 없는 경우
-        boolean isContentEmpty = request.getContent() == null || request.getContent().isBlank();
-        boolean areEmotionsEmpty = request.getEmotions().isEmpty();
-
-        if(isContentEmpty && areEmotionsEmpty){
-            throw new CustomException(ErrorCode.EMPTY_RECORD_DATA);
+        if(request.getEmotions() == null || request.getEmotions().isEmpty()){
+            throw new CustomException(ErrorCode.EMOTIONS_NOT_PROVIDED);
         }
 
         // 요청에 필요한 사용자, 책 엔티티를 조회합니다.
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Book book = bookRepository.findByIsbn(request.getIsbn()).orElseThrow(() -> new IllegalArgumentException("해당 ISBN의 책을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Book book = bookRepository.findByIsbn(request.getIsbn()).orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
         //책장 조회 혹은 생성
         Bookshelf bookshelf = bookshelfRepository.findByUserAndBook(user, book).orElseGet(() -> bookshelfRepository.save(Bookshelf.startReading(user, book)));
 
         //RecordEmotion 리스트 변환
         List<RecordEmotion> recordEmotions = request.getEmotions().stream().map(emotionDto -> {
-            Emotion emotion = emotionRepository.findById(emotionDto.getEmotionId()).orElseThrow(() -> new IllegalArgumentException("해당 감정을 찾을 수 없습니다. ID: " + emotionDto.getEmotionId()));
+            Emotion emotion = emotionRepository.findById(emotionDto.getEmotionId()).orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
             return RecordEmotion.builder().emotion(emotion).emotionScore(emotionDto.getScore()).build();
         }).collect(Collectors.toList());
 
@@ -63,7 +60,7 @@ public class RecordService {
 
         //finished 상태 호출 시 완독 처리
         if (request.getStatus() == ReadingStatus.FINISHED) {
-            bookshelf.finish();
+            bookshelf.finish(request.getIsbn());
         }
         return pageRecord;
     }

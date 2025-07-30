@@ -35,7 +35,7 @@ public class RecordApi {
     public ResponseEntity<RecordResponse> createPageRecord(@AuthenticationPrincipal CustomPrincipal principal, @Valid @RequestBody RecordCreateRequest request) {
         Long currentUserId = principal.getId();
         PageRecord saved = recordService.createPageRecord(currentUserId, request);
-        return ResponseEntity.ok(RecordResponse.of(saved));
+        return ResponseEntity.ok(RecordResponse.from(saved));
     }
 
 

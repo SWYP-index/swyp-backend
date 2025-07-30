@@ -4,6 +4,8 @@ package com.swyp.index.application.bookshelf;
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.domain.user.User;
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.repository.BookRepository;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.infrastructure.repository.UserRepository;
@@ -24,11 +26,11 @@ public class ReadingStartService {
     // 사용자의 책장에 새로운 책을 READING 상태로 추가.
     public BookshelfResponse addBookToBookshelf(Long userId, String isbn) {
         //  사용자(User)와 책(Book) 엔티티를 조회합니다.
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Book book = bookRepository.findByIsbn(isbn).orElseThrow(() -> new IllegalArgumentException("해당 ISBN의 책을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Book book = bookRepository.findByIsbn(isbn).orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
         if (bookshelfRepository.existsByUserAndBook(user, book)) {
-            throw new IllegalStateException("이미 책장에 추가된 책입니다.");
+            throw new CustomException(ErrorCode.BOOKSHELF_ALREADY_EXISTS);
         }
         Bookshelf newBookshelf = Bookshelf.startReading(user, book);
         Bookshelf savedBookshelf = bookshelfRepository.save(newBookshelf);
