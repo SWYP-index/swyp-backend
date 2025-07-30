@@ -3,6 +3,7 @@ package com.swyp.index.presentation.dto.book;
 import java.time.LocalDate;
 
 import com.swyp.index.domain.book.Book;
+import com.swyp.index.domain.book.BookInfo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,15 +26,18 @@ public class BookInfoDto {
 		BookInfoDto response = new BookInfoDto();
 
 		response.bookId = book.getId();
-		response.title = book.getTitle();
 		response.isbn = book.getIsbn();
-		response.author = book.getAuthor();
-		response.coverImageUrl = book.getCoverImageUrl();
-		response.publishedDate = book.getPublishedDate();
-		response.description = book.getDescription();
-		response.publisher = book.getPublisher();
-		response.category = book.getCategory();
 		response.totalCount = book.getTotalCount();
+
+		BookInfo bookInfo = book.getBookInfo();
+
+		response.title = bookInfo.getTitle();
+		response.author = bookInfo.getAuthor();
+		response.coverImageUrl = bookInfo.getCoverImageUrl();
+		response.publishedDate = bookInfo.getPublishedDate();
+		response.description = bookInfo.getDescription();
+		response.publisher = bookInfo.getPublisher();
+		response.category = bookInfo.getCategory();
 
 		return response;
 	}
