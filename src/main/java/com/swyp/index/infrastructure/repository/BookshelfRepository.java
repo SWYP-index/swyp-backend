@@ -22,5 +22,10 @@ public interface BookshelfRepository extends JpaRepository<Bookshelf, Long> {
     // 유저와 책으로 책장 데이터 조회
     Optional<Bookshelf> findByUserAndBook(User user, Book book);
 
+    //특정 기간 내에 독서를 시작한 책장 목록 조회
+    List<Bookshelf> findAllByUserAndCreatedAtBetween(User user, LocalDateTime start, LocalDateTime end);
+
+    //특정 기간 내에 독서를 완료한 책장 목록 조회
+    List<Bookshelf> findAllByUserAndFinishedAtBetween(User user, LocalDateTime start, LocalDateTime end);
 
 }
