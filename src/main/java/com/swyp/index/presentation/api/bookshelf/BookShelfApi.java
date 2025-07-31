@@ -40,15 +40,5 @@ public class BookShelfApi {
 
     }
 
-    @DeleteMapping("/{bookshelfId}")
-    public ResponseEntity<Void> deleteBookshelfItem(
-            @AuthenticationPrincipal CustomPrincipal principal,
-            @Parameter(description = "삭제할 책장 아이템 ID", required = true)
-            @PathVariable Long bookshelfId
-    ){
-        Long userId = principal.getId();
-        bookshelfService.deleteBookshelf(userId, bookshelfId);
-        return ResponseEntity.noContent().build();
-    }
 
 }
