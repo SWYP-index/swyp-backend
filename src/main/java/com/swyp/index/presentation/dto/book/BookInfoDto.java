@@ -5,15 +5,20 @@ import java.time.LocalDate;
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookInfo;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
+@Builder
+@AllArgsConstructor
 public class BookInfoDto {
+
 	private Long bookId;
-	private String title;
 	private String isbn;
+	private String title;
 	private String author;
 	private String coverImageUrl;
 	private LocalDate publishedDate;
@@ -23,22 +28,19 @@ public class BookInfoDto {
 	private Long totalCount;
 
 	public static BookInfoDto from(Book book) {
-		BookInfoDto response = new BookInfoDto();
-
-		response.bookId = book.getId();
-		response.isbn = book.getIsbn();
-		response.totalCount = book.getTotalCount();
-
 		BookInfo bookInfo = book.getBookInfo();
 
-		response.title = bookInfo.getTitle();
-		response.author = bookInfo.getAuthor();
-		response.coverImageUrl = bookInfo.getCoverImageUrl();
-		response.publishedDate = bookInfo.getPublishedDate();
-		response.description = bookInfo.getDescription();
-		response.publisher = bookInfo.getPublisher();
-		response.category = bookInfo.getCategory();
-
-		return response;
+		return BookInfoDto.builder()
+			.bookId(book.getId())
+			.isbn(book.getIsbn())
+			.title(bookInfo.getTitle())
+			.author(bookInfo.getAuthor())
+			.coverImageUrl(bookInfo.getCoverImageUrl())
+			.publishedDate(bookInfo.getPublishedDate())
+			.description(bookInfo.getDescription())
+			.publisher(bookInfo.getPublisher())
+			.category(bookInfo.getCategory())
+			.totalCount(book.getTotalCount())
+			.build();
 	}
 }

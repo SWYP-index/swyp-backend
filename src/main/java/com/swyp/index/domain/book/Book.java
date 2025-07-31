@@ -21,13 +21,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Book {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -48,18 +53,11 @@ public class Book {
 	private Long totalEmotionScoreSum = 0L;
 
 	public static Book from(BookItem bookItem) {
-		Book book = new Book();
-
-		book.isbn = bookItem.isbn();
-		book.bookInfo = new BookInfo(
-			bookItem.title(),
-			bookItem.author(),
-			bookItem.description(),
-			bookItem.publisher(),
-			bookItem.coverImageUrl(),
-			bookItem.pubDate(),
-			bookItem.categoryName()
-		);
+		Book book = Book.builder()
+			.isbn(bookItem.isbn())
+			.bookInfo(new BookInfo(bookItem.title(), bookItem.author(), bookItem.description(), bookItem.publisher(),
+				bookItem.coverImageUrl(), bookItem.pubDate(), bookItem.categoryName()))
+			.build();
 
 		book.initializeBookStats();
 
