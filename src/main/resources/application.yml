@@ -4,10 +4,6 @@ jwt:
   refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
 
 spring:
-  sql:
-    init:
-#      mode: always
-
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -21,12 +17,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
 
   mail:
     host: smtp.gmail.com
