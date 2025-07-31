@@ -1,6 +1,8 @@
 package com.swyp.index.application.bookshelf;
 
 import com.swyp.index.domain.bookshelf.Bookshelf;
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
 
@@ -36,6 +38,18 @@ public class BookshelfService {
         return readingShelf.stream()
                 .map(BookshelfResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    //책장에서 책을 삭제하는 기능
+    @Transactional
+    public void deleteBookshelf(Long userId, Long bookshelfId){
+        Bookshelf bookshelf = bookshelfRepository.findById(bookshelfId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOOKSHELF_NOT_FOUND));
+
+        if(!bookshelf.getUser().getId().equals(userId)){
+            throw new CustomException(ErrorCode.FORBIDDEN_ACCESS);
+        }
+        bookshelfRepository.delete(bookshelf);
     }
 
 

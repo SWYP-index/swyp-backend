@@ -6,6 +6,7 @@ import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,6 +38,17 @@ public class BookShelfApi {
         Long userId = principal.getId();
         return ResponseEntity.ok(bookshelfService.getFinishedBooks(userId));
 
+    }
+
+    @DeleteMapping("/{bookshelfId}")
+    public ResponseEntity<Void> deleteBookshelfItem(
+            @AuthenticationPrincipal CustomPrincipal principal,
+            @Parameter(description = "삭제할 책장 아이템 ID", required = true)
+            @PathVariable Long bookshelfId
+    ){
+        Long userId = principal.getId();
+        bookshelfService.deleteBookshelf(userId, bookshelfId);
+        return ResponseEntity.noContent().build();
     }
 
 }
