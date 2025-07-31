@@ -52,6 +52,10 @@ public class Bookshelf {
 
     private LocalDateTime finishedAt;
 
+    //종합 감상평을 위한 필드 추가
+    @Lob
+    private String finalNote;
+
 
     @Builder(access = AccessLevel.PRIVATE)
     private Bookshelf(User user, Book book, ReadingStatus status) {
@@ -73,9 +77,10 @@ public class Bookshelf {
 
 
     //독서를 완료 처리
-    public void finish() {
+    public void finish(String finalNote) {
         this.status = ReadingStatus.FINISHED;
         this.finishedAt = LocalDateTime.now();
+        this.finalNote = finalNote;
     }
 
 

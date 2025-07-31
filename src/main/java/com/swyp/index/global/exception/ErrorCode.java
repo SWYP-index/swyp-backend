@@ -15,6 +15,10 @@ public enum ErrorCode {
 	INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "이메일 인증 코드가 일치하지 않습니다."),
 	CANNOT_RECORD_FINISHED_BOOK(HttpStatus.BAD_REQUEST, "이미 완독한 책에는 기록을 추가할 수 없습니다."),
 	INVALID_STATUS_UPDATE(HttpStatus.BAD_REQUEST, "유효하지 않은 상태 변경 요청입니다."),
+	INVALID_DATE_PARAMETER(HttpStatus.BAD_REQUEST, "유효하지 않은 연도 또는 월입니다."),
+	EMOTIONS_NOT_PROVIDED(HttpStatus.BAD_REQUEST, "하나 이상의 감정을 등록해야 합니다."),
+	EMPTY_RECORD_DATA(HttpStatus.BAD_REQUEST, "기록할 내용 또는 감정이 없습니다."),
+	PAGE_NUMBER_REQUIRED(HttpStatus.BAD_REQUEST, "읽는 중인 기록에는 페이지 번호가 필요합니다."),
 
 	// 401
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
