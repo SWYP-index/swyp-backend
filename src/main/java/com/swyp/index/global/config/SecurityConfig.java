@@ -32,29 +32,18 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-			.csrf(AbstractHttpConfigurer::disable)
+		http.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers(
-						"/api/users/**",
-						"/api/bookshelf/**",
-						"/api/desk/**"
-				).authenticated()
-				// .requestMatchers("/api/books/**").authenticated() // 인가 필요한 URL 추가
-				.anyRequest().permitAll()
-			)
-			.oauth2Login(oauth2 -> oauth2
-				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-				.successHandler(oAuth2SuccessHandler)
-			)
-			.logout(logout -> logout
-				.logoutUrl("/logout")
+			.authorizeHttpRequests(
+				authorize -> authorize.requestMatchers("/api/users/**", "/api/bookshelf/**", "/api/desk/**",
+					"/api/books/**").authenticated().anyRequest().permitAll())
+			.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+				.successHandler(oAuth2SuccessHandler))
+			.logout(logout -> logout.logoutUrl("/logout")
 				.logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
-				.deleteCookies("accessToken", "refreshToken")
-			);
+				.deleteCookies("accessToken", "refreshToken"));
 
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
