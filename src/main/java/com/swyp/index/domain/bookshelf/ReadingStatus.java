@@ -1,5 +1,5 @@
 package com.swyp.index.domain.bookshelf;
 
 public enum ReadingStatus {
-    WISH, READING, FINISHED
+    NONE, WISH, READING, FINISHED
 }

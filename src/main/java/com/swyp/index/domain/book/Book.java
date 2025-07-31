@@ -23,6 +23,7 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -48,8 +49,10 @@ public class Book {
 	@Embedded
 	private BookInfo bookInfo;
 
-	private Long totalCount = 0L;
+	@Default
+	private Long totalEmotionCount = 0L;
 
+	@Default
 	private Long totalEmotionScoreSum = 0L;
 
 	public static Book from(BookItem bookItem) {
@@ -83,7 +86,7 @@ public class Book {
 				throw new CustomException(ErrorCode.BOOK_STATS_NOT_FOUND);
 			}
 
-			totalCount += 1;
+			totalEmotionCount += 1;
 			totalEmotionScoreSum += emotion.score();
 
 			bookStats.record(emotion.score());

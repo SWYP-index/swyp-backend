@@ -29,11 +29,11 @@ public class BookStats {
 	@Setter
 	private Long emotionId;
 
-	private Long count = 0L;
+	private Long emotionCount = 0L;
 
-	private Long totalEmotionScore = 0L;
+	private Long emotionScoreSum = 0L;
 
-	private Double averageEmotionScore = 0.0;
+	private Double emotionScoreAverage = 0.0;
 
 	@CreatedDate
 	@Column(updatable = false)
@@ -43,8 +43,8 @@ public class BookStats {
 	private LocalDateTime updatedAt;
 
 	public void record(int score) {
-		this.count += 1;
-		this.totalEmotionScore += score;
-		this.averageEmotionScore = (double) this.totalEmotionScore / this.count;
+		this.emotionCount += 1;
+		this.emotionScoreSum += score;
+		this.emotionScoreAverage = (double) this.emotionScoreSum / this.emotionCount;
 	}
 }

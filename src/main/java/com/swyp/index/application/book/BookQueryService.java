@@ -8,20 +8,25 @@ import java.util.Set;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookStats;
+import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.domain.emotion.Emotion;
+import com.swyp.index.domain.user.User;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.api.AladinApiClient;
 import com.swyp.index.infrastructure.api.AladinSearchResponse;
 import com.swyp.index.infrastructure.redis.SearchCacheAdapter;
 import com.swyp.index.infrastructure.repository.BookRepository;
+import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.infrastructure.repository.EmotionRepository;
 import com.swyp.index.presentation.dto.book.BookDto;
 import com.swyp.index.presentation.dto.book.BookEmotionSearchResponse;
 import com.swyp.index.presentation.dto.book.BookInfoDto;
+import com.swyp.index.presentation.dto.book.BookResponse;
 import com.swyp.index.presentation.dto.book.BookStatsDto;
 import com.swyp.index.presentation.dto.book.BookTitleSearchResponse;
 
@@ -29,21 +34,30 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class BookSearchService {
+public class BookQueryService {
 
 	private final AladinApiClient aladinApiClient;
 	private final SearchCacheAdapter cacheAdapter;
 	private final BookRepository bookRepository;
+	private final BookshelfRepository bookshelfRepository;
 	private final EmotionRepository emotionRepository;
 
+	@Transactional(readOnly = true)
 	public BookEmotionSearchResponse searchBooksByEmotion(String emotionName, int startIndex) {
 		Emotion emotion = emotionRepository.findByName(emotionName)
 			.orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
 
-		List<Book> books = bookRepository.findBooksByEmotionIdOrderByTotalEmotionScoreDesc(emotion.getId(),
+		List<Book> books = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDesc(emotion.getId(),
 			PageRequest.of(startIndex - 1, 10));
 
-		List<BookDto> bookDtos = findTop3EmotionScoreDesc(books);
+		List<BookDto> bookDtos = new ArrayList<>();
+
+		for (Book book: books) {
+			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
+				book.getId(), PageRequest.of(0, 3));
+
+			bookDtos.add(convertToBookDto(book, bookStats));
+		}
 
 		return new BookEmotionSearchResponse(startIndex, bookDtos);
 	}
@@ -55,7 +69,15 @@ public class BookSearchService {
 			int totalResults = cacheAdapter.getTotalResultsCache(title).orElse(0);
 
 			List<Book> books = bookRepository.findAllByIsbnIn((cachedIsbns.get()));
-			List<BookDto> bookDtos = findTop3EmotionScoreDesc(books);
+
+			List<BookDto> bookDtos = new ArrayList<>();
+
+			for (Book book: books) {
+				List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
+					book.getId(), PageRequest.of(0, 3));
+
+				bookDtos.add(convertToBookDto(book, bookStats));
+			}
 
 			return new BookTitleSearchResponse(startIndex, totalResults, bookDtos);
 		}
@@ -73,38 +95,52 @@ public class BookSearchService {
 		saveBooksIfNotExists(response);
 
 		List<Book> books = bookRepository.findAllByIsbnIn(isbns);
-		List<BookDto> bookDtos = findTop3EmotionScoreDesc(books);
+
+		List<BookDto> bookDtos = new ArrayList<>();
+
+		for (Book book: books) {
+			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
+				book.getId(), PageRequest.of(0, 3));
+
+			bookDtos.add(convertToBookDto(book, bookStats));
+		}
 
 		return new BookTitleSearchResponse(startIndex, response.totalResults(), bookDtos);
 	}
 
-	// 책의 감정 통계 TOP3 조회
-	private List<BookDto> findTop3EmotionScoreDesc(List<Book> books) {
-		List<BookDto> bookDtos = new ArrayList<>();
+	@Transactional(readOnly = true)
+	public BookResponse getBookDetail(User user, String isbn) {
+		Book book = bookRepository.findByIsbn(isbn)
+			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
-		for (Book book : books) {
-			List<BookStats> top3Stats = bookRepository.findTopByBookIdOrderByTotalEmotionScoreDesc(book.getId(),
-				PageRequest.of(0, 3));
+		List<BookStats> BookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDesc(
+			book.getId());
 
-			Long totalSum = book.getTotalEmotionScoreSum();
+		BookDto bookDto = convertToBookDto(book, BookStats);
 
-			List<BookStatsDto> bookStatsDtos = top3Stats.stream().map(bs -> {
-				double percentage = 0.0;
+		Bookshelf bookshelf = bookshelfRepository.findByUserAndBook(user, book)
+			.orElseThrow(() -> new CustomException(ErrorCode.BOOKSHELF_NOT_FOUND));
 
-				if (totalSum != null && totalSum > 0) {
-					percentage = (double)bs.getTotalEmotionScore() / totalSum * 100;
-				}
+		return new BookResponse(bookshelf.getStatus().name(), bookDto);
+	}
 
-				Emotion emotion = emotionRepository.findById(bs.getEmotionId())
-					.orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
+	private BookDto convertToBookDto(Book book, List<BookStats> bookStats) {
+		Long totalSum = book.getTotalEmotionScoreSum();
 
-				return new BookStatsDto(bs.getId(), bs.getEmotionId(), emotion.getName(), percentage);
-			}).toList();
+		List<BookStatsDto> bookStatsDtos = bookStats.stream().map(bs -> {
+			double percentage = 0.0;
 
-			bookDtos.add(new BookDto(BookInfoDto.from(book), bookStatsDtos));
-		}
+			if (totalSum != null && totalSum > 0) {
+				percentage = (double)bs.getEmotionScoreSum() / totalSum * 100;
+			}
 
-		return bookDtos;
+			Emotion emotion = emotionRepository.findById(bs.getEmotionId())
+				.orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
+
+			return new BookStatsDto(bs.getEmotionId(), emotion.getName(), bs.getEmotionScoreSum(), percentage);
+		}).toList();
+
+		return new BookDto(BookInfoDto.from(book), bookStatsDtos);
 	}
 
 	// ISBN 리스트 추출

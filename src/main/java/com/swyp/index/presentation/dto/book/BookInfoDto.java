@@ -46,7 +46,7 @@ public class BookInfoDto {
 	private String category;
 
 	@Schema(description = "이 책에 남긴 총 감정 기록 수", example = "42")
-	private Long totalCount;
+	private Long totalEmotionCount;
 
 	public static BookInfoDto from(Book book) {
 		BookInfo bookInfo = book.getBookInfo();
@@ -61,7 +61,7 @@ public class BookInfoDto {
 				.description(bookInfo.getDescription())
 				.publisher(bookInfo.getPublisher())
 				.category(bookInfo.getCategory())
-				.totalCount(book.getTotalCount())
+				.totalEmotionCount(book.getTotalEmotionCount())
 				.build();
 	}
 }
