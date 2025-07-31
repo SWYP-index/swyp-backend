@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class OpenApiConfig {
+
     private static final String SECURITY_SCHEME = "JWT Authentication";
 
     @Bean

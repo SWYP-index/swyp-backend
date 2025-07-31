@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum EmotionType {
+
 	// 긍정
 	MOVED(1L, "감동", EmotionCategory.POSITIVE),
 	EXCITED(2L, "설렘", EmotionCategory.POSITIVE),
@@ -43,7 +44,6 @@ public enum EmotionType {
 	public static String getEmotionNameById(Long id) {
 		return EmotionType.fromId(id).getName();
 	}
-
 
 	public static EmotionType fromId(Long id) {
 		return Arrays.stream(values())

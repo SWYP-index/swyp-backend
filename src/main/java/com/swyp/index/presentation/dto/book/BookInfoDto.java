@@ -45,7 +45,7 @@ public class BookInfoDto {
 	@Schema(description = "카테고리/장르", example = "소설")
 	private String category;
 
-	@Schema(description = "이 책을 읽은 총 사용자 수", example = "42")
+	@Schema(description = "이 책에 남긴 총 감정 기록 수", example = "42")
 	private Long totalCount;
 
 	public static BookInfoDto from(Book book) {
