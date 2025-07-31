@@ -32,6 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Book {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -53,11 +54,10 @@ public class Book {
 
 	public static Book from(BookItem bookItem) {
 		Book book = Book.builder()
-				.isbn(bookItem.isbn())
-				.bookInfo(new BookInfo(bookItem.title(), bookItem.author(), bookItem.description(), bookItem.publisher(),
-						bookItem.coverImageUrl(), bookItem.pubDate(), bookItem.categoryName()))
-				.build();
-
+			.isbn(bookItem.isbn())
+			.bookInfo(new BookInfo(bookItem.title(), bookItem.author(), bookItem.description(), bookItem.publisher(),
+				bookItem.coverImageUrl(), bookItem.pubDate(), bookItem.categoryName()))
+			.build();
 
 		book.initializeBookStats();
 

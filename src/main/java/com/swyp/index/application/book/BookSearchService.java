@@ -59,6 +59,7 @@ public class BookSearchService {
 
 			return new BookTitleSearchResponse(startIndex, totalResults, bookDtos);
 		}
+		
 		// 외부 API로 책 검색
 		AladinSearchResponse response = aladinApiClient.searchBooks(title, startIndex);
 
