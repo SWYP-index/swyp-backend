@@ -6,7 +6,6 @@ import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

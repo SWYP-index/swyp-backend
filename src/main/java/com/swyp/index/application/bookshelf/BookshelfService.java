@@ -1,8 +1,6 @@
 package com.swyp.index.application.bookshelf;
 
 import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
 
