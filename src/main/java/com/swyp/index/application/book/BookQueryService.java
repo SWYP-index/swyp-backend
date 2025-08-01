@@ -115,7 +115,7 @@ public class BookQueryService {
 
 		String status = bookshelfRepository.findByUserAndBook(user, book)
 			.map(bookshelf -> bookshelf.getStatus().name())
-			.orElse(null);
+			.orElse("NONE");
 
 		return new BookResponse(status, BookDto.from(book, BookStats));
 	}

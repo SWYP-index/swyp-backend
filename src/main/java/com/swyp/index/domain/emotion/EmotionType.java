@@ -54,6 +54,7 @@ public enum EmotionType {
 
 	public static String getNameById(Long id) {
 		EmotionType type = ID_MAP.get(id);
+
 		if (type == null) {
 			throw new IllegalArgumentException("Invalid emotion ID: " + id);
 		}
@@ -63,6 +64,7 @@ public enum EmotionType {
 
 	public static Long getIdByName(String name) {
 		EmotionType type = NAME_MAP.get(name);
+
 		if (type == null) {
 			throw new IllegalArgumentException("Invalid emotion name: " + name);
 		}
