@@ -2,7 +2,6 @@ package com.swyp.index.application.bookshelf;
 
 import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
-import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
 
 import com.swyp.index.presentation.dto.bookshelf.BookshelfSummaryDto;
 import lombok.RequiredArgsConstructor;
