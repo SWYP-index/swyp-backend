@@ -34,7 +34,7 @@ public class StatsService {
         LocalDateTime start = end.minusMonths(6).withDayOfMonth(1).toLocalDate().atStartOfDay();
 
         //DB에서 해당 기간의 모든 기록 조회
-        List<PageRecord> records = pageRecordRepository.findALlByBookshelfUserAndCreatedAtBetween(user, start, end);
+        List<PageRecord> records = pageRecordRepository.findAllByBookshelfUserAndCreatedAtBetween(user, start, end);
 
         //월별로 그룹화하고, 각 월마다 기록이 있는 날짜의 중복을 제거하여 개수를 셈
         Map<YearMonth, Long> daysPerMonth = records.stream()

@@ -19,5 +19,5 @@ public interface PageRecordRepository extends JpaRepository<PageRecord, Long> {
     List<PageRecord> findRecordsWithEmotionByUserAndDate(@Param("user") User user, @Param("start")LocalDateTime start, @Param("end") LocalDateTime end);
 
     //특정 사용자의 특정 기간 동안의 모든 기록을 조회
-    List<PageRecord> findALlByBookshelfUserAndCreatedAtBetween(User user, LocalDateTime start, LocalDateTime end);
+    List<PageRecord> findAllByBookshelfUserAndCreatedAtBetween(User user, LocalDateTime start, LocalDateTime end);
 }
