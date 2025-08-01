@@ -2,6 +2,8 @@ package com.swyp.index.domain.emotion;
 
 import java.util.Arrays;
 
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -50,5 +52,12 @@ public enum EmotionType {
 			.filter(e -> e.id.equals(id))
 			.findFirst()
 			.orElseThrow(() -> new IllegalArgumentException("Invalid emotion id: " + id));
+	}
+
+	public static EmotionType fromName(String name) {
+		return Arrays.stream(values())
+				.filter(e -> e.name.equals(name)) // 이름이 정확히 일치할 경우만
+				.findFirst()
+				.orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
 	}
 }
