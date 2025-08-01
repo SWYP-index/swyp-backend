@@ -1,12 +1,13 @@
 package com.swyp.index.presentation.dto.bookshelf;
 
+import java.time.LocalDateTime;
+
 import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.presentation.dto.book.BookInfoDto;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor

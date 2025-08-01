@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookStats;
-import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.domain.emotion.Emotion;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.exception.CustomException;
@@ -25,9 +24,7 @@ import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.infrastructure.repository.EmotionRepository;
 import com.swyp.index.presentation.dto.book.BookDto;
 import com.swyp.index.presentation.dto.book.BookEmotionSearchResponse;
-import com.swyp.index.presentation.dto.book.BookInfoDto;
 import com.swyp.index.presentation.dto.book.BookResponse;
-import com.swyp.index.presentation.dto.book.BookStatsDto;
 import com.swyp.index.presentation.dto.book.BookTitleSearchResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -56,7 +53,7 @@ public class BookQueryService {
 			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
 				book.getId(), PageRequest.of(0, 3));
 
-			bookDtos.add(convertToBookDto(book, bookStats));
+			bookDtos.add(BookDto.from(book, bookStats));
 		}
 
 		return new BookEmotionSearchResponse(startIndex, bookDtos);
@@ -76,7 +73,7 @@ public class BookQueryService {
 				List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
 					book.getId(), PageRequest.of(0, 3));
 
-				bookDtos.add(convertToBookDto(book, bookStats));
+				bookDtos.add(BookDto.from(book, bookStats));
 			}
 
 			return new BookTitleSearchResponse(startIndex, totalResults, bookDtos);
@@ -102,7 +99,7 @@ public class BookQueryService {
 			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
 				book.getId(), PageRequest.of(0, 3));
 
-			bookDtos.add(convertToBookDto(book, bookStats));
+			bookDtos.add(BookDto.from(book, bookStats));
 		}
 
 		return new BookTitleSearchResponse(startIndex, response.totalResults(), bookDtos);
@@ -116,31 +113,11 @@ public class BookQueryService {
 		List<BookStats> BookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDesc(
 			book.getId());
 
-		BookDto bookDto = convertToBookDto(book, BookStats);
+		String status = bookshelfRepository.findByUserAndBook(user, book)
+			.map(bookshelf -> bookshelf.getStatus().name())
+			.orElse(null);
 
-		Bookshelf bookshelf = bookshelfRepository.findByUserAndBook(user, book)
-			.orElseThrow(() -> new CustomException(ErrorCode.BOOKSHELF_NOT_FOUND));
-
-		return new BookResponse(bookshelf.getStatus().name(), bookDto);
-	}
-
-	private BookDto convertToBookDto(Book book, List<BookStats> bookStats) {
-		Long totalSum = book.getTotalEmotionScoreSum();
-
-		List<BookStatsDto> bookStatsDtos = bookStats.stream().map(bs -> {
-			double percentage = 0.0;
-
-			if (totalSum != null && totalSum > 0) {
-				percentage = (double)bs.getEmotionScoreSum() / totalSum * 100;
-			}
-
-			Emotion emotion = emotionRepository.findById(bs.getEmotionId())
-				.orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
-
-			return new BookStatsDto(bs.getEmotionId(), emotion.getName(), bs.getEmotionScoreSum(), percentage);
-		}).toList();
-
-		return new BookDto(BookInfoDto.from(book), bookStatsDtos);
+		return new BookResponse(status, BookDto.from(book, BookStats));
 	}
 
 	// ISBN 리스트 추출

@@ -15,11 +15,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @AllArgsConstructor
-@Schema(description = "책 상세 정보 응답 DTO")
+@Schema(description = "책 정보 응답 DTO")
 public class BookInfoDto {
-
-	@Schema(description = "도서 고유 ID", example = "1")
-	private Long bookId;
 
 	@Schema(description = "ISBN", example = "9791191136979")
 	private String isbn;
@@ -49,19 +46,18 @@ public class BookInfoDto {
 	private Long totalEmotionCount;
 
 	public static BookInfoDto from(Book book) {
-		BookInfo bookInfo = book.getBookInfo();
+		BookInfo info = book.getBookInfo();
 
 		return BookInfoDto.builder()
-				.bookId(book.getId())
-				.isbn(book.getIsbn())
-				.title(bookInfo.getTitle())
-				.author(bookInfo.getAuthor())
-				.coverImageUrl(bookInfo.getCoverImageUrl())
-				.publishedDate(bookInfo.getPublishedDate())
-				.description(bookInfo.getDescription())
-				.publisher(bookInfo.getPublisher())
-				.category(bookInfo.getCategory())
-				.totalEmotionCount(book.getTotalEmotionCount())
-				.build();
+			.isbn(book.getIsbn())
+			.title(info.getTitle())
+			.author(info.getAuthor())
+			.coverImageUrl(info.getCoverImageUrl())
+			.publishedDate(info.getPublishedDate())
+			.description(info.getDescription())
+			.publisher(info.getPublisher())
+			.category(info.getCategory())
+			.totalEmotionCount(book.getTotalEmotionCount())
+			.build();
 	}
 }

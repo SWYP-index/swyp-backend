@@ -38,9 +38,7 @@ public class BookApi {
 	@GetMapping("/search/title")
 	public ResponseEntity<BookTitleSearchResponse> searchBooks(@RequestParam String keyword,
 		@RequestParam int startIndex) {
-		BookTitleSearchResponse bookTitleSearchResponse = bookQueryService.searchBooksByTitle(keyword, startIndex);
-
-		return ResponseEntity.ok(bookTitleSearchResponse);
+		return ResponseEntity.ok(bookQueryService.searchBooksByTitle(keyword, startIndex));
 	}
 
 	@Operation(summary = "감정 검색", description = "감정 이름과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
@@ -48,10 +46,7 @@ public class BookApi {
 	@GetMapping("/search/emotion")
 	public ResponseEntity<BookEmotionSearchResponse> searchBooksByEmotion(@RequestParam String keyword,
 		@RequestParam int startIndex) {
-		BookEmotionSearchResponse bookEmotionSearchResponse = bookQueryService.searchBooksByEmotion(keyword,
-			startIndex);
-
-		return ResponseEntity.ok(bookEmotionSearchResponse);
+		return ResponseEntity.ok(bookQueryService.searchBooksByEmotion(keyword, startIndex));
 	}
 
 	@Operation(summary = "상세 페이지", description = "책의 상태 값, 책 정보, 해당 책의 감정 점수를 내림차순으로 반환")

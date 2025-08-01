@@ -1,6 +1,7 @@
 package com.swyp.index.domain.emotion;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,14 +42,31 @@ public enum EmotionType {
 	private final String name;
 	private final EmotionCategory category;
 
-	public static String getEmotionNameById(Long id) {
-		return EmotionType.fromId(id).getName();
+	private static final Map<Long, EmotionType> ID_MAP = new HashMap<>();
+	private static final Map<String, EmotionType> NAME_MAP = new HashMap<>();
+
+	static {
+		for (EmotionType type : EmotionType.values()) {
+			ID_MAP.put(type.id, type);
+			NAME_MAP.put(type.name, type);
+		}
 	}
 
-	public static EmotionType fromId(Long id) {
-		return Arrays.stream(values())
-			.filter(e -> e.id.equals(id))
-			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Invalid emotion id: " + id));
+	public static String getNameById(Long id) {
+		EmotionType type = ID_MAP.get(id);
+		if (type == null) {
+			throw new IllegalArgumentException("Invalid emotion ID: " + id);
+		}
+
+		return type.getName();
+	}
+
+	public static Long getIdByName(String name) {
+		EmotionType type = NAME_MAP.get(name);
+		if (type == null) {
+			throw new IllegalArgumentException("Invalid emotion name: " + name);
+		}
+
+		return type.getId();
 	}
 }
