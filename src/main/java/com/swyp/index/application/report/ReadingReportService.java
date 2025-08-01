@@ -4,7 +4,7 @@ import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.domain.bookshelf.ReadingStatus;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.infrastructure.repository.PageRecordRepository;
-import com.swyp.index.presentation.dto.book.BookStatsDto;
+import com.swyp.index.presentation.dto.book.UserBookEmotionStatDto;
 import com.swyp.index.presentation.dto.report.ReadingReportResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,7 +46,7 @@ public class ReadingReportService {
         return allBooks.stream()
                 .map(bs -> {
                     String isbn = bs.getBook().getIsbn();
-                    List<BookStatsDto> stats = emotionAnalysisService.getUserBookEmotionStats(userId, isbn);
+                    List<UserBookEmotionStatDto> stats = emotionAnalysisService.getUserBookEmotionStats(userId, isbn);
 
                     //current page 계산(Reading 상태일 때만)
                     Integer currentPage = null;

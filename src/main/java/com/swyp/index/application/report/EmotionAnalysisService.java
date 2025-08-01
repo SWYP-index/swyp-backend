@@ -7,7 +7,7 @@ import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.repository.BookRepository;
 import com.swyp.index.infrastructure.repository.RecordEmotionRepository;
 import com.swyp.index.infrastructure.repository.UserEmotionStatProjection;
-import com.swyp.index.presentation.dto.book.BookStatsDto;
+import com.swyp.index.presentation.dto.book.UserBookEmotionStatDto;
 import com.swyp.index.presentation.dto.report.EmotionRankingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class EmotionAnalysisService {
      * @Param isbn 도서 isbn
      * @return 감정별 비중 리스트(0~100%)
      */
-    public List<BookStatsDto> getUserBookEmotionStats(Long userId, String isbn){
+    public List<UserBookEmotionStatDto> getUserBookEmotionStats(Long userId, String isbn){
         // 1. ISBN으로 Book 조회
         Book book = bookRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
@@ -50,14 +50,13 @@ public class EmotionAnalysisService {
         if (total == 0) return List.of();
 
         // 4. 감정별 비중 계산
-        List<BookStatsDto> result = new ArrayList<>();
+        List<UserBookEmotionStatDto> result = new ArrayList<>();
         for (UserEmotionStatProjection s : stats) {
             double percentage = (s.getTotalScore() * 100.0) / total;
 
             //emotionName으로 emotionId 추출
             EmotionType emotion = EmotionType.fromName(s.getEmotionType());
-            result.add(new BookStatsDto(
-                    null,      //bookStatsId는 개인 통계라 null
+            result.add(new UserBookEmotionStatDto(
                     emotion.getId(),      //감정 ID
                     emotion.getName(),    //감정 한글 이름
                     Math.round(percentage * 10.0) / 10.0  //소수점 1자리 반 올림

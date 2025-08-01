@@ -4,7 +4,7 @@ package com.swyp.index.presentation.dto.report;
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookInfo;
 import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.presentation.dto.book.BookStatsDto;
+import com.swyp.index.presentation.dto.book.UserBookEmotionStatDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,12 +58,12 @@ public class ReadingReportResponse {
     private Integer currentPage;
 
     @Schema(description = "감정 비율 리스트")
-    private List<BookStatsDto> emotionStats;
+    private List<UserBookEmotionStatDto> emotionStats;
 
     /**
      * Bookshelf + 감정 분석 결과를 기반으로 응답 DTO 생성
      */
-    public static ReadingReportResponse of(Bookshelf bookshelf, List<BookStatsDto> stats, Integer currentPage){
+    public static ReadingReportResponse of(Bookshelf bookshelf, List<UserBookEmotionStatDto> stats, Integer currentPage){
         Book book = bookshelf.getBook();
         BookInfo info = book.getBookInfo();
 

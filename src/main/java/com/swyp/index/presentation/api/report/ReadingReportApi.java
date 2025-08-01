@@ -3,7 +3,7 @@ package com.swyp.index.presentation.api.report;
 import com.swyp.index.application.report.EmotionAnalysisService;
 import com.swyp.index.application.report.ReadingReportService;
 import com.swyp.index.global.security.CustomPrincipal;
-import com.swyp.index.presentation.dto.book.BookStatsDto;
+import com.swyp.index.presentation.dto.book.UserBookEmotionStatDto;
 import com.swyp.index.presentation.dto.report.EmotionRankingResponse;
 import com.swyp.index.presentation.dto.report.ReadingReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +37,7 @@ public class ReadingReportApi {
             @AuthenticationPrincipal CustomPrincipal principal
     ) {
         Long userId = principal.id();
-        List<BookStatsDto> stats = emotionAnalysisService.getUserBookEmotionStats(userId, isbn);
+        List<UserBookEmotionStatDto> stats = emotionAnalysisService.getUserBookEmotionStats(userId, isbn);
         return readingReportService.getUserReadingReport(userId);
     }
 
