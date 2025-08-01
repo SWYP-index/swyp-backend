@@ -1,10 +1,10 @@
-package com.swyp.index.presentation.api.calendar;
+package com.swyp.index.presentation.api.report;
 
 
-import com.swyp.index.application.calendar.CalendarService;
+import com.swyp.index.application.report.CalendarService;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
-import com.swyp.index.presentation.dto.calendar.CalendarResponse;
+import com.swyp.index.presentation.dto.report.CalendarResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

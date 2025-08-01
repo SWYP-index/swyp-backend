@@ -1,4 +1,4 @@
-package com.swyp.index.presentation.dto.calendar;
+package com.swyp.index.presentation.dto.report;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
