@@ -39,7 +39,7 @@ public class CalendarService {
 
         //해당 기간의 모든 활동 데이터 조회
         List<Bookshelf> startedBooks = bookshelfRepository.findAllByUserAndCreatedAtBetween(user, startOfMonth, endOfMonth);
-        List<Bookshelf> finishedBooks = bookshelfRepository.findAllByUserAndFinishedAtBetween(user, endOfMonth, startOfMonth);
+        List<Bookshelf> finishedBooks = bookshelfRepository.findAllByUserAndFinishedAtBetween(user, startOfMonth, endOfMonth);
         List<PageRecord> pageRecords = pageRecordRepository.findRecordsWithEmotionByUserAndDate(user, startOfMonth, endOfMonth);
 
         //날짜를 기준으로 데이터를 종합할 Map 생성
