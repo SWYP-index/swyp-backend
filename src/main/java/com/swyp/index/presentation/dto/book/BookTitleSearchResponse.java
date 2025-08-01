@@ -4,11 +4,13 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Getter
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class BookTitleSearchResponse {
 
@@ -21,12 +23,10 @@ public class BookTitleSearchResponse {
 	private List<BookDto> books;
 
 	public static BookTitleSearchResponse empty() {
-		BookTitleSearchResponse response = new BookTitleSearchResponse();
-
-		response.page = 0;
-		response.totalResults = 0;
-		response.books = List.of();
-
-		return response;
+		return BookTitleSearchResponse.builder()
+			.page(0)
+			.totalResults(0)
+			.books(List.of())
+			.build();
 	}
 }

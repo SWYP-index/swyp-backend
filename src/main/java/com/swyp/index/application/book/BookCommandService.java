@@ -36,14 +36,7 @@ public class BookCommandService {
 
 			List<Book> books = bookRepository.findAllByIsbnIn((cachedIsbns.get()));
 
-			List<BookDto> bookDtos = new ArrayList<>();
-
-			for (Book book: books) {
-				List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
-					book.getId(), PageRequest.of(0, 3));
-
-				bookDtos.add(BookDto.from(book, bookStats));
-			}
+			List<BookDto> bookDtos = convertBookToDto(books);
 
 			return new BookTitleSearchResponse(startIndex, totalResults, bookDtos);
 		}
@@ -62,6 +55,12 @@ public class BookCommandService {
 
 		List<Book> books = bookRepository.findAllByIsbnIn(isbns);
 
+		List<BookDto> bookDtos = convertBookToDto(books);
+
+		return new BookTitleSearchResponse(startIndex, response.totalResults(), bookDtos);
+	}
+
+	private List<BookDto> convertBookToDto(List<Book> books) {
 		List<BookDto> bookDtos = new ArrayList<>();
 
 		for (Book book: books) {
@@ -71,7 +70,7 @@ public class BookCommandService {
 			bookDtos.add(BookDto.from(book, bookStats));
 		}
 
-		return new BookTitleSearchResponse(startIndex, response.totalResults(), bookDtos);
+		return bookDtos;
 	}
 
 	// ISBN 리스트 추출
