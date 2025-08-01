@@ -38,7 +38,7 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(
 				authorize -> authorize.requestMatchers("/api/users/**", "/api/bookshelf/**", "/api/desk/**",
-					"/api/books/**").authenticated().anyRequest().permitAll())
+					"/api/books/**", "/api/reports/**").authenticated().anyRequest().permitAll())
 			.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(oAuth2SuccessHandler))
 			.logout(logout -> logout.logoutUrl("/logout")
