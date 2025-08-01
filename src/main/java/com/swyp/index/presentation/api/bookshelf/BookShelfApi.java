@@ -5,6 +5,7 @@ import com.swyp.index.application.bookshelf.BookshelfService;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
+import com.swyp.index.presentation.dto.bookshelf.BookshelfSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,11 +29,11 @@ public class BookShelfApi {
 
     @Operation(summary = "완독 도서 목록 조회", description = "현재 상태가 'Finished'인 도서만 반환합니다.\n" + "사용자는 JWT 쿠키 인증을 기반으로 식별됩니다.")
 
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookshelfResponse.class)))), @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class))), @ApiResponse(responseCode = "404", description = "유저 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BookshelfSummaryDto.class)))), @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class))), @ApiResponse(responseCode = "404", description = "유저 정보 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))})
 
     //FINISHED에 해당하는 도서 목록 조회
     @GetMapping("/finished")
-    public ResponseEntity<List<BookshelfResponse>> getFinishedBooks(@AuthenticationPrincipal CustomPrincipal principal) {
+    public ResponseEntity<List<BookshelfSummaryDto>> getFinishedBooks(@AuthenticationPrincipal CustomPrincipal principal) {
 
         Long userId = principal.getId();
         return ResponseEntity.ok(bookshelfService.getFinishedBooks(userId));

@@ -4,6 +4,7 @@ import com.swyp.index.application.bookshelf.BookshelfService;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
+import com.swyp.index.presentation.dto.bookshelf.BookshelfSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,14 +33,14 @@ public class DeskApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공",
                     content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = BookshelfResponse.class)))),
+                            array = @ArraySchema(schema = @Schema(implementation = BookshelfSummaryDto.class)))),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/reading")
-    public ResponseEntity<List<BookshelfResponse>> getDeskBooks(@AuthenticationPrincipal CustomPrincipal principal) {
+    public ResponseEntity<List<BookshelfSummaryDto>> getDeskBooks(@AuthenticationPrincipal CustomPrincipal principal) {
         Long userId = principal.getId();
-        List<BookshelfResponse> deskBooks = bookshelfService.getDeskBooks(userId);
+        List<BookshelfSummaryDto> deskBooks = bookshelfService.getDeskBooks(userId);
         return ResponseEntity.ok(deskBooks);
     }
 }

@@ -1,20 +1,36 @@
 package com.swyp.index.domain.bookshelf;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.swyp.index.domain.book.Book;
-import com.swyp.index.domain.user.User;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import com.swyp.index.domain.book.Book;
+import com.swyp.index.domain.user.User;
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 //사용자와 특정 책 사이의 관계를 나타내는 엔티티
 //한 사용자가 한 책에 대해 가지는 독서 상태를 관리
@@ -37,7 +53,6 @@ public class Bookshelf {
 
     @OneToMany(mappedBy = "bookshelf", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PageRecord> pageRecords = new ArrayList<>();
-
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -83,5 +98,11 @@ public class Bookshelf {
         this.finalNote = finalNote;
     }
 
-
+    public void updateStatus(String status) {
+        try {
+            this.status = ReadingStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.INVALID_READING_STATUS);
+        }
+    }
 }

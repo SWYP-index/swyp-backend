@@ -22,10 +22,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findByIsbn(String isbn);
 
     // 감정별로 책을 조회하고, 해당 감정의 총 감정 점수로 내림차순 정렬
-    @Query("SELECT b FROM Book b JOIN b.bookStatsMap bs WHERE KEY(bs) = :emotionId ORDER BY bs.totalEmotionScore DESC")
-    List<Book> findBooksByEmotionIdOrderByTotalEmotionScoreDesc(@Param("emotionId") Long emotionId, Pageable pageable);
+    @Query("SELECT b FROM Book b JOIN b.bookStatsMap bs WHERE KEY(bs) = :emotionId ORDER BY bs.emotionScoreSum DESC")
+    List<Book> findBooksByEmotionIdOrderByEmotionScoreSumDesc(@Param("emotionId") Long emotionId, Pageable pageable);
 
-    // 책 ID로 감정 통계 조회, 총 감정 점수별로 감정 TOP3 내림차순 정렬
-    @Query("SELECT bs FROM Book b JOIN b.bookStatsMap bs WHERE b.id = :bookId ORDER BY bs.totalEmotionScore DESC")
-    List<BookStats> findTopByBookIdOrderByTotalEmotionScoreDesc(@Param("bookId") Long bookId, Pageable pageable);
+    // 책 ID로 감정 통계 조회, 총 감정 점수별로 내림차순 정렬
+    @Query("SELECT bs FROM Book b JOIN b.bookStatsMap bs WHERE b.id = :bookId ORDER BY bs.emotionScoreSum DESC")
+    List<BookStats> findAllByBookIdOrderByEmotionScoreSumDesc(@Param("bookId") Long bookId);
+
+    // 책 ID로 감정 통계 조회, 총 감정 점수별로 내림차순 정렬 (페이징 처리)
+    @Query("SELECT bs FROM Book b JOIN b.bookStatsMap bs WHERE b.id = :bookId ORDER BY bs.emotionScoreSum DESC")
+    List<BookStats> findTopByBookIdOrderByEmotionScoreSumDesc(@Param("bookId") Long bookId, Pageable pageable);
 }

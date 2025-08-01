@@ -21,6 +21,7 @@ public enum ErrorCode {
 	PAGE_NUMBER_REQUIRED(HttpStatus.BAD_REQUEST, "읽는 중인 기록에는 페이지 번호가 필요합니다."),
 
 	// 401
+	INVALID_READING_STATUS(HttpStatus.UNAUTHORIZED, "유효하지 않은 도서 상태입니다."),
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
 	ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
 	TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다."),

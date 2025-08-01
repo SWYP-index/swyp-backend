@@ -1,12 +1,13 @@
 package com.swyp.index.presentation.dto.bookshelf;
 
+import java.time.LocalDateTime;
+
 import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.presentation.dto.book.BookInfoDto;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -20,6 +21,8 @@ public class BookshelfResponse {
     private LocalDateTime createdAt;   // createdAt
     @Schema(description = "독서 완료일 (완독 상태가 아닐 경우 null)", example = "null")
     private LocalDateTime finishedAt; // finishedAt (완독 시 기록)
+    @Schema(description = "종합 감상평 (완독 상태가 아닐 경우 null)", example = "오랜만에 깊은 울림을 주는 책이었다.")
+    private String finalNote;
     @Schema(description = "책 상세 정보")
     private BookInfoDto book;       // 책 정보
 
@@ -29,6 +32,7 @@ public class BookshelfResponse {
         br.status = shelf.getStatus().name();
         br.createdAt = shelf.getCreatedAt();
         br.finishedAt = shelf.getFinishedAt();
+        br.finalNote = shelf.getFinalNote();
         br.book = BookInfoDto.from(shelf.getBook());
         return br;
     }
