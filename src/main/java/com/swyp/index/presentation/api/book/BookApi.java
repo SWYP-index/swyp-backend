@@ -8,15 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.swyp.index.application.book.BookCommandService;
 import com.swyp.index.application.book.BookQueryService;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.infrastructure.repository.UserRepository;
+import com.swyp.index.presentation.dto.book.BookDto;
 import com.swyp.index.presentation.dto.book.BookEmotionSearchResponse;
-import com.swyp.index.presentation.dto.book.BookResponse;
 import com.swyp.index.presentation.dto.book.BookTitleSearchResponse;
+import com.swyp.index.presentation.dto.book.StatusResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,14 +33,15 @@ import lombok.RequiredArgsConstructor;
 public class BookApi {
 
 	private final BookQueryService bookQueryService;
+	private final BookCommandService bookCommandService;
 	private final UserRepository userRepository;
 
 	@Operation(summary = "제목 검색", description = "책 제목과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
 		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
 	@GetMapping("/search/title")
-	public ResponseEntity<BookTitleSearchResponse> searchBooks(@RequestParam String keyword,
+	public ResponseEntity<BookTitleSearchResponse> searchBooksByTitle(@RequestParam String keyword,
 		@RequestParam int startIndex) {
-		return ResponseEntity.ok(bookQueryService.searchBooksByTitle(keyword, startIndex));
+		return ResponseEntity.ok(bookCommandService.fetchBooksByTitleAndStoreIfAbsent(keyword, startIndex));
 	}
 
 	@Operation(summary = "감정 검색", description = "감정 이름과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
@@ -46,16 +49,27 @@ public class BookApi {
 	@GetMapping("/search/emotion")
 	public ResponseEntity<BookEmotionSearchResponse> searchBooksByEmotion(@RequestParam String keyword,
 		@RequestParam int startIndex) {
-		return ResponseEntity.ok(bookQueryService.searchBooksByEmotion(keyword, startIndex));
+		return ResponseEntity.ok(bookQueryService.getBooksByEmotion(keyword, startIndex));
 	}
 
-	@Operation(summary = "상세 페이지", description = "책의 상태 값, 책 정보, 해당 책의 감정 점수를 내림차순으로 반환")
-	@GetMapping("/{isbn}/me")
-	public ResponseEntity<BookResponse> getBookDetail(@AuthenticationPrincipal CustomPrincipal principal,
+	@Operation(summary = "상세 페이지", description = "책 정보, 해당 책의 감정 점수를 내림차순으로 반환")
+	@GetMapping("/{isbn}")
+	public ResponseEntity<BookDto> getBookDetail(@PathVariable String isbn) {
+
+		return ResponseEntity.ok(bookQueryService.getBookDetail(isbn));
+	}
+
+	@Operation(summary = "해당 책의 상태 값", description = "유저가 해당 책에 남긴 상태 값(NONE, WISH, READING, FINISHED)을 반환합니다.")
+	@GetMapping("/{isbn}/me/status")
+	public ResponseEntity<StatusResponse> getUserStatus(@AuthenticationPrincipal CustomPrincipal principal,
 		@PathVariable String isbn) {
 		User user = userRepository.findById(principal.getId())
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-		return ResponseEntity.ok(bookQueryService.getBookDetail(user, isbn));
+		String status = bookQueryService.getUserStats(user, isbn)
+			.map(bookshelf -> bookshelf.getStatus().name())
+			.orElse("NONE");
+
+		return ResponseEntity.ok(new StatusResponse(status));
 	}
 }
