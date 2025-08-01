@@ -50,10 +50,13 @@ public class BookDto {
 	private Long totalEmotionCount;
 
 	@Schema(description = "책 통계 정보 리스트")
-	@JsonProperty("bookStats")
+	@JsonProperty("emotions")
 	private List<BookStatsDto> bookStatsDtos;
 
-	public record BookStatsDto(String emotionName, Long emotionScoreSum, double percentage) {
+	public record BookStatsDto(
+		@JsonProperty("name") String emotionName,
+		@JsonProperty("scoreSum") Long emotionScoreSum,
+		double percentage) {
 	}
 
 	public static BookDto from(Book book, List<BookStats> bookStats) {
