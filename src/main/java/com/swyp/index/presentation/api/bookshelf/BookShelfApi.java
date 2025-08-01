@@ -5,6 +5,7 @@ import com.swyp.index.application.bookshelf.BookshelfService;
 import com.swyp.index.global.exception.ErrorResponse;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
+import com.swyp.index.presentation.dto.bookshelf.BookshelfSummaryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,7 +33,7 @@ public class BookShelfApi {
 
     //FINISHED에 해당하는 도서 목록 조회
     @GetMapping("/finished")
-    public ResponseEntity<List<BookshelfResponse>> getFinishedBooks(@AuthenticationPrincipal CustomPrincipal principal) {
+    public ResponseEntity<List<BookshelfSummaryDto>> getFinishedBooks(@AuthenticationPrincipal CustomPrincipal principal) {
 
         Long userId = principal.getId();
         return ResponseEntity.ok(bookshelfService.getFinishedBooks(userId));
