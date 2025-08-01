@@ -57,6 +57,11 @@ public class RecordService {
         //책장 조회 혹은 생성
         Bookshelf bookshelf = bookshelfRepository.findByUserAndBook(user, book).orElseGet(() -> bookshelfRepository.save(Bookshelf.startReading(user, book)));
 
+        //완독한 책인지 검증하는 로직 추가
+        if(bookshelf.getStatus() ==ReadingStatus.FINISHED){
+            throw new CustomException(ErrorCode.CANNOT_RECORD_FINISHED_BOOK);
+        }
+
         //RecordEmotion 리스트 변환
         List<RecordEmotion> recordEmotions = request.getEmotions().stream().map(emotionDto -> {
             Emotion emotion = emotionRepository.findById(emotionDto.getEmotionId()).orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
@@ -67,9 +72,9 @@ public class RecordService {
         bookshelf.addPageRecord(pageRecord);
         bookshelfRepository.save(bookshelf);
 
-        //finished 상태 호출 시 완독 처리
+        //다 읽음 상태일 경우
         if (request.getStatus() == ReadingStatus.FINISHED) {
-            bookshelf.finish(request.getIsbn());
+            bookshelf.finish(request.getFinalNote());
         }
 
 		eventPublisher.publishEvent(

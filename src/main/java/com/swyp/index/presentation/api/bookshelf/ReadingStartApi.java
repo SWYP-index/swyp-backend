@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "내 서재 관리 API", description = "사용자 본인의 서재에 책을 추가하고 상태 변경 API입니다.")
+@Tag(name = "책 읽기 시작 API", description = "책을 처음으로 책상에 추가하는 API")
 @RestController
 @RequestMapping("/api/addBookshelf")
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class ReadingStartApi {
 
     //상세페이지에서 읽기 시작 요청을 보내면, READING 상태의 Bookshelf 에그리거트를 생성하여 반환
     @Operation(
-            summary = "내 서재에 새로운 책 등록",
-            description = "책 상세페이지 등에서 특정 책(ISBN)을 '읽는 중' 상태로 내 서재에 등록합니다."
+            summary = "책 읽기 시작 (책상에 추가)",
+            description = "책 상세페이지 등에서 특정 책(ISBN)을 '읽는 중' 상태로 책상에 등록합니다."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "등록 성공",
@@ -40,7 +40,7 @@ public class ReadingStartApi {
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "409", description = "이미 서재에 등록된 책",
+            @ApiResponse(responseCode = "409", description = "이미 책상에 등록된 책",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)))
     })
