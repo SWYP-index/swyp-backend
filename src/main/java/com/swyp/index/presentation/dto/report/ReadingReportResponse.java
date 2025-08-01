@@ -1,14 +1,15 @@
 package com.swyp.index.presentation.dto.report;
 
 
+import com.swyp.index.domain.book.Book;
+import com.swyp.index.domain.book.BookInfo;
 import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.presentation.dto.book.BookInfoDto;
 import com.swyp.index.presentation.dto.book.BookStatsDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -23,20 +24,38 @@ import java.util.List;
 @Schema(description = "독서 리포트 카드 응답 DTO")
 public class ReadingReportResponse {
 
-    @Schema(description = "책장 고유 ID", example = "101")
-    private Long bookshelfId;
+    @Schema(description = "도서 제목")
+    private String title;
 
-    @Schema(description = "독서 상태(Reading, Finished)", example = "READING")
+    @Schema(description = "저자")
+    private String author;
+
+    @Schema(description = "ISBN")
+    private String isbn;
+
+    @Schema(description = "커버 이미지 URL")
+    private String coverImageUrl;
+
+    @Schema(description = "출판사")
+    private String publisher;
+
+    @Schema(description = "카테고리")
+    private String category;
+
+    @Schema(description = "발행일")
+    private LocalDate pubDate;
+
+    @Schema(description = "독서 상태")
     private String status;
 
-    @Schema(description = "독서 시작일", example = "2025-07-01T00:00:00")
-    private LocalDateTime createdAt;
+    @Schema(description = "독서 시작일")
+    private LocalDate createdAt;
 
-    @Schema(description = "독서 완료일", example = "2025-07-20T00:00:00")
-    private LocalDateTime finishedAt;
+    @Schema(description = "독서 완료일")
+    private LocalDate finishedAt;
 
-    @Schema(description = "도서 정보")
-    private BookInfoDto book;
+    @Schema(description = "현재 읽고 있는 페이지 (읽는 중일 경우)")
+    private Integer currentPage;
 
     @Schema(description = "감정 비율 리스트")
     private List<BookStatsDto> emotionStats;
@@ -44,14 +63,27 @@ public class ReadingReportResponse {
     /**
      * Bookshelf + 감정 분석 결과를 기반으로 응답 DTO 생성
      */
-    public static ReadingReportResponse of(Bookshelf bookshelf, List<BookStatsDto> stats){
+    public static ReadingReportResponse of(Bookshelf bookshelf, List<BookStatsDto> stats, Integer currentPage){
+        Book book = bookshelf.getBook();
+        BookInfo info = book.getBookInfo();
+
         ReadingReportResponse r = new ReadingReportResponse();
-        r.bookshelfId = bookshelf.getId();
+
+        r.title = info.getTitle();
+        r.author = info.getAuthor();
+        r.isbn = book.getIsbn();
+        r.coverImageUrl = info.getCoverImageUrl();
+        r.publisher = info.getPublisher();
+        r.category = info.getCategory();
+        r.pubDate = info.getPublishedDate();
+
         r.status = bookshelf.getStatus().name();
-        r.createdAt = bookshelf.getCreatedAt();
-        r.finishedAt = bookshelf.getFinishedAt();
-        r.book = BookInfoDto.from(bookshelf.getBook());
+        r.createdAt = bookshelf.getCreatedAt().toLocalDate();
+        r.finishedAt = bookshelf.getFinishedAt() != null ? bookshelf.getFinishedAt().toLocalDate() : null; // null 인지 체크
+
+        r.currentPage = currentPage;
         r.emotionStats = stats;
+
         return r;
     }
 

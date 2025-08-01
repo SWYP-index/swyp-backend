@@ -1,7 +1,9 @@
 package com.swyp.index.application.report;
 
 import com.swyp.index.domain.bookshelf.Bookshelf;
+import com.swyp.index.domain.bookshelf.ReadingStatus;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
+import com.swyp.index.infrastructure.repository.PageRecordRepository;
 import com.swyp.index.presentation.dto.book.BookStatsDto;
 import com.swyp.index.presentation.dto.report.ReadingReportResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class ReadingReportService {
 
     private final BookshelfRepository bookshelfRepository;
     private final EmotionAnalysisService emotionAnalysisService;
+    private final PageRecordRepository pageRecordRepository;
 
     /**
      * 사용자의 모든 책장(읽는 중 + 완독) 목록에 대해 감정 통계를 포함한 리포트 생성
@@ -44,7 +47,17 @@ public class ReadingReportService {
                 .map(bs -> {
                     String isbn = bs.getBook().getIsbn();
                     List<BookStatsDto> stats = emotionAnalysisService.getUserBookEmotionStats(userId, isbn);
-                    return ReadingReportResponse.of(bs, stats);
+
+                    //current page 계산(Reading 상태일 때만)
+                    Integer currentPage = null;
+                    if(bs.getStatus() == ReadingStatus.READING){
+                        currentPage = pageRecordRepository
+                                .findLatestPageByBookshelfId(bs.getId())
+                                .stream()
+                                .findFirst()
+                                .orElse(null);
+                    }
+                    return ReadingReportResponse.of(bs, stats, currentPage);
                 })
                 .collect(Collectors.toList());
 

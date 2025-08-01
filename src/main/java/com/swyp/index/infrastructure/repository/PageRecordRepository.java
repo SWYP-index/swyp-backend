@@ -17,4 +17,10 @@ public interface PageRecordRepository extends JpaRepository<PageRecord, Long> {
             "JOIN FETCH re.emotion " +
             "WHERE pr.bookshelf.user = :user AND pr.createdAt BETWEEN :start AND :end")
     List<PageRecord> findRecordsWithEmotionByUserAndDate(@Param("user") User user, @Param("start")LocalDateTime start, @Param("end") LocalDateTime end);
+
+    // 최신 기록 1개만 page 값으로 가져오기
+    @Query("SELECT pr.page FROM PageRecord pr " +
+           "WHERE pr.bookshelf.id = :bookshelfId " +
+           "ORDER BY pr.createdAt DESC")
+    List<Integer> findLatestPageByBookshelfId(@Param("bookshelfId") Long bookshelfId);
 }
