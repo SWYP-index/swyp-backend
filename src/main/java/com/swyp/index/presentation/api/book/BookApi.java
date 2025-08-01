@@ -63,16 +63,4 @@ public class BookApi {
 
 		return ResponseEntity.ok(bookQueryService.getBookDetail(user, isbn));
 	}
-
-	// @Operation(summary = "책 상태 업데이트", description = "사용자의 해당 책 상태 값을 업데이트합니다. 상태 값은 NONE, WISH, READING, FINISHED 중 하나입니다.")
-	// @PatchMapping("/{isbn}/me/status")
-	// public ResponseEntity<Void> updateBookStatus(@AuthenticationPrincipal CustomPrincipal principal,
-	// 	@PathVariable String isbn, @RequestBody ReadingStatusRequest statusRequest) {
-	// 	User user = userRepository.findById(principal.getId())
-	// 		.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-	//
-	// 	bookCommandService.updateBookStatus(user, isbn, statusRequest.status());
-	//
-	// 	return ResponseEntity.noContent().build();
-	// }
 }
