@@ -55,7 +55,7 @@ public class EmotionAnalysisService {
             double percentage = (s.getTotalScore() * 100.0) / total;
 
             //emotionName으로 emotionId 추출
-            EmotionType emotion = EmotionType.fromName(s.getEmotionType());
+            EmotionType emotion = EmotionType.fromName(s.getEmotionName());
             result.add(new UserBookEmotionStatDto(
                     emotion.getId(),      //감정 ID
                     emotion.getName(),    //감정 한글 이름
@@ -76,7 +76,7 @@ public class EmotionAnalysisService {
         return stats.stream()
                 .limit(3)
                 .map(s -> {
-                    EmotionType emotion = EmotionType.fromName(s.getEmotionType());
+                    EmotionType emotion = EmotionType.fromName(s.getEmotionName());
                     return new EmotionRankingResponse(
                             emotion.getId(),
                             emotion.getName(),
