@@ -49,15 +49,15 @@ public class BookDto {
 	private Long totalEmotionCount;
 
 	@Schema(description = "책 통계 정보 리스트")
-	private List<EmotionDto> emotions;
+	private List<BookEmotionDto> emotions;
 
-	public record EmotionDto(Long id, String name, Long scoreSum, double percentage) {
+	public record BookEmotionDto(Long id, String name, Long scoreSum, double percentage) {
 	}
 
 	public static BookDto from(Book book, List<BookStats> bookStats) {
 		BookInfo info = book.getBookInfo();
 
-		List<EmotionDto> statsDtos = mapBookStatsToDtos(book.getTotalEmotionScoreSum(), bookStats);
+		List<BookEmotionDto> bookEmotionDtos = mapBookStatsToDtos(book.getTotalEmotionScoreSum(), bookStats);
 
 		return BookDto.builder()
 			.isbn(book.getIsbn())
@@ -69,17 +69,17 @@ public class BookDto {
 			.publisher(info.getPublisher())
 			.category(info.getCategory())
 			.totalEmotionCount(book.getTotalEmotionCount())
-			.emotions(statsDtos)
+			.emotions(bookEmotionDtos)
 			.build();
 	}
 
-	private static List<EmotionDto> mapBookStatsToDtos(Long totalSum, List<BookStats> bookStats) {
+	private static List<BookEmotionDto> mapBookStatsToDtos(Long totalSum, List<BookStats> bookStats) {
 		return bookStats.stream().map(bs -> {
 			String emotionName = EmotionType.getNameById(bs.getEmotionId());
 			long scoreSum = bs.getEmotionScoreSum();
 			double percentage = calculatePercentage(scoreSum, totalSum);
 
-			return new EmotionDto(bs.getEmotionId(), emotionName, bs.getEmotionScoreSum(), percentage);
+			return new BookEmotionDto(bs.getEmotionId(), emotionName, bs.getEmotionScoreSum(), percentage);
 		}).toList();
 	}
 
