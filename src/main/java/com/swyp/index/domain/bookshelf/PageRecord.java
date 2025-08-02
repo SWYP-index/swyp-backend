@@ -33,7 +33,7 @@ public class PageRecord {
     /**
      * 기록을 남긴 페이지
      */
-    private int page;
+    private Integer page;
 
     /**
      * 기록 내용
@@ -55,14 +55,14 @@ public class PageRecord {
     private List<RecordEmotion> recordEmotions = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    public PageRecord(Bookshelf bookshelf, int page, String content) {
+    public PageRecord(Bookshelf bookshelf, Integer page, String content) {
         this.bookshelf = bookshelf;
         this.page = page;
         this.content = content;
     }
 
     // 페이지 기록과 감정 목록을 한 번에 생성
-    public static PageRecord create(Bookshelf bookshelf, int page, String content, List<RecordEmotion> recordEmotions) {
+    public static PageRecord create(Bookshelf bookshelf, Integer page, String content, List<RecordEmotion> recordEmotions) {
 
         //기록 인스턴스 생성
         PageRecord pr = PageRecord.builder().bookshelf(bookshelf).page(page).content(content).build();
