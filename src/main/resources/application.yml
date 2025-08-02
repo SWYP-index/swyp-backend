@@ -75,3 +75,8 @@ aladin:
 logging:
   level:
     org.springframework.security: DEBUG
+
+cloud:
+  aws:
+    s3:
+      base-url: https://index-service-assets.s3.ap-northeast-2.amazonaws.com/ # S3 버킷 기본 URL
