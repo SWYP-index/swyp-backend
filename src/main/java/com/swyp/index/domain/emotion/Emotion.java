@@ -19,4 +19,13 @@ public class Emotion {
 
     @Enumerated(EnumType.STRING)
     private EmotionCategory category;
+
+    @Column(nullable = false)
+    private String iconImageUrl;
+
+    public Emotion(String name, EmotionCategory category, String iconImageUrl) {
+        this.name = name;
+        this.category = category;
+        this.iconImageUrl = iconImageUrl;
+    }
 }

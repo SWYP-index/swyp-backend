@@ -17,23 +17,18 @@ public class RecordEmotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 이 감정 기록이 속한 '기록 카드'
-     */
+    /** 이 감정 기록이 속한 '기록 카드' */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "page_record_id")
     private PageRecord pageRecord;
 
-    /**
-     * 어떤 종류의 감정인지 (감동, 기쁨 등)
-     */
+    /** 어떤 종류의 감정인지 (감동, 기쁨 등) */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emotion_id")
     private Emotion emotion;
 
-    /**
-     * 해당 감정에 대한 점수
-     */
+
+    /** 해당 감정에 대한 점수 */
     private int emotionScore;
 
     @Builder
