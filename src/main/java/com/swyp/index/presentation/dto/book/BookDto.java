@@ -3,7 +3,6 @@ package com.swyp.index.presentation.dto.book;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookInfo;
 import com.swyp.index.domain.book.BookStats;
@@ -50,19 +49,15 @@ public class BookDto {
 	private Long totalEmotionCount;
 
 	@Schema(description = "책 통계 정보 리스트")
-	@JsonProperty("emotions")
-	private List<StatsDto> statsDtos;
+	private List<EmotionDto> emotions;
 
-	public record StatsDto(
-		@JsonProperty("name") String emotionName,
-		@JsonProperty("scoreSum") Long emotionScoreSum,
-		double percentage) {
+	public record EmotionDto(Long id, String name, Long scoreSum, double percentage) {
 	}
 
 	public static BookDto from(Book book, List<BookStats> bookStats) {
 		BookInfo info = book.getBookInfo();
 
-		List<StatsDto> statsDtos = mapBookStatsToDtos(book.getTotalEmotionScoreSum(), bookStats);
+		List<EmotionDto> statsDtos = mapBookStatsToDtos(book.getTotalEmotionScoreSum(), bookStats);
 
 		return BookDto.builder()
 			.isbn(book.getIsbn())
@@ -74,17 +69,17 @@ public class BookDto {
 			.publisher(info.getPublisher())
 			.category(info.getCategory())
 			.totalEmotionCount(book.getTotalEmotionCount())
-			.statsDtos(statsDtos)
+			.emotions(statsDtos)
 			.build();
 	}
 
-	private static List<StatsDto> mapBookStatsToDtos(Long totalSum, List<BookStats> bookStats) {
+	private static List<EmotionDto> mapBookStatsToDtos(Long totalSum, List<BookStats> bookStats) {
 		return bookStats.stream().map(bs -> {
 			String emotionName = EmotionType.getNameById(bs.getEmotionId());
 			long scoreSum = bs.getEmotionScoreSum();
 			double percentage = calculatePercentage(scoreSum, totalSum);
 
-			return new StatsDto(emotionName, bs.getEmotionScoreSum(), percentage);
+			return new EmotionDto(bs.getEmotionId(), emotionName, bs.getEmotionScoreSum(), percentage);
 		}).toList();
 	}
 
