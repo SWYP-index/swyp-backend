@@ -47,8 +47,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
             cd /home/ec2-user
             docker-compose down
-            docker-compose pull
+            docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
             docker-compose up -d
