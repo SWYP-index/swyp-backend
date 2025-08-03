@@ -60,14 +60,15 @@ public class BookshelfService {
         if (!bookshelf.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN_ACCESS);
         }
-        //Bookshelf의 상태를 변경하고, finalNote를 저장함.
+        //Bookshelf의 상태를(다 읽음) 변경하고, finalNote를 저장함.
         bookshelf.finish(request.getFinalNote());
 
         //content와 감정들은 별도의 PageRecord로 생성하여 추가
         List<RecordEmotion> recordEmotions = createRecordEmotions(request.getEmotions());
         //페이지가 없는 최종 기록이므로 page 파라미터는 null로 전달.
         PageRecord finalRecord = PageRecord.create(bookshelf,null, request.getContent(), recordEmotions);
-        //bookshelf.addPageRecord(finalRecord); // PageRecord.create 내부에서 이 로직을 처리해서 주석 처리
+        bookshelfRepository.save(bookshelf);
+
 
         return CompletionRecordResponse.from(finalRecord,bookshelf);
     }
