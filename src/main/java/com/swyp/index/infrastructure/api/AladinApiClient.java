@@ -1,5 +1,6 @@
 package com.swyp.index.infrastructure.api;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -11,10 +12,13 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class AladinApiClient {
-	private static final String API_KEY = "ttbleednj01131320001";
+
 	private static final String QUERY_TYPE = "Title";
 	private static final String SORT_TYPE = "SalesPoint";
 	private static final String OUTPUT_FORMAT = "js";
+
+	@Value("${aladin.api.ttbkey}")
+	private String API_KEY;
 
 	private final WebClient webClient;
 	private final ObjectMapper objectMapper;
