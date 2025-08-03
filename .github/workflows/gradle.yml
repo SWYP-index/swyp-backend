@@ -51,3 +51,4 @@ jobs:
             docker-compose down
             docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
             docker-compose up -d
+            docker system prune -f
