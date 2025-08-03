@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.swyp.index.application.user.CustomOAuth2UserService;
+import com.swyp.index.global.exception.CustomAuthenticationEntryPoint;
 import com.swyp.index.global.security.JwtAuthenticationFilter;
 import com.swyp.index.global.security.OAuth2SuccessHandler;
 
@@ -25,9 +26,11 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final OAuth2SuccessHandler oAuth2SuccessHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 	private final CorsConfigurationSource corsConfigurationSource;
 
 	@Bean
@@ -43,6 +46,9 @@ public class SecurityConfig {
 				.anyRequest().permitAll())
 			.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(oAuth2SuccessHandler))
+			.exceptionHandling(exceptionHandling ->
+				exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint)
+			)
 			.logout(logout -> logout.logoutUrl("/logout")
 				.logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
 				.deleteCookies("accessToken", "refreshToken"));
