@@ -1,19 +1,21 @@
 package com.swyp.index.presentation.dto.record;
 
-import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.domain.bookshelf.PageRecord;
-import com.swyp.index.domain.bookshelf.ReadingStatus;
-import com.swyp.index.domain.bookshelf.RecordEmotion;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.swyp.index.domain.bookshelf.Bookshelf;
+import com.swyp.index.domain.bookshelf.PageRecord;
+import com.swyp.index.domain.bookshelf.ReadingStatus;
+import com.swyp.index.domain.bookshelf.RecordEmotion;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Getter;
+
 @Getter
 public class CompletionRecordResponse {
+    
     private final Long recordId;
     private final String content;
     private final String finalNote;
