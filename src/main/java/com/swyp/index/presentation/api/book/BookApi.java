@@ -1,5 +1,7 @@
 package com.swyp.index.presentation.api.book;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +18,7 @@ import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.book.BookDto;
-import com.swyp.index.presentation.dto.book.BookEmotionSearchResponse;
-import com.swyp.index.presentation.dto.book.BookTitleSearchResponse;
+import com.swyp.index.presentation.dto.book.BookSearchResponse;
 import com.swyp.index.presentation.dto.book.StatusResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +40,7 @@ public class BookApi {
 	@Operation(summary = "제목 검색", description = "책 제목과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
 		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
 	@GetMapping("/search/title")
-	public ResponseEntity<BookTitleSearchResponse> searchBooksByTitle(@RequestParam String keyword,
+	public ResponseEntity<BookSearchResponse> searchBooksByTitle(@RequestParam String keyword,
 		@RequestParam int startIndex) {
 		return ResponseEntity.ok(bookCommandService.fetchBooksByTitleAndStoreIfAbsent(keyword, startIndex));
 	}
@@ -47,9 +48,12 @@ public class BookApi {
 	@Operation(summary = "감정 검색", description = "감정 이름과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
 		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
 	@GetMapping("/search/emotion")
-	public ResponseEntity<BookEmotionSearchResponse> searchBooksByEmotion(@RequestParam String keyword,
+	public ResponseEntity<BookSearchResponse> searchBooksByEmotion(@RequestParam String keyword,
 		@RequestParam int startIndex) {
-		return ResponseEntity.ok(bookQueryService.getBooksByEmotion(keyword, startIndex));
+		List<BookDto> books = bookQueryService.getBooksByEmotion(keyword, startIndex);
+		Long totalResults = bookQueryService.getTotalResultsByEmtoion(keyword);
+
+		return ResponseEntity.ok(new BookSearchResponse(startIndex, totalResults, books));
 	}
 
 	@Operation(summary = "상세 페이지", description = "책 정보, 해당 책의 감정 점수를 내림차순으로 반환")

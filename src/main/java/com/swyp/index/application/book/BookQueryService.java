@@ -18,7 +18,6 @@ import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.repository.BookRepository;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.presentation.dto.book.BookDto;
-import com.swyp.index.presentation.dto.book.BookEmotionSearchResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,22 +29,17 @@ public class BookQueryService {
 	private final BookRepository bookRepository;
 	private final BookshelfRepository bookshelfRepository;
 
-	public BookEmotionSearchResponse getBooksByEmotion(String emotionName, int startIndex) {
+	public List<BookDto> getBooksByEmotion(String emotionName, int startIndex) {
 		Long emotionId = EmotionType.getIdByName(emotionName);
 
 		List<Book> books = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDesc(emotionId,
 			PageRequest.of(startIndex - 1, 10));
 
-		List<BookDto> bookDtos = new ArrayList<>();
+		return convertBookToDto(books);
+	}
 
-		for (Book book: books) {
-			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
-				book.getId(), PageRequest.of(0, 3));
-
-			bookDtos.add(BookDto.from(book, bookStats));
-		}
-
-		return new BookEmotionSearchResponse(startIndex, bookDtos);
+	public Long getTotalResultsByEmtoion(String emotionName) {
+		return bookRepository.countBooksByEmotionIdAndEmotionScoreSumGreaterThanZero(EmotionType.getIdByName(emotionName));
 	}
 
 	public BookDto getBookDetail(String isbn) {
@@ -58,10 +52,25 @@ public class BookQueryService {
 		return BookDto.from(book, BookStats);
 	}
 
+
+
 	public Optional<Bookshelf> getUserStats(User user, String isbn) {
 		Book book = bookRepository.findByIsbn(isbn)
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
 		return bookshelfRepository.findByUserAndBook(user, book);
+	}
+
+	private List<BookDto> convertBookToDto(List<Book> books) {
+		List<BookDto> bookDtos = new ArrayList<>();
+
+		for (Book book: books) {
+			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
+				book.getId(), PageRequest.of(0, 3));
+
+			bookDtos.add(BookDto.from(book, bookStats));
+		}
+
+		return bookDtos;
 	}
 }

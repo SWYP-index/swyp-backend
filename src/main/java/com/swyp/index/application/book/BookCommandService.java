@@ -16,7 +16,7 @@ import com.swyp.index.infrastructure.api.AladinSearchResponse;
 import com.swyp.index.infrastructure.redis.SearchCacheAdapter;
 import com.swyp.index.infrastructure.repository.BookRepository;
 import com.swyp.index.presentation.dto.book.BookDto;
-import com.swyp.index.presentation.dto.book.BookTitleSearchResponse;
+import com.swyp.index.presentation.dto.book.BookSearchResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +28,7 @@ public class BookCommandService {
 	private final SearchCacheAdapter cacheAdapter;
 	private final BookRepository bookRepository;
 
-	public BookTitleSearchResponse fetchBooksByTitleAndStoreIfAbsent(String title, int startIndex) {
+	public BookSearchResponse fetchBooksByTitleAndStoreIfAbsent(String title, int startIndex) {
 		Optional<List<String>> cachedIsbns = cacheAdapter.getIsbnsCache(title, startIndex);
 
 		if (cachedIsbns.isPresent()) {
@@ -38,14 +38,14 @@ public class BookCommandService {
 
 			List<BookDto> bookDtos = convertBookToDto(books);
 
-			return new BookTitleSearchResponse(startIndex, totalResults, bookDtos);
+			return new BookSearchResponse(startIndex, totalResults, bookDtos);
 		}
 
 		// 외부 API로 책 검색
 		AladinSearchResponse response = aladinApiClient.searchBooks(title, startIndex);
 
 		if (response.isEmpty()) {
-			return BookTitleSearchResponse.empty();
+			return BookSearchResponse.empty();
 		}
 
 		List<String> isbns = extractIsbns(response);
@@ -57,7 +57,7 @@ public class BookCommandService {
 
 		List<BookDto> bookDtos = convertBookToDto(books);
 
-		return new BookTitleSearchResponse(startIndex, response.totalResults(), bookDtos);
+		return new BookSearchResponse(startIndex, response.totalResults(), bookDtos);
 	}
 
 	private List<BookDto> convertBookToDto(List<Book> books) {
