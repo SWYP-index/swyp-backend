@@ -50,39 +50,5 @@ public class BookshelfService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * [추가] 특정 책을 '완독' 상태로 변경하고 최종 감상을 기록합니다.
-     */
-    public CompletionRecordResponse finishBookWithNote(Long userId, CompletionRecordCreateRequest request) {
-        Bookshelf bookshelf = bookshelfRepository.findById(request.getBookshelfId())
-                .orElseThrow(() -> new CustomException(ErrorCode.BOOKSHELF_NOT_FOUND));
-
-        if (!bookshelf.getUser().getId().equals(userId)) {
-            throw new CustomException(ErrorCode.FORBIDDEN_ACCESS);
-        }
-        //Bookshelf의 상태를(다 읽음) 변경하고, finalNote를 저장함.
-        bookshelf.finish(request.getFinalNote());
-
-        //content와 감정들은 별도의 PageRecord로 생성하여 추가
-        List<RecordEmotion> recordEmotions = createRecordEmotions(request.getEmotions());
-        //페이지가 없는 최종 기록이므로 page 파라미터는 null로 전달.
-        PageRecord finalRecord = PageRecord.create(bookshelf,null, request.getContent(), recordEmotions);
-        bookshelfRepository.save(bookshelf);
-
-
-        return CompletionRecordResponse.from(finalRecord,bookshelf);
-    }
-
-    // EmotionDto를 RecordEmotion 엔티티 리스트로 변환하는 헬퍼 메소드
-    private List<RecordEmotion> createRecordEmotions(List<EmotionDto> emotionDtos) {
-        if (emotionDtos == null || emotionDtos.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return emotionDtos.stream().map(dto -> {
-            Emotion emotion = emotionRepository.findById(dto.getEmotionId()).orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
-            return RecordEmotion.builder().emotion(emotion).emotionScore(dto.getScore()).build();
-        }).collect(Collectors.toList());
-    }
-
 
 }
