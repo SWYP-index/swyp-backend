@@ -1,5 +1,6 @@
 package com.swyp.index.global.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,11 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
+	public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex, HttpServletRequest request) {
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 
-		log.warn("CustomException Occurred: status={}, code={}, message={}",
-			response.getStatus(), ex.getErrorCode().name(), response.getMessage());
+		log.error("CustomException Occurred: uri={} method={} status={}, code={}, message={}",
+			request.getRequestURI(),request.getMethod(),response.getStatus(), ex.getErrorCode().name(), response.getMessage(),ex);
 
 		return ResponseEntity
 				.status(response.getStatus())
@@ -28,27 +29,41 @@ public class GlobalExceptionHandler {
 	 * @Valid 어노테이션 유효성 검사 실패 시 발생하는 예외를 처리하는 핸들러
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+			MethodArgumentNotValidException ex,
+			HttpServletRequest req
+	) {
 		String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-
-		// 에러 메시지를 담은 커스텀 BAD_REQUEST 코드가 없다면 INVALID_INPUT_VALUE를 쓰는게 일반적입니다.
 		ErrorResponse response = new ErrorResponse(ErrorCode.INVALID_INPUT_VALUE);
 
-		log.warn("MethodArgumentNotValidException Occurred: {}", errorMessage);
+		log.error("[ValidationException] uri={} method={} message={}",
+				req.getRequestURI(),
+				req.getMethod(),
+				errorMessage,
+				ex
+		);
 
 		return ResponseEntity
-			.status(HttpStatus.BAD_REQUEST)
-			.body(response);
+				.status(HttpStatus.BAD_REQUEST)
+				.body(response);
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-		log.error("Unhandled Exception Occurred: {}", ex.getMessage(), ex);
+	public ResponseEntity<ErrorResponse> handleException(
+			Exception ex,
+			HttpServletRequest req
+	) {
+		log.error("[UnhandledException] uri={} method={} message={}",
+				req.getRequestURI(),
+				req.getMethod(),
+				ex.getMessage(),
+				ex
+		);
 
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
 
 		return ResponseEntity
-			.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			.body(response);
+				.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(response);
 	}
 }
