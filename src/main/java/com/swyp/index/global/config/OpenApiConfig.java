@@ -33,7 +33,7 @@ public class OpenApiConfig {
                         .bearerFormat("JWT"));
 
         //서버 정보 설정
-        Server server = new Server().url("http://localhost:8080").description("인덱스 API 서버");
+        Server server = new Server().url("https://api-index.store").description("인덱스 API 서버");
 
         return new OpenAPI()
                 .info(info)
