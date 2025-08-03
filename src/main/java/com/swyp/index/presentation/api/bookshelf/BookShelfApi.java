@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/bookshelf")
 @Tag(name = "책장 API", description = "완독 도서 관리 API입니다.")
+@SecurityRequirement(name = "JWT Authentication")
 public class BookShelfApi {
     private final BookshelfService bookshelfService;
 

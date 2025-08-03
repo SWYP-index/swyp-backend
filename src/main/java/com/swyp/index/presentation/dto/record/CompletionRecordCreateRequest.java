@@ -9,8 +9,11 @@ import java.util.List;
 
 @Getter
 @Setter
+@Schema(description = "독서 기록 (완독) 생성 요청 DTO")
 public class CompletionRecordCreateRequest {
+
     @NotBlank(message = "ISBN은 필수입니다.")
+    @Schema(description = "도서 ISBN", example = "9791191114225", requiredMode = Schema.RequiredMode.REQUIRED)
     private String isbn;
 
     @Size(max = 1000, message = "내용은 1000자 이하로 입력해주세요.")
@@ -18,9 +21,10 @@ public class CompletionRecordCreateRequest {
     private String content;
 
     @Size(max = 1500, message = "종합 감상평은 1500자 이하로 입력해주세요.")
-    @Schema(description = "종합 감상평 ('다 읽음' 상태일 때 사용, 1500자 이내)", example = "오랜만에 깊은 울림을 주는 책이었다.")
-    private String finalNote; // 한 줄 요약 필드 (선택적)
+    @Schema(description = "종합 감상평 (1500자 이내)", example = "오랜만에 깊은 울림을 주는 책이었다.")
+    private String finalNote;
 
     @NotEmpty(message = "감정은 최소 1개 이상 선택해야 합니다.")
+    @Schema(description = "독서 기록에 대한 감정 목록 (최소 1개 이상 선택)")
     private List<EmotionDto> emotions;
 }

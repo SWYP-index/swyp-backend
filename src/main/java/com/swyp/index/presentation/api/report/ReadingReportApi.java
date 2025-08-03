@@ -7,6 +7,7 @@ import com.swyp.index.presentation.dto.book.UserBookEmotionStatDto;
 import com.swyp.index.presentation.dto.report.EmotionRankingResponse;
 import com.swyp.index.presentation.dto.report.ReadingReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
 @Tag(name = "독서 리포트 API", description = "읽는 중 + 완독한 책의 감정 분석 리포트를 반환합니다.")
+@SecurityRequirement(name = "JWT Authentication")
 public class ReadingReportApi {
 
     private final ReadingReportService readingReportService;
