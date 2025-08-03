@@ -11,13 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookStats;
 import com.swyp.index.domain.bookshelf.Bookshelf;
-import com.swyp.index.domain.emotion.Emotion;
+import com.swyp.index.domain.emotion.EmotionType;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.repository.BookRepository;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
-import com.swyp.index.infrastructure.repository.EmotionRepository;
 import com.swyp.index.presentation.dto.book.BookDto;
 import com.swyp.index.presentation.dto.book.BookEmotionSearchResponse;
 
@@ -30,13 +29,11 @@ public class BookQueryService {
 
 	private final BookRepository bookRepository;
 	private final BookshelfRepository bookshelfRepository;
-	private final EmotionRepository emotionRepository;
 
 	public BookEmotionSearchResponse getBooksByEmotion(String emotionName, int startIndex) {
-		Emotion emotion = emotionRepository.findByName(emotionName)
-			.orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
+		Long emotionId = EmotionType.getIdByName(emotionName);
 
-		List<Book> books = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDesc(emotion.getId(),
+		List<Book> books = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDesc(emotionId,
 			PageRequest.of(startIndex - 1, 10));
 
 		List<BookDto> bookDtos = new ArrayList<>();

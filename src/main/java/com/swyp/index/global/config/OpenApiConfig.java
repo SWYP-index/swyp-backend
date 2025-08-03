@@ -39,6 +39,5 @@ public class OpenApiConfig {
                 .info(info)
                 .servers(List.of(server))
                 .components(compnents);
-
     }
 }
