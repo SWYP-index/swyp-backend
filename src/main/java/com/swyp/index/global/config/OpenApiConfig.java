@@ -41,5 +41,4 @@ public class OpenApiConfig {
                 .components(compnents);
 
     }
-
 }
