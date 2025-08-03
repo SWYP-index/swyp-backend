@@ -1,5 +1,6 @@
 package com.swyp.index.presentation.dto.record;
 
+import com.swyp.index.domain.bookshelf.Bookshelf;
 import com.swyp.index.domain.bookshelf.PageRecord;
 import com.swyp.index.domain.bookshelf.RecordEmotion;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -11,42 +12,35 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@Schema(description = "독서 기록 응답 DTO")
-public class RecordResponse {
-
-    @Schema(description = "기록 ID", example = "1")
+public class CompletionRecordResponse {
     private final Long recordId;
-
-    // ◀◀ [수정] int -> Integer, '다 읽음' 기록의 null 페이지를 허용하기 위함
-    @Schema(description = "기록한 페이지 (완독 기록 시 null)", example = "106")
-    private final Integer page;
-
-    @Schema(description = "기록 내용", example = "주인공의 선택이 인상 깊었다.")
     private final String content;
+    private final String finalNote;
 
-    @Schema(description = "기록 생성일", example = "2025-07-31T02:48:41")
-    private final LocalDateTime createdAt;
+    //  createdAt 필드 이름을 finishedAt으로 변경하여 의미를 명확화
+    @Schema(description = "완독 처리 시각")
+    private final LocalDateTime finishedAt;
 
-    @Schema(description = "기록에 포함된 감정 목록")
     private final List<EmotionResponse> emotions;
 
     @Builder
-    private RecordResponse(Long recordId, Integer page, String content, LocalDateTime createdAt, List<EmotionResponse> emotions) {
+    private CompletionRecordResponse(Long recordId, String content, String finalNote, LocalDateTime finishedAt, List<EmotionResponse> emotions) {
         this.recordId = recordId;
-        this.page = page;
         this.content = content;
-        this.createdAt = createdAt;
+        this.finalNote = finalNote;
+        this.finishedAt = finishedAt;
         this.emotions = emotions;
     }
 
-    public static RecordResponse from(PageRecord pr) {
-        return RecordResponse.builder()
+    public static CompletionRecordResponse from(PageRecord pr, Bookshelf bs) {
+        return CompletionRecordResponse.builder()
                 .recordId(pr.getId())
-                .page(pr.getPage())
                 .content(pr.getContent())
-                .createdAt(pr.getCreatedAt())
+                .finalNote(bs.getFinalNote())
+                //  PageRecord의 생성 시각(createdAt)을 finishedAt 필드에 매핑
+                .finishedAt(pr.getCreatedAt())
                 .emotions(pr.getRecordEmotions().stream()
-                        .map(EmotionResponse::from)
+                        .map(CompletionRecordResponse.EmotionResponse::from)
                         .collect(Collectors.toList()))
                 .build();
     }
