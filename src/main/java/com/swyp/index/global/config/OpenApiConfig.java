@@ -25,7 +25,7 @@ public class OpenApiConfig {
                 .description("INDEX 프로젝트의 API 명세서입니다.");
 
         //인증 스키마 설정
-        Components compnents = new Components()
+        Components components = new Components()
                 .addSecuritySchemes(SECURITY_SCHEME, new SecurityScheme()
                         .name(SECURITY_SCHEME)
                         .type(SecurityScheme.Type.HTTP)
@@ -39,6 +39,6 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(info)
                 .servers(List.of(prodServer, localServer))
-                .components(compnents);
+                .components(components);
     }
 }

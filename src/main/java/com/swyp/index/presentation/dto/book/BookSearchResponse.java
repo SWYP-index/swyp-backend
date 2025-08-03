@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "책 검색 결과 응답 DTO")
 public class BookSearchResponse {
 
 	@Schema(description = "현재 페이지 번호", example = "2")
