@@ -17,16 +17,14 @@ public class PageRecordResponse {
     private final Integer page; // 페이지 기록이므로 page는 항상 존재 (Integer -> int)
     private final String content;
     private final LocalDateTime createdAt;
-    private final ReadingStatus status;
     private final List<EmotionResponse> emotions;
 
     @Builder
-    private PageRecordResponse(Long recordId, int page, String content, LocalDateTime createdAt, ReadingStatus status, List<EmotionResponse> emotions) {
+    private PageRecordResponse(Long recordId, int page, String content, LocalDateTime createdAt, List<EmotionResponse> emotions) {
         this.recordId = recordId;
         this.page = page;
         this.content = content;
         this.createdAt = createdAt;
-        this.status = status;
         this.emotions = emotions;
     }
 
@@ -36,7 +34,6 @@ public class PageRecordResponse {
                 .page(pr.getPage())
                 .content(pr.getContent())
                 .createdAt(pr.getCreatedAt())
-                .status(ReadingStatus.READING)
                 .emotions(pr.getRecordEmotions().stream()
                         .map(PageRecordResponse.EmotionResponse::from)
                         .collect(Collectors.toList()))

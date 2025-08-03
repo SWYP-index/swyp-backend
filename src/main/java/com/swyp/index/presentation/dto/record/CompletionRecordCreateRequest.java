@@ -1,5 +1,6 @@
 package com.swyp.index.presentation.dto.record;
 
+import com.swyp.index.domain.bookshelf.ReadingStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -9,8 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 public class CompletionRecordCreateRequest {
-    @NotNull(message = "책장 ID는 필수입니다.")
-    private Long bookshelfId;
+    @NotBlank(message = "ISBN은 필수입니다.")
+    private String isbn;
 
     @Size(max = 1000, message = "내용은 1000자 이하로 입력해주세요.")
     @Schema(description = "인상 깊은 구절 및 느낀 점 (1000자 이내)", example = "주인공의 선택이 인상 깊었다.")

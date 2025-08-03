@@ -1,4 +1,5 @@
 package com.swyp.index.presentation.dto.record;
+import com.swyp.index.domain.bookshelf.ReadingStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -8,8 +9,9 @@ import java.util.List;
 @Getter
 @Setter
 public class PageRecordCreateRequest {
-    @NotNull(message = "책장 ID는 필수입니다.")
-    private Long bookshelfId;
+
+    @NotBlank(message = "ISBN은 필수입니다.")
+    private String isbn;
 
     @NotNull(message = "페이지는 필수입니다.")
     private Integer page;
