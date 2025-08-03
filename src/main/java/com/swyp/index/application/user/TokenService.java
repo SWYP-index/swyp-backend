@@ -21,14 +21,14 @@ public class TokenService {
 
 	public void validateRefreshToken(String refreshToken) {
 		if (!jwtProvider.validateToken(refreshToken)) {
-			throw new CustomException(ErrorCode.TOKEN_INVALID);
+			throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
 		}
 
 		String id = jwtProvider.getId(refreshToken);
 		String storedRefreshToken = redisTemplate.opsForValue().get(id);
 
 		if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-			throw new CustomException(ErrorCode.TOKEN_INVALID);
+			throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
 		}
 	}
 

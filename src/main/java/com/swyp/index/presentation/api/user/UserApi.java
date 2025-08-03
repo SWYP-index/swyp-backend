@@ -1,12 +1,9 @@
 package com.swyp.index.presentation.api.user;
 
-import java.util.Map;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,13 +19,10 @@ import com.swyp.index.presentation.dto.user.UserResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/users")
 @Slf4j
 public class UserApi {
+
 	private final UserRepository userRepository;
 	private final JwtProvider jwtProvider;
 	private final TokenService tokenService;
@@ -60,31 +55,5 @@ public class UserApi {
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
 		return ResponseEntity.ok(UserResponse.from(user));
-	}
-
-	@Operation(summary = "Access Token 재발급", description = "쿠키에 담긴 Refresh Token을 사용하여 만료된 Access Token을 재발급받습니다.")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Access Token 재발급 성공",
-					content = @Content(schema = @Schema(type = "object", example = "{\"accessToken\": \"new_token_string...\"}"))),
-			@ApiResponse(responseCode = "401", description = "Refresh Token이 없거나 유효하지 않음", content = @Content)
-	})
-	@PostMapping("/refresh")
-	public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-
-		String refreshToken = null;
-
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if ("refreshToken".equals(cookie.getName())) {
-					refreshToken = cookie.getValue();
-					break;
-				}
-			}
-		}
-
-		tokenService.validateRefreshToken(refreshToken);
-
-		return ResponseEntity.ok(Map.of("accessToken", tokenService.reissueAccessToken(refreshToken)));
 	}
 }

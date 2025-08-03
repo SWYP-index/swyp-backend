@@ -6,9 +6,15 @@ import java.util.Map;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.swyp.index.application.user.AuthService;
+import com.swyp.index.application.user.TokenService;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.common.CookieUtil;
 import com.swyp.index.global.security.JwtProvider;
@@ -20,9 +26,12 @@ import com.swyp.index.presentation.dto.user.SignUpRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +42,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthApi {
+
 	private final AuthService authService;
+	private final TokenService tokenService;
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 
@@ -107,5 +118,31 @@ public class AuthApi {
 	){
 		boolean available = authService.isEmailAvailable(email);
 		return ResponseEntity.ok(Map.of("available", available));
+	}
+
+	@Operation(summary = "Access Token 재발급", description = "쿠키에 담긴 Refresh Token을 사용하여 만료된 Access Token을 재발급받습니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Access Token 재발급 성공",
+			content = @Content(schema = @Schema(type = "object", example = "{\"accessToken\": \"new_token_string...\"}"))),
+		@ApiResponse(responseCode = "401", description = "Refresh Token이 없거나 유효하지 않음", content = @Content)
+	})
+	@PostMapping("/refresh")
+	public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+
+		String refreshToken = null;
+
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("refreshToken".equals(cookie.getName())) {
+					refreshToken = cookie.getValue();
+					break;
+				}
+			}
+		}
+
+		tokenService.validateRefreshToken(refreshToken);
+
+		return ResponseEntity.ok(Map.of("accessToken", tokenService.reissueAccessToken(refreshToken)));
 	}
 }
