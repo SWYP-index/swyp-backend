@@ -46,7 +46,7 @@ public class BookApi {
 	}
 
 	@Operation(summary = "감정 검색", description = "감정 이름과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
-		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
+		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다. 감정 총점이 높은 순으로 내림차순 정렬됩니다.")
 	@GetMapping("/search/emotion")
 	public ResponseEntity<BookSearchResponse> searchBooksByEmotion(@RequestParam String keyword,
 		@RequestParam int startIndex) {
