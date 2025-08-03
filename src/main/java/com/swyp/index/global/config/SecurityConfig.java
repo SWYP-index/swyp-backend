@@ -36,9 +36,11 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable)
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(
-				authorize -> authorize.requestMatchers("/api/users/**", "/api/bookshelf/**", "/api/desk/**",
-					"/api/books/**", "/api/reports/**","/api/addBookshelf/**").authenticated().anyRequest().permitAll())
+			.authorizeHttpRequests(authorize -> authorize
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/api/users/**", "/api/bookshelf/**", "/api/desk/**", "/api/books/**",
+					"/api/reports/**", "/api/addBookshelf/**").authenticated()
+				.anyRequest().permitAll())
 			.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(oAuth2SuccessHandler))
 			.logout(logout -> logout.logoutUrl("/logout")
