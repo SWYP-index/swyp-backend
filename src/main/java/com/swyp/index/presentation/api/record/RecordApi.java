@@ -14,10 +14,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "독서 기록 API", description = "페이지 기록 및 완독 처리를 담당하는 API")
 @RestController
@@ -39,6 +38,7 @@ public class RecordApi {
     ) {
         return ResponseEntity.ok(recordService.createPageRecord(principal.getId(), request));
     }
+
     /**
      * 책을 '완독' 상태로 변경하고 최종 감상을 기록합니다.
      */
@@ -48,6 +48,8 @@ public class RecordApi {
             @AuthenticationPrincipal CustomPrincipal principal,
             @Valid @RequestBody CompletionRecordCreateRequest request
     ) {
-        return ResponseEntity.ok(bookshelfService.finishBookWithNote(principal.getId(), request));
+        return ResponseEntity.ok(recordService.createCompletionRecord(principal.getId(), request));
     }
+
+
 }
