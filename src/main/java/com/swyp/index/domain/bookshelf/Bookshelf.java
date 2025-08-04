@@ -84,6 +84,10 @@ public class Bookshelf {
         return Bookshelf.builder().user(user).book(book).status(ReadingStatus.READING).build();
     }
 
+    public static Bookshelf finishReading(User user, Book book){
+        return Bookshelf.builder().user(user).book(book).status(ReadingStatus.FINISHED).build();
+    }
+
     //페이지 기록을 추가
     public void addPageRecord(PageRecord pageRecord) {
         this.pageRecords.add(pageRecord);
