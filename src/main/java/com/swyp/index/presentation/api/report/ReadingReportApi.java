@@ -32,15 +32,14 @@ public class ReadingReportApi {
     /**
      * 사용자 리포트 목록 조회 (책상 + 책장 감정 통계 포함)
      */
-    @GetMapping("/{isbn}")
+    @GetMapping
     @Operation(summary = "사용자 독서 리포트 조회", description = "읽는 중 + 완독한 책의 감정 분석 리포트(감정 점수 비율)를 반환합니다.")
-    public List<ReadingReportResponse> getUserReadingReports(
-            @PathVariable String isbn,
+    public ResponseEntity<List<ReadingReportResponse>> getUserReadingReports(
             @AuthenticationPrincipal CustomPrincipal principal
     ) {
         Long userId = principal.id();
-        List<UserBookEmotionStatDto> stats = emotionAnalysisService.getUserBookEmotionStats(userId, isbn);
-        return readingReportService.getUserReadingReport(userId);
+        List<ReadingReportResponse> reports = readingReportService.getUserReadingReport(userId);
+        return ResponseEntity.ok(reports);
     }
 
     /**
