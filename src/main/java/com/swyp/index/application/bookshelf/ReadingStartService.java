@@ -1,5 +1,7 @@
 package com.swyp.index.application.bookshelf;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.bookshelf.Bookshelf;
@@ -10,9 +12,8 @@ import com.swyp.index.infrastructure.repository.BookRepository;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.bookshelf.BookshelfResponse;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +33,13 @@ public class ReadingStartService {
         if (bookshelfRepository.existsByUserAndBook(user, book)) {
             throw new CustomException(ErrorCode.BOOKSHELF_ALREADY_EXISTS);
         }
+
         Bookshelf newBookshelf = Bookshelf.startReading(user, book);
         Bookshelf savedBookshelf = bookshelfRepository.save(newBookshelf);
+
+        // 책의 통계 정보를 초기화합니다.
+        book.initializeStatsIfAbsent();
+
         return BookshelfResponse.of(savedBookshelf);
     }
 
