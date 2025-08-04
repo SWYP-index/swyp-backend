@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @Tag(name = "책상 API", description = "책상에 올린 도서 관련 API입니다.")
+@SecurityRequirement(name = "JWT Authentication")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/desk")

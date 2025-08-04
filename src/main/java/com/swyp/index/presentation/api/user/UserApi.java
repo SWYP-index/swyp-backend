@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "사용자 API", description = "인증된 사용자의 정보 조회 및 토큰 관리 API입니다.")
+@SecurityRequirement(name = "JWT Authentication")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
