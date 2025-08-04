@@ -37,7 +37,6 @@ public class RecordService {
      * 읽는 중 페이지 기록 추가
      */
     public PageRecordResponse createPageRecord(Long userId, PageRecordCreateRequest req) {
-        log.info("[createPageRecord] 호출 userId={}, req={}", userId, req);
         // 1) 사용자, 책 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -56,17 +55,12 @@ public class RecordService {
 
         // 5) 감정 변환 전
         List<EmotionDto> emotionDtos = req.getEmotions();
-        log.info("[createPageRecord] 변환할 감정 리스트 size={}, ids={}",
-                emotionDtos.size(),
-                emotionDtos.stream().map(EmotionDto::getEmotionId).toList());
 
         // 5) 감정 변환
         List<RecordEmotion> ems = emotionDtos.stream()
                 .map(dto -> {
-                    log.debug("[createPageRecord] 감정 조회 시도 emotionId={}", dto.getEmotionId());
                     Emotion e = emotionRepository.findById(dto.getEmotionId())
                             .orElseThrow(() -> {
-                                log.error("[createPageRecord] EMOTION_NOT_FOUND emotionId={}", dto.getEmotionId());
                                 return new CustomException(ErrorCode.EMOTION_NOT_FOUND);
                             });
                     return RecordEmotion.builder()
@@ -85,9 +79,6 @@ public class RecordService {
         // 7) 저장 (cascade ALL)
         bookshelfRepository.save(shelf);
 
-        // → 저장 직후에 로그 추가
-        log.info("[createPageRecord] 저장 완료 recordId={}, createdAt={}",
-                pr.getId(), pr.getCreatedAt());
 
         // 8) 이벤트 발행
         eventPublisher.publishEvent(
@@ -124,10 +115,8 @@ public class RecordService {
         // 감정 변환
         List<RecordEmotion> ems = req.getEmotions().stream()
                 .map(dto -> {
-                    log.debug("[createCompletionRecord] 감정 조회 시도 emotionId={}", dto.getEmotionId());
                     Emotion e = emotionRepository.findById(dto.getEmotionId())
                             .orElseThrow(() -> {
-                                log.error("[createCompletionRecord] EMOTION_NOT_FOUND emotionId={}", dto.getEmotionId());
                                 return new CustomException(ErrorCode.EMOTION_NOT_FOUND);
                             });
                     return RecordEmotion.builder()
@@ -136,18 +125,13 @@ public class RecordService {
                             .build();
                 })
                 .collect(Collectors.toList());
-        log.info("[createCompletionRecord] 변환된 RecordEmotion 개수={}", ems.size());
 
         // PageRecord 생성
         PageRecord pr = PageRecord.create(shelf, null, req.getContent(), ems);
         shelf.addPageRecord(pr);
-        log.debug("[createCompletionRecord] 생성된 PageRecord={}", pr);
         PageRecord savedPr = pageRecordRepository.save(pr);
         // 저장
         bookshelfRepository.save(shelf);
-        //  로그 찍기
-        log.info("[createCompletionRecord] 저장 완료 recordId={}, finishedAt={}",
-                savedPr.getId(), shelf.getFinishedAt());
 
         // 이벤트 발행
         eventPublisher.publishEvent(
