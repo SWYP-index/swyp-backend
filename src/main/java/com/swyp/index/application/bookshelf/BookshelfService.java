@@ -50,6 +50,13 @@ public class BookshelfService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getReadingIsbns(Long userId) {
+        return bookshelfRepository.findReadingBooksByUserId(userId).stream()
+                .map(shelf -> shelf.getBook().getIsbn())
+                .collect(Collectors.toList());
+    }
+
     /**
      * [추가] 특정 책을 '완독' 상태로 변경하고 최종 감상을 기록합니다.
      */
