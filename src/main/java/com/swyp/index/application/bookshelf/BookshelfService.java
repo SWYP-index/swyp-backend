@@ -50,5 +50,12 @@ public class BookshelfService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getReadingIsbns(Long userId) {
+        return bookshelfRepository.findReadingBooksByUserId(userId).stream()
+                .map(shelf -> shelf.getBook().getIsbn())
+                .collect(Collectors.toList());
+    }
+
 
 }
