@@ -59,10 +59,10 @@ public class RecordService {
         // 5) 감정 변환
         List<RecordEmotion> ems = emotionDtos.stream()
                 .map(dto -> {
-                    Emotion e = emotionRepository.findById(dto.getEmotionId())
-                            .orElseThrow(() -> {
-                                return new CustomException(ErrorCode.EMOTION_NOT_FOUND);
-                            });
+                    long incomingId = dto.getEmotionId();
+                    long dbId = (incomingId==0L) ? 101L : incomingId;
+                    Emotion e = emotionRepository.findById(dbId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
                     return RecordEmotion.builder()
                             .emotion(e)
                             .emotionScore(dto.getScore())
@@ -115,10 +115,10 @@ public class RecordService {
         // 감정 변환
         List<RecordEmotion> ems = req.getEmotions().stream()
                 .map(dto -> {
-                    Emotion e = emotionRepository.findById(dto.getEmotionId())
-                            .orElseThrow(() -> {
-                                return new CustomException(ErrorCode.EMOTION_NOT_FOUND);
-                            });
+                    long incomingId = dto.getEmotionId();
+                    long dbId = (incomingId==0L) ? 101L : incomingId;
+                    Emotion e = emotionRepository.findById(dbId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
                     return RecordEmotion.builder()
                             .emotion(e)
                             .emotionScore(dto.getScore())
