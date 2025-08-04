@@ -4,10 +4,6 @@ jwt:
   refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
 
 spring:
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
