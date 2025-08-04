@@ -55,4 +55,20 @@ public class DeskApi {
 
         return ResponseEntity.ok(new DeskOverviewResponse(readingBooks, recommendedBooks));
     }
+
+    @Operation(summary = "읽는 중 도서 목록 조회", description = "현재 '읽는 중' 상태인 모든 책의 목록을 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = BookshelfSummaryDto.class)))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+
+    @GetMapping("/reading-only")
+    public ResponseEntity<List<BookshelfSummaryDto>> getReadingBooksOnly(@AuthenticationPrincipal CustomPrincipal principal) {
+        Long userId = principal.getId();
+        List<BookshelfSummaryDto> readingBooks = bookshelfService.getDeskBooks(userId);
+        return ResponseEntity.ok(readingBooks);
+    }
 }
