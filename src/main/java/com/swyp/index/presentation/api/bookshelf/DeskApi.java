@@ -27,7 +27,6 @@ import java.util.List;
 @Tag(name = "책상 API", description = "책상에 올린 도서 관련 API입니다.")
 @RestController
 @RequiredArgsConstructor
-@SecurityRequirement(name = "JWT Authentication")
 @RequestMapping("/api/desk")
 public class DeskApi {
 
