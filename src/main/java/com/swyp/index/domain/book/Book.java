@@ -62,12 +62,14 @@ public class Book {
 				bookItem.coverImageUrl(), bookItem.pubDate(), bookItem.categoryName()))
 			.build();
 
-		book.initializeBookStats();
-
 		return book;
 	}
 
-	private void initializeBookStats() {
+	public void initializeStatsIfAbsent() {
+		if (this.bookStatsMap != null && !this.bookStatsMap.isEmpty()) {
+			return;
+		}
+
 		this.bookStatsMap = new HashMap<>();
 
 		for (long emotionId = 1; emotionId <= 20; emotionId++) {

@@ -72,10 +72,6 @@ aladin:
   api:
     ttbkey: ${ALADIN_API_KEY}
 
-springdoc:
-  cache:
-    disabled: true
-
 logging:
   level:
     org.springframework.security: DEBUG
