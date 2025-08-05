@@ -3,9 +3,12 @@ package com.swyp.index.presentation.api.user;
 import java.time.Duration;
 import java.util.Map;
 
+import com.swyp.index.global.security.CustomPrincipal;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +40,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 
-@Tag(name= "인증 API", description = "사용자 회원가입, 로그인, 이메일 인증, 중복 확인 기능을 제공합니다.")
+@Tag(name= "인증 API", description = "사용자 회원가입, 로그인, 로그아웃, 이메일 인증, 중복 확인 기능을 제공합니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -76,6 +79,21 @@ public class AuthApi {
 		response.addHeader(HttpHeaders.SET_COOKIE,CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
 		return ResponseEntity.ok(LoginResponse.from(jwtProvider.generateAccessToken(user.getId()), user));
+	}
+
+	@Operation(summary = "로그아웃", description = "서버의 refresh token을 삭제하고 클라이언트의 쿠키를 만료시켜 로그아웃 처리를 합니다.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+			@ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content)
+	})
+	@SecurityRequirement(name = "JWT Authentication")
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(@AuthenticationPrincipal CustomPrincipal principal, HttpServletResponse response) {
+		authService.logout(principal.getId());
+
+		response.addHeader(HttpHeaders.SET_COOKIE,CookieUtil.createLogoutCookie().toString());
+
+		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "이메일 인증 코드 발송", description = "지정된 이메일로 6자리 인증 코드를 발송합니다.")

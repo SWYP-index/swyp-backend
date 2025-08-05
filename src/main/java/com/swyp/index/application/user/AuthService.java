@@ -106,6 +106,11 @@ public class AuthService {
 		return userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 	}
 
+	public void logout(Long userId){
+		redisTemplate.delete(String.valueOf(userId));
+	}
+
+
 	public boolean isNicknameAvailable(String nickname) {
 		return !userRepository.existsByNickname(nickname);
 	}

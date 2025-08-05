@@ -24,4 +24,15 @@ public class CookieUtil {
 			.sameSite("none")
 			.build();
 	}
+
+	public static ResponseCookie createLogoutCookie(){
+		return ResponseCookie.from("refreshToken", "")
+				.path("/")
+				.httpOnly(true)
+				.secure(true)
+				.maxAge(0)
+				.sameSite("none")
+				.build();
+	}
+
 }
