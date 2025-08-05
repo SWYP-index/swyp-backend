@@ -10,9 +10,11 @@ import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.global.security.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TokenService {
 	
 	private final JwtProvider jwtProvider;
@@ -24,6 +26,8 @@ public class TokenService {
 
 		String id = jwtProvider.getId(refreshToken);
 		String storedRefreshToken = redisTemplate.opsForValue().get(id);
+
+		log.info("user id: {}, refresh token: {}", id, refreshToken);
 
 		if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
 			throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);

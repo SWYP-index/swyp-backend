@@ -3,8 +3,6 @@ package com.swyp.index.presentation.api.user;
 import java.time.Duration;
 import java.util.Map;
 
-import com.swyp.index.global.security.CustomPrincipal;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +18,7 @@ import com.swyp.index.application.user.AuthService;
 import com.swyp.index.application.user.TokenService;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.common.CookieUtil;
+import com.swyp.index.global.security.CustomPrincipal;
 import com.swyp.index.global.security.JwtProvider;
 import com.swyp.index.presentation.dto.user.EmailRequest;
 import com.swyp.index.presentation.dto.user.EmailVerificationRequest;
@@ -32,18 +31,20 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 
 @Tag(name= "인증 API", description = "사용자 회원가입, 로그인, 로그아웃, 이메일 인증, 중복 확인 기능을 제공합니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthApi {
 
 	private final AuthService authService;
@@ -158,6 +159,8 @@ public class AuthApi {
 				}
 			}
 		}
+
+		log.info("Received refresh token: {}", refreshToken);
 
 		tokenService.validateRefreshToken(refreshToken);
 

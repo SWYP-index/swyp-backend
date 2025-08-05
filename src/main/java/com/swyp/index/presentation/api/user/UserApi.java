@@ -53,6 +53,8 @@ public class UserApi {
 
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
+		log.info("user id: {}, refresh token: {}", user.getId(), refreshToken);
+
 		return ResponseEntity.ok(UserResponse.from(user));
 	}
 }

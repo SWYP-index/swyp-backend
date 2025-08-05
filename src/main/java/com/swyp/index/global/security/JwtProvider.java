@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtProvider {
+
 	@Value("${jwt.secret}")
 	private String secretKey;
 
@@ -54,14 +55,10 @@ public class JwtProvider {
 
 	public void validateToken(String token) {
 		try {
-			Jwts.parserBuilder()
-				.setSigningKey(getSigningKey())
-				.build()
-				.parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
 		} catch (ExpiredJwtException e) {
 			throw new CustomException(ErrorCode.TOKEN_EXPIRED);
-		}
-		catch (JwtException | IllegalArgumentException e) {
+		} catch (JwtException | IllegalArgumentException e) {
 			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 	}
@@ -77,11 +74,6 @@ public class JwtProvider {
 	}
 
 	public String getId(String token) {
-		return Jwts.parserBuilder()
-			.setSigningKey(getSigningKey())
-			.build()
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
+		return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody().getSubject();
 	}
 }
