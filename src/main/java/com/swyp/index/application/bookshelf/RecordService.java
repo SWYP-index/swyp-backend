@@ -122,6 +122,7 @@ public class RecordService {
         List<RecordEmotion> ems = Collections.emptyList();
         if(req.getEmotions() != null && !req.getEmotions().isEmpty()) {
             ems = req.getEmotions().stream()
+                    .filter(dto->dto.getEmotionId() != 0L)
                     .map(dto -> {
                         Emotion e = emotionRepository.findById(dto.getEmotionId())
                                 .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
