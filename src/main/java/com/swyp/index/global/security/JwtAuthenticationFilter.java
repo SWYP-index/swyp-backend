@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.swyp.index.global.exception.CustomException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,17 +30,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String token = jwtProvider.extractToken(request);
 
-		if (token != null && !token.isBlank() && jwtProvider.validateToken(token)) {
-			Long userId = Long.valueOf(jwtProvider.getId(token));
-			CustomPrincipal principal = new CustomPrincipal(userId);
+		try {
+			if (token != null && !token.isBlank()) {
+				jwtProvider.validateToken(token);
 
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, null,
-				List.of(new SimpleGrantedAuthority("ROLE_USER")));
+				Long userId = Long.valueOf(jwtProvider.getId(token));
+				CustomPrincipal principal = new CustomPrincipal(userId);
 
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+				// SecurityContext에 인증 정보 저장
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+					principal, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+			}
+		} catch (CustomException e) {
+			request.setAttribute("exception", e.getErrorCode());
 		}
 
-		// 인증 정보가 없으면 AuthenticationEntryPoint를 통해 401 Unauthorized 응답을 반환합니다.
 		filterChain.doFilter(request, response);
 	}
 }

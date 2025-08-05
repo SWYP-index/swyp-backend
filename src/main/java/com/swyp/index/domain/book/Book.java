@@ -61,11 +61,10 @@ public class Book {
 	public static Book from(BookItem bookItem) {
 		return Book.builder()
 			.isbn(bookItem.isbn())
-				.isbn13(bookItem.isbn13())
+			.isbn13(bookItem.isbn13())
 			.bookInfo(new BookInfo(bookItem.title(), bookItem.author(), bookItem.description(), bookItem.publisher(),
 				bookItem.coverImageUrl(), bookItem.pubDate(), bookItem.categoryName()))
 			.build();
-
 	}
 
 	public void initializeStatsIfAbsent() {

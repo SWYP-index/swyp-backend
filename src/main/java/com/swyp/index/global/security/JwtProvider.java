@@ -52,18 +52,17 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public boolean validateToken(String token) {
+	public void validateToken(String token) {
 		try {
 			Jwts.parserBuilder()
 				.setSigningKey(getSigningKey())
 				.build()
 				.parseClaimsJws(token);
-			return true;
 		} catch (ExpiredJwtException e) {
-			throw new CustomException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+			throw new CustomException(ErrorCode.TOKEN_EXPIRED);
 		}
 		catch (JwtException | IllegalArgumentException e) {
-			return false;
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 	}
 
