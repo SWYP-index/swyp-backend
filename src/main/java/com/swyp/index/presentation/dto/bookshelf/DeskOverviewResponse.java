@@ -8,22 +8,27 @@ import java.util.List;
 {
   "readingBooks": [
     {
-      "isbn": "9788956604996",
-      "title": "총, 균, 쇠",
-      "author": "재레드 다이아몬드",
-      "coverImageUrl": "https://image.aladin.co.kr/product/123/456/cover.jpg"
+      "bookshelfId": 101,
+      "status": "READING",
+      "isbn": "9791191136979",
+      "title": "이처럼 사소한 것들",
+      "author": "클레어 키건",
+      "coverImageUrl": "https://image.aladin.co.kr/product/31221/53/coversum/k392832962_1.jpg",
+      "publisher": "다산책방",
+      "category": "소설",
+      "publishedDate": "2023-04-10"
     }
   ],
   "recommendedBooks": [
     {
       "emotionName": "기쁨",
-      "isbn": "9788996991342",
-      "title": "인간 본성에 대하여",
-      "author": "에드워드 윌슨",
-      "coverImageUrl": "https://image.aladin.co.kr/product/987/654/cover.jpg",
-      "publisher": "사이언스북스",
-      "category": "인문학",
-      "publishedDate": "2021-05-17"
+      "isbn": "9791191136979",
+      "title": "이처럼 사소한 것들",
+      "author": "클레어 키건",
+      "coverImageUrl": "https://image.aladin.co.kr/product/31221/53/coversum/k392832962_1.jpg",
+      "publisher": "다산책방",
+      "category": "소설",
+      "publishedDate": "2023-04-10"
     }
   ]
 }
