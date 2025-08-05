@@ -41,7 +41,8 @@ public class Book {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "book_id")
 	@MapKey(name = "emotionId")
-	private Map<Long, BookStats> bookStatsMap;
+	@Builder.Default
+	private Map<Long, BookStats> bookStatsMap = new HashMap<>();
 
 	@Column(unique = true, nullable = false)
 	private String isbn;
@@ -66,18 +67,15 @@ public class Book {
 	}
 
 	public void initializeStatsIfAbsent() {
-		if (this.bookStatsMap != null && !this.bookStatsMap.isEmpty()) {
-			return;
+		if (this.bookStatsMap.isEmpty()) {
+			for (long emotionId = 1; emotionId <= 20; emotionId++) {
+				BookStats stats = new BookStats();
+				stats.setEmotionId(emotionId);
+
+				this.bookStatsMap.put(emotionId, stats);
+			}
 		}
 
-		this.bookStatsMap = new HashMap<>();
-
-		for (long emotionId = 1; emotionId <= 20; emotionId++) {
-			BookStats stats = new BookStats();
-			stats.setEmotionId(emotionId);
-
-			this.bookStatsMap.put(emotionId, stats);
-		}
 	}
 
 	public void addRecordToStats(List<RecordCreatedEventEmotion> emotions) {
