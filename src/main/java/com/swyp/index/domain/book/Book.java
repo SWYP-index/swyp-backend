@@ -47,6 +47,8 @@ public class Book {
 	@Column(unique = true, nullable = false)
 	private String isbn;
 
+	private String isbn13;
+
 	@Embedded
 	private BookInfo bookInfo;
 
@@ -57,13 +59,13 @@ public class Book {
 	private Long totalEmotionScoreSum = 0L;
 
 	public static Book from(BookItem bookItem) {
-		Book book = Book.builder()
+		return Book.builder()
 			.isbn(bookItem.isbn())
+				.isbn13(bookItem.isbn13())
 			.bookInfo(new BookInfo(bookItem.title(), bookItem.author(), bookItem.description(), bookItem.publisher(),
 				bookItem.coverImageUrl(), bookItem.pubDate(), bookItem.categoryName()))
 			.build();
 
-		return book;
 	}
 
 	public void initializeStatsIfAbsent() {
