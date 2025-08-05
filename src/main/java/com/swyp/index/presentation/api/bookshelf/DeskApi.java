@@ -38,7 +38,7 @@ public class DeskApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공",
                     content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = BookshelfSummaryDto.class)))),
+                            array = @ArraySchema(schema = @Schema(implementation = DeskOverviewResponse.class)))),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
