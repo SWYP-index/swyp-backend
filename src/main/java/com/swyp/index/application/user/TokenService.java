@@ -28,6 +28,7 @@ public class TokenService {
 		String storedRefreshToken = redisTemplate.opsForValue().get(id);
 
 		log.info("user id: {}, refresh token: {}", id, refreshToken);
+		log.info("stored refresh token: {}", storedRefreshToken);
 
 		if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
 			throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
