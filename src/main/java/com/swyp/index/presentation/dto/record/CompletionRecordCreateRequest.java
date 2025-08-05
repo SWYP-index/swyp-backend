@@ -3,6 +3,7 @@ package com.swyp.index.presentation.dto.record;
 import com.swyp.index.domain.bookshelf.ReadingStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,8 +28,8 @@ public class CompletionRecordCreateRequest {
     @Schema(description = "종합 감상평 (1500자 이내)", example = "오랜만에 깊은 울림을 주는 책이었다.", requiredMode=Schema.RequiredMode.NOT_REQUIRED,nullable = true)
     private String finalNote;
 
-    @NotEmpty(message = "감정은 최소 1개 이상 선택해야 합니다.")
+    @Valid
     @Size(max = 5, message = "감정은 최대 5개까지 선택 할 수 있습니다.")
-    @Schema(description = "독서 기록에 대한 감정 목록 (1~5개)", requiredMode=Schema.RequiredMode.REQUIRED)
+    @Schema(description = "독서 기록에 대한 감정 목록 (쵀대 5개)", requiredMode=Schema.RequiredMode.REQUIRED, nullable = true)
     private List<EmotionDto> emotions;
 }
