@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "책 상세 정보 응답 DTO")
 public class BookDto {
 
-	@Schema(description = "ISBN", example = "9791191136979")
+	@Schema(description = "ISBN(10자리)", example = "6000021559")
 	private String isbn;
 
 	@Schema(description = "제목", example = "이처럼 사소한 것들")
