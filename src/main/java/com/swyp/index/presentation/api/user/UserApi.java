@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.swyp.index.application.user.TokenService;
 import com.swyp.index.domain.user.User;
 import com.swyp.index.global.common.CookieUtil;
 import com.swyp.index.global.exception.CustomException;
@@ -36,6 +37,7 @@ public class UserApi {
 
 	private final UserRepository userRepository;
 	private final JwtProvider jwtProvider;
+	private final TokenService tokenService;
 
 	@Operation(summary = "내 정보 조회", description = "현재 로그인된 사용자의 정보를 조회합니다. 요청 성공 시, 새로운 refresh token이 쿠키에 재설정될 수 있습니다.")
 	@ApiResponses({
@@ -50,6 +52,8 @@ public class UserApi {
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
+
+		tokenService.saveRefreshToken(user, refreshToken);
 
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 

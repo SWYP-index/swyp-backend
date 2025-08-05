@@ -1,5 +1,7 @@
 package com.swyp.index.application.user;
 
+import java.time.Duration;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class TokenService {
-	
+
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final UserRepository userRepository;
@@ -41,5 +43,9 @@ public class TokenService {
 			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
 		return jwtProvider.generateAccessToken(user.getId());
+	}
+
+	public void saveRefreshToken(User user, String refreshToken) {
+		redisTemplate.opsForValue().set(String.valueOf(user.getId()), refreshToken, Duration.ofDays(7));
 	}
 }
