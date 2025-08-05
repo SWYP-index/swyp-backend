@@ -20,9 +20,7 @@ public class TokenService {
 	private final UserRepository userRepository;
 
 	public void validateRefreshToken(String refreshToken) {
-		if (!jwtProvider.validateToken(refreshToken)) {
-			throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
-		}
+		jwtProvider.validateToken(refreshToken);
 
 		String id = jwtProvider.getId(refreshToken);
 		String storedRefreshToken = redisTemplate.opsForValue().get(id);
