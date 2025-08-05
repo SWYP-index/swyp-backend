@@ -30,6 +30,6 @@ public class CompletionRecordCreateRequest {
 
     @Valid
     @Size(max = 5, message = "감정은 최대 5개까지 선택 할 수 있습니다.")
-    @Schema(description = "독서 기록에 대한 감정 목록 (쵀대 5개)", requiredMode=Schema.RequiredMode.REQUIRED, nullable = true)
+    @Schema(description = "독서 기록에 대한 감정 목록 (최대 5개)", requiredMode=Schema.RequiredMode.REQUIRED, nullable = true)
     private List<EmotionDto> emotions;
 }
