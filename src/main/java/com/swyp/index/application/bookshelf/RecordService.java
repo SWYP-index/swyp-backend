@@ -1,5 +1,6 @@
 package com.swyp.index.application.bookshelf;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,18 +58,21 @@ public class RecordService {
         List<EmotionDto> emotionDtos = req.getEmotions();
 
         // 5) 감정 변환
-        List<RecordEmotion> ems = emotionDtos.stream()
-                .map(dto -> {
-                    long incomingId = dto.getEmotionId();
-                    long dbId = (incomingId==0L) ? 101L : incomingId;
-                    Emotion e = emotionRepository.findById(dbId)
-                            .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
-                    return RecordEmotion.builder()
-                            .emotion(e)
-                            .emotionScore(dto.getScore())
-                            .build();
-                })
-                .collect(Collectors.toList());
+        List<RecordEmotion> ems = Collections.emptyList();
+        if(req.getEmotions() != null && !req.getEmotions().isEmpty()) {
+            ems = emotionDtos.stream()
+                    .filter(dto->dto.getEmotionId() != 0L)
+                    .map(dto -> {
+                        Emotion e = emotionRepository.findById(dto.getEmotionId())
+                                .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
+                        return RecordEmotion.builder()
+                                .emotion(e)
+                                .emotionScore(dto.getScore())
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+        }
+
 
         // 6) PageRecord 생성 & 연관관계
         PageRecord pr = PageRecord.create(shelf, req.getPage(), req.getContent(), ems);
@@ -81,9 +85,11 @@ public class RecordService {
 
 
         // 8) 이벤트 발행
-        eventPublisher.publishEvent(
-                RecordCreatedEvent.from(book.getId(), pr.getRecordEmotions())
-        );
+        if(!pr.getRecordEmotions().isEmpty()) {
+            eventPublisher.publishEvent(
+                    RecordCreatedEvent.from(book.getId(), pr.getRecordEmotions())
+            );
+        }
 
         // 9) 응답 DTO
         return PageRecordResponse.from(savedPr);
@@ -113,18 +119,19 @@ public class RecordService {
         shelf.finish(req.getFinalNote());
 
         // 감정 변환
-        List<RecordEmotion> ems = req.getEmotions().stream()
-                .map(dto -> {
-                    long incomingId = dto.getEmotionId();
-                    long dbId = (incomingId==0L) ? 101L : incomingId;
-                    Emotion e = emotionRepository.findById(dbId)
-                            .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
-                    return RecordEmotion.builder()
-                            .emotion(e)
-                            .emotionScore(dto.getScore())
-                            .build();
-                })
-                .collect(Collectors.toList());
+        List<RecordEmotion> ems = Collections.emptyList();
+        if(req.getEmotions() != null && !req.getEmotions().isEmpty()) {
+            ems = req.getEmotions().stream()
+                    .map(dto -> {
+                        Emotion e = emotionRepository.findById(dto.getEmotionId())
+                                .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
+                        return RecordEmotion.builder()
+                                .emotion(e)
+                                .emotionScore(dto.getScore())
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+        }
 
         // PageRecord 생성
         PageRecord pr = PageRecord.create(shelf, null, req.getContent(), ems);
@@ -134,9 +141,11 @@ public class RecordService {
         bookshelfRepository.save(shelf);
 
         // 이벤트 발행
-        eventPublisher.publishEvent(
-                RecordCreatedEvent.from(book.getId(), savedPr.getRecordEmotions())
-        );
+        if(!pr.getRecordEmotions().isEmpty()) {
+            eventPublisher.publishEvent(
+                    RecordCreatedEvent.from(book.getId(), savedPr.getRecordEmotions())
+            );
+        }
 
         return CompletionRecordResponse.from(savedPr, shelf);
     }
