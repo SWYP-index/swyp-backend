@@ -70,14 +70,15 @@ public class Book {
 			return;
 		}
 
-		this.bookStatsMap = new HashMap<>();
+		Map<Long, BookStats> map = new HashMap<>();
 
 		for (long emotionId = 1; emotionId <= 20; emotionId++) {
 			BookStats stats = new BookStats();
 			stats.setEmotionId(emotionId);
-
-			this.bookStatsMap.put(emotionId, stats);
+			map.put(emotionId, stats);
 		}
+
+		this.bookStatsMap = map;
 	}
 
 	public void addRecordToStats(List<RecordCreatedEventEmotion> emotions) {
