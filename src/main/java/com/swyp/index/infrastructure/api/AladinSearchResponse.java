@@ -23,7 +23,8 @@ public record AladinSearchResponse(@JsonProperty("item") List<BookItem> items,
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public record BookItem(
 		String title,
-		@JsonProperty("isbn13") String isbn,
+		String isbn,
+		String isbn13,
 		String author,
 		String description,
 		@JsonFormat(pattern = "yyyy-MM-dd") LocalDate pubDate,
