@@ -5,26 +5,30 @@
 -- =================================================================
 
 -- Emotion (ID 1~20 고정)
-INSERT INTO emotion (id, name, category) VALUES (1, '설렘', 'POSITIVE');
-INSERT INTO emotion (id, name, category) VALUES (2, '감동', 'POSITIVE');
+INSERT INTO emotion (id, name, category) VALUES (1, '감동', 'POSITIVE');
+INSERT INTO emotion (id, name, category) VALUES (2, '설렘', 'POSITIVE');
 INSERT INTO emotion (id, name, category) VALUES (3, '유쾌한', 'POSITIVE');
 INSERT INTO emotion (id, name, category) VALUES (4, '공감', 'POSITIVE');
 INSERT INTO emotion (id, name, category) VALUES (5, '위로', 'POSITIVE');
-INSERT INTO emotion (id, name, category) VALUES (6, '불쾌한', 'NEGATIVE');
-INSERT INTO emotion (id, name, category) VALUES (7, '슬픔', 'NEGATIVE');
-INSERT INTO emotion (id, name, category) VALUES (8, '분노', 'NEGATIVE');
-INSERT INTO emotion (id, name, category) VALUES (9, '혼란', 'NEGATIVE');
+INSERT INTO emotion (id, name, category) VALUES (6, '슬픔', 'NEGATIVE');
+INSERT INTO emotion (id, name, category) VALUES (7, '분노', 'NEGATIVE');
+INSERT INTO emotion (id, name, category) VALUES (8, '혼란', 'NEGATIVE');
+INSERT INTO emotion (id, name, category) VALUES (9, '불쾌한', 'NEGATIVE');
 INSERT INTO emotion (id, name, category) VALUES (10, '공포', 'NEGATIVE');
-INSERT INTO emotion (id, name, category) VALUES (11, '어색한', 'NEUTRAL');
-INSERT INTO emotion (id, name, category) VALUES (12, '놀람', 'NEUTRAL');
-INSERT INTO emotion (id, name, category) VALUES (13, '당황한', 'NEUTRAL');
-INSERT INTO emotion (id, name, category) VALUES (14, '답답한', 'NEUTRAL');
-INSERT INTO emotion (id, name, category) VALUES (15, '아쉬움', 'NEUTRAL');
-INSERT INTO emotion (id, name, category) VALUES (16, '통찰', 'THOUGHT');
-INSERT INTO emotion (id, name, category) VALUES (17, '깨달음', 'THOUGHT');
+INSERT INTO emotion (id, name, category) VALUES (11, '놀람', 'NEUTRAL');
+INSERT INTO emotion (id, name, category) VALUES (12, '당황한', 'NEUTRAL');
+INSERT INTO emotion (id, name, category) VALUES (13, '답답한', 'NEUTRAL');
+INSERT INTO emotion (id, name, category) VALUES (14, '아쉬운', 'NEUTRAL');
+INSERT INTO emotion (id, name, category) VALUES (15, '어색한', 'NEUTRAL');
+INSERT INTO emotion (id, name, category) VALUES (16, '깨달음', 'THOUGHT');
+INSERT INTO emotion (id, name, category) VALUES (17, '통찰', 'THOUGHT');
 INSERT INTO emotion (id, name, category) VALUES (18, '의문', 'THOUGHT');
 INSERT INTO emotion (id, name, category) VALUES (19, '영감', 'THOUGHT');
 INSERT INTO emotion (id, name, category) VALUES (20, '성찰', 'THOUGHT');
+INSERT INTO emotion (id, name, category) VALUES (101, '기본', 'POSITIVE');
+INSERT INTO emotion (id, name, category) VALUES (102, '기본', 'NEGATIVE');
+INSERT INTO emotion (id, name, category) VALUES (103, '기본', 'NEUTRAL');
+INSERT INTO emotion (id, name, category) VALUES (104, '기본', 'THOUGHT');
 
 --INSERT INTO emotion (id, name, category, icon_image_url) VALUES (1, '감동', 'POSITIVE', 'YOUR_S3_BASE_URL/positive_gamdong.png');
 --INSERT INTO emotion (id, name, category, icon_image_url) VALUES (2, '설렘', 'POSITIVE', 'YOUR_S3_BASE_URL/positive_seollem.png');
