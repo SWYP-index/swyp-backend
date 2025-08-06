@@ -2,6 +2,7 @@ package com.swyp.index.global.config;
 
 import java.util.List;
 
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,9 +37,12 @@ public class OpenApiConfig {
         Server prodServer = new Server().url("https://api-index.store").description("인덱스 API 서버");
         Server localServer = new Server().url("http://localhost:8080").description("로컬 개발 서버");
 
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(SECURITY_SCHEME);
+
         return new OpenAPI()
                 .info(info)
                 .servers(List.of(prodServer, localServer))
-                .components(components);
+                .components(components)
+                .addSecurityItem(securityRequirement);
     }
 }
