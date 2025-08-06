@@ -107,7 +107,7 @@ public class AuthService {
 	}
 
 	public void logout(Long userId){
-		redisTemplate.delete(String.valueOf(userId));
+		redisTemplate.delete("refreshToken:" + userId);
 	}
 
 

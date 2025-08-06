@@ -19,7 +19,6 @@ import com.swyp.index.global.exception.CustomAuthenticationEntryPoint;
 import com.swyp.index.global.security.JwtAuthenticationFilter;
 import com.swyp.index.global.security.OAuth2SuccessHandler;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -41,16 +40,13 @@ public class SecurityConfig {
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/api/users/**", "/api/bookshelf/**", "/api/desk/**", "/api/books/**",
-					"/api/reports/**", "/api/addBookshelf/**","/api/records/**","/api/stats/**","/api/calendar/**","/api/addFinishBookshelf/**").authenticated()
+					"/api/reports/**", "/api/addBookshelf/**", "/api/records/**", "/api/stats/**", "/api/calendar/**",
+					"/api/addFinishBookshelf/**").authenticated()
 				.anyRequest().permitAll())
 			.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(oAuth2SuccessHandler))
 			.exceptionHandling(exceptionHandling ->
-				exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint)
-			)
-			.logout(logout -> logout.logoutUrl("/logout")
-				.logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
-				.deleteCookies("accessToken", "refreshToken"));
+				exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint));
 
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

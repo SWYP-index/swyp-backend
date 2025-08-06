@@ -15,6 +15,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -71,6 +72,26 @@ public class JwtProvider {
 		}
 
 		return null;
+	}
+
+	public String extractRefreshToken(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		String refreshToken = null;
+
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("refreshToken".equals(cookie.getName())) {
+					refreshToken = cookie.getValue();
+					break;
+				}
+			}
+		}
+
+		if (refreshToken == null) {
+			throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+		}
+
+		return refreshToken;
 	}
 
 	public String getId(String token) {

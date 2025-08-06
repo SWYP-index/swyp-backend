@@ -1,9 +1,7 @@
 package com.swyp.index.presentation.api.user;
 
-import java.time.Duration;
 import java.util.Map;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,7 +48,6 @@ public class AuthApi {
 	private final AuthService authService;
 	private final TokenService tokenService;
 	private final JwtProvider jwtProvider;
-	private final RedisTemplate<String, String> redisTemplate;
 
 	@Operation(summary = "회원가입", description = "이메일 인증 코드 부분을 이메일,비밀번호,닉네임을 받아 회원가입을 처리합니다.")
 	@ApiResponses(value = {
@@ -75,7 +72,7 @@ public class AuthApi {
 
 		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
-		redisTemplate.opsForValue().set(String.valueOf(user.getId()), refreshToken, Duration.ofDays(7));
+		tokenService.saveRefreshToken(user, refreshToken);
 
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
@@ -159,8 +156,6 @@ public class AuthApi {
 				}
 			}
 		}
-
-		log.info("Received refresh token: {}", refreshToken);
 
 		tokenService.validateRefreshToken(refreshToken);
 

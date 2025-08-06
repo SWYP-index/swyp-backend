@@ -9,7 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.swyp.index.application.user.TokenService;
 import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
+	private final TokenService tokenService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -33,6 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			if (token != null && !token.isBlank()) {
 				jwtProvider.validateToken(token);
+
+				if (tokenService.isAccessTokenBlacklisted(token)) {
+					throw new CustomException(ErrorCode.TOKEN_BLACKLISTED);
+				}
 
 				Long userId = Long.valueOf(jwtProvider.getId(token));
 				CustomPrincipal principal = new CustomPrincipal(userId);

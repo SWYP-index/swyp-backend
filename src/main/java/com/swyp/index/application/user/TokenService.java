@@ -46,6 +46,26 @@ public class TokenService {
 	}
 
 	public void saveRefreshToken(User user, String refreshToken) {
-		redisTemplate.opsForValue().set(String.valueOf(user.getId()), refreshToken, Duration.ofDays(7));
+		String key = "refreshToken:" + user.getId();
+
+		redisTemplate.opsForValue().set(key, refreshToken, Duration.ofDays(7));
+	}
+
+	public void deleteRefreshToken(User user) {
+		String key = "refreshToken:" + user.getId();
+
+		redisTemplate.delete(key);
+	}
+
+	public void addAccessTokenToBlacklist(String accessToken) {
+		String key = "blacklist:" + accessToken;
+
+		redisTemplate.opsForValue().set(key, "logout", Duration.ofMinutes(15));
+	}
+
+	public boolean isAccessTokenBlacklisted(String accessToken) {
+		String key = "blacklist:" + accessToken;
+
+		return redisTemplate.hasKey(key);
 	}
 }
