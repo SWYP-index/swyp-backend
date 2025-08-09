@@ -54,7 +54,7 @@ jobs:
             sleep 10
             if curl -sf http://localhost:$( [ "$NEW" = "blue" ] && echo 8080 || echo 8081 )/actuator/health; then
               sed -i "s/proxy_pass http:\/\/spring-app-.*:808[01]\//proxy_pass http:\/\/spring-app-$NEW:808$( [ "$NEW" = "blue" ] && echo 0 || echo 1 )\//g" ./nginx/conf.d/default.conf
-              docker exec ngnix nginx -s reload
+              docker exec nginx nginx -s reload
               docker-compose stop spring-app-$OLD
               echo $NEW > active_version.txt
             else
