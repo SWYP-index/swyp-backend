@@ -49,7 +49,42 @@ jobs:
           script: |
             cd /home/ec2-user
             
-            docker-compose down
+            STATUS_FILE="/home/ec2-user/deploy_status.txt"
+
+            if [ ! -f "$STATUS_FILE" ]; then
+              echo "blue" > "$STATUS_FILE"
+            fi
+
+            CURRENT=$(cat "$STATUS_FILE")
+            echo "현재 활성 환경: $CURRENT"
+
+            if [ "$CURRENT" == "blue" ]; then
+              NEW="green"
+            else
+              NEW="blue"
+            fi
+
+            echo "새 환경으로 배포: $NEW"
+
+            cd /home/ec2-user
+
             docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
-            docker-compose up -d
+
+            docker-compose up -d spring-app-$NEW
+
+            sleep 10
+
+            if ! curl -f http://localhost:$( [ "$NEW" == "blue" ] && echo "8080" || echo "8081" )/actuator/health; then
+              echo "헬스체크 실패, 배포 중단"
+              exit 1
+            fi
+
+            sed -i "s/proxy_pass http:\/\/spring-app-\(blue\|green\);/proxy_pass http:\/\/spring-app-$NEW;/" ./nginx/conf.d/default.conf
+
+            docker exec nginx nginx -s reload
+
+            docker-compose stop spring-app-$CURRENT
+
+            echo "$NEW" > "$STATUS_FILE"
+
             docker system prune -f
