@@ -51,7 +51,9 @@ jobs:
             ACTIVE=$(cat active_version.txt || echo green)
             
             if [ "$ACTIVE" = "blue" ]; then NEW=green; OLD=blue; else NEW=blue; OLD=green; fi
-            docker-compose up -d --no-deps --build spring-app-$NEW
+            
+            docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
+            docker-compose up -d --no-deps spring-app-$NEW
             
             MAX_RETRIES=10
             RETRY_DELAY=5
