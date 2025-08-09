@@ -1,14 +1,19 @@
-# 1단계: 빌드된 JAR 파일만 사용하는 경량 이미지
-FROM openjdk:21-jdk-slim
+# 1단계: 빌드 스테이지
+FROM gradle:8.7.0-jdk21-jammy AS builder
 
-# 작업 디렉토리 설정
 WORKDIR /app
 
-# 빌드된 JAR 파일을 이미지에 복사
-COPY build/libs/*.jar app.jar
+COPY --chown=gradle:gradle . /app
 
-# 포트 노출 (옵션)
+RUN gradle clean build --no-daemon
+
+# 2단계: 실행 스테이지
+FROM openjdk:21-jdk-slim
+
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/*.jar app.jar
+
 EXPOSE 8080
 
-# 컨테이너 실행 시 실행할 명령어
 CMD ["java", "-jar", "app.jar"]
