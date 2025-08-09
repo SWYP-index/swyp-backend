@@ -32,6 +32,5 @@ public record AladinSearchResponse(@JsonProperty("item") List<BookItem> items,
 		String categoryName,
 		@JsonProperty("cover") String coverImageUrl
 	) {}
-
 }
 

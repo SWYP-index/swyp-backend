@@ -87,10 +87,16 @@ public class Book {
 				throw new CustomException(ErrorCode.BOOK_STATS_NOT_FOUND);
 			}
 
-			totalEmotionCount += 1;
-			totalEmotionScoreSum += emotion.score();
+			int score = emotion.score();
 
-			bookStats.record(emotion.score());
+			if (score < 1 || score > 10) {
+				throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+			}
+
+			totalEmotionCount += 1;
+			totalEmotionScoreSum += score;
+
+			bookStats.record(score);
 		});
 	}
 }

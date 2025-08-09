@@ -64,7 +64,7 @@ public class BookCommandService {
 		List<BookDto> bookDtos = new ArrayList<>();
 
 		for (Book book: books) {
-			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
+			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
 				book.getId(), PageRequest.of(0, 3));
 
 			bookDtos.add(BookDto.from(book, bookStats));

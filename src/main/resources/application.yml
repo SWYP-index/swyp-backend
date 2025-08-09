@@ -22,12 +22,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    # jpa가 테이블을 생성한 후 스크립트를 실행하도록 순서 보장
-    defer-datasource-initialization: true
-  # 항상 SQL 스크립트를 실행하도록 모드 변경
+    defer-datasource-initialization: true # jpa가 테이블을 생성한 후 스크립트를 실행하도록 순서 보장
   sql:
     init:
-      mode: always
+      mode: never # 항상 SQL 스크립트를 실행하도록 모드 변경
 
 
   mail:

@@ -32,7 +32,7 @@ public class BookQueryService {
 	public List<BookDto> getBooksByEmotion(String emotionName, int startIndex) {
 		Long emotionId = EmotionType.getIdByName(emotionName);
 
-		List<Book> books = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDesc(emotionId,
+		List<Book> books = bookRepository.findBooksByEmotionIdOrderByTotalEmotionScoreSumDescGreaterThanZero(emotionId,
 			PageRequest.of(startIndex - 1, 10));
 
 		return convertBookToDto(books);
@@ -52,8 +52,6 @@ public class BookQueryService {
 		return BookDto.from(book, BookStats);
 	}
 
-
-
 	public Optional<Bookshelf> getUserStats(User user, String isbn) {
 		Book book = bookRepository.findByIsbn(isbn)
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
@@ -65,7 +63,7 @@ public class BookQueryService {
 		List<BookDto> bookDtos = new ArrayList<>();
 
 		for (Book book: books) {
-			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDesc(
+			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
 				book.getId(), PageRequest.of(0, 3));
 
 			bookDtos.add(BookDto.from(book, bookStats));
