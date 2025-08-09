@@ -39,6 +39,7 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize -> authorize
+				.requestMatchers("/actuator/**").permitAll()
 				.requestMatchers("/api/users/**", "/api/bookshelf/**", "/api/desk/**", "/api/books/**",
 					"/api/reports/**", "/api/addBookshelf/**", "/api/records/**", "/api/stats/**", "/api/calendar/**",
 					"/api/addFinishBookshelf/**").authenticated()
