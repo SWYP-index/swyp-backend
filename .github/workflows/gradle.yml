@@ -74,9 +74,7 @@ jobs:
                   return 0
                 fi
                 sleep $wait
-                
               done
-              
               return 1
             }
             
