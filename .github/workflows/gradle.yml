@@ -39,7 +39,7 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/index:latest
 
-      - name: Deploy on EC2 with Docker Compose
+      - name: Deploy on EC2 with Blue/Green
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.HOST }}
@@ -48,7 +48,17 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ec2-user
-            docker-compose down
-            docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
-            docker-compose up -d
+            ACTIVE=$(cat active_version.txt || echo green)
+            if [ "$ACTIVE" = "blue" ]; then NEW=green; OLD=blue; else NEW=blue; OLD=green; fi
+            docker-compose up -d --no-deps --build spring-app-$NEW
+            sleep 10
+            if curl -sf http://localhost:$( [ "$NEW" = "blue" ] && echo 8080 || echo 8081 )/actuator/health; then
+              sed -i "s/proxy_pass http:\/\/spring-app-.*:808[01]\//proxy_pass http:\/\/spring-app-$NEW:808$( [ "$NEW" = "blue" ] && echo 0 || echo 1 )\//g" ./nginx/conf.d/default.conf
+              docker exec ngnix nginx -s reload
+              docker-compose stop spring-app-$OLD
+              echo $NEW > active_version.txt
+            else
+              docker-compose stop spring-app-$NEW
+              exit 1
+            fi
             docker system prune -f
