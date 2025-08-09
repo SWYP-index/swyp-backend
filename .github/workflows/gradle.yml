@@ -51,8 +51,11 @@ jobs:
             cd /home/ec2-user
             
             NGINX_CONF="/home/ec2-user/nginx/conf.d/default.conf"
+            echo "NGINX_CONF path: $NGINX_CONF"
+            
             CURRENT_ACTIVE=$(grep -oP 'server spring-app-\K\w+' "$NGINX_CONF" | cut -d':' -f1)
-
+            echo "CURRENT_ACTIVE: $CURRENT_ACTIVE"
+            
             if [ "$CURRENT_ACTIVE" == "green" ]; then
               NEXT="blue"
               NEXT_PORT=8081
@@ -61,8 +64,14 @@ jobs:
               NEXT_PORT=8082
             fi
             
+            echo "NEXT: $NEXT"
+            echo "NEXT_PORT: $NEXT_PORT"
+            
             docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
+            echo "docker pull completed"
+            
             docker compose up -d spring-app-$NEXT
+            echo "docker compose up completed for spring-app-$NEXT"
             
             check_health() {
               local url=$1
@@ -71,28 +80,37 @@ jobs:
             
               for ((i=1; i<=retries; i++)); do
                 status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+                echo "Checking health, attempt $i: status_code=$status_code"
                 if [ "$status_code" == "200" ]; then
+                  echo "Health check passed!"
                   return 0
                 fi
                 sleep $wait
               done
+              echo "Health check failed after $retries attempts"
               return 1
             }
             
             HEALTH_URL="http://localhost:$NEXT_PORT/actuator/health"
+            echo "Health check URL: $HEALTH_URL"
             
             if ! check_health "$HEALTH_URL"; then
+              echo "Health check failed, stopping container spring-app-$NEXT"
               docker compose stop spring-app-$NEXT
               docker compose rm -f spring-app-$NEXT
               exit 1
             fi
             
-            NGINX_CONF="/home/ec2-user/nginx/conf.d/default.conf"
+            echo "Updating nginx config..."
             sed -i "s/server spring-app-.*/server spring-app-$NEXT:8080;/" $NGINX_CONF
-            
+            echo "Reloading nginx..."
             docker exec nginx nginx -s reload
             
+            echo "Stopping old container spring-app-$CURRENT_ACTIVE"
             docker compose stop spring-app-$CURRENT_ACTIVE
             docker compose rm -f spring-app-$CURRENT_ACTIVE
             
+            echo "Cleaning up docker system..."
             docker system prune -f
+            
+            echo "Deployment script completed successfully."
