@@ -49,6 +49,9 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /home/ec2-user
+
+            docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
+            echo "docker pull completed"
             
             NGINX_CONF="/home/ec2-user/nginx/conf.d/default.conf"
             echo "NGINX_CONF path: $NGINX_CONF"
@@ -66,17 +69,16 @@ jobs:
             
             echo "NEXT: $NEXT"
             echo "NEXT_PORT: $NEXT_PORT"
-            
-            docker pull ${{ secrets.DOCKER_USERNAME }}/index:latest
-            echo "docker pull completed"
-            
+                        
             docker compose up -d spring-app-$NEXT
             echo "docker compose up completed for spring-app-$NEXT"
+
+            sleep 10
             
             check_health() {
               local url=$1
-              local retries=10
-              local wait=5
+              local retries=5
+              local wait=10
             
               for ((i=1; i<=retries; i++)); do
                 status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
@@ -103,8 +105,13 @@ jobs:
             
             echo "Updating nginx config..."
             sed -i "s/server spring-app-.*/server spring-app-$NEXT:8080;/" $NGINX_CONF
+
+            sleep 10
+            
             echo "Reloading nginx..."
             docker exec nginx nginx -s reload
+
+            sleep 10
             
             echo "Stopping old container spring-app-$CURRENT_ACTIVE"
             docker compose stop spring-app-$CURRENT_ACTIVE
