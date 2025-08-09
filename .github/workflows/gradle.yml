@@ -78,7 +78,7 @@ jobs:
               return 1
             }
             
-            HEALTH_URL="http://localhost:$NEXT_PORT/health"
+            HEALTH_URL="http://localhost:$NEXT_PORT/actuator/health"
             
             if ! check_health "$HEALTH_URL"; then
               docker compose stop spring-app-$NEXT
