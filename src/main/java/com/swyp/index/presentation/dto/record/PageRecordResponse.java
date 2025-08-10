@@ -31,7 +31,7 @@ public class PageRecordResponse {
     private final List<EmotionResponse> emotions;
 
     @Builder
-    private PageRecordResponse(Long recordId, int page, String content, LocalDateTime createdAt, List<EmotionResponse> emotions) {
+    private PageRecordResponse(Long recordId, Integer page, String content, LocalDateTime createdAt, List<EmotionResponse> emotions) {
         this.recordId = recordId;
         this.page = page;
         this.content = content;
