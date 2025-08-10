@@ -12,6 +12,9 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +24,17 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
+@Table(
+	indexes = {
+		@Index(name = "idx_emotion_id_score_sum", columnList = "emotion_id, emotion_score_sum"),
+		@Index(name = "idx_book_id_score_sum", columnList = "book_id, emotion_score_sum")
+	},
+	uniqueConstraints = {
+		@UniqueConstraint(columnNames = {"book_id", "emotion_id"})
+	}
+)
 public class BookStats {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
