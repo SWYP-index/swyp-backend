@@ -41,6 +41,7 @@ public class BookshelfService {
                 .collect(Collectors.toList());
     }
 
+
     //책상의 책 목록(읽는 중인 책)을 조회하는 기능
     @Transactional(readOnly = true)
     public List<BookshelfSummaryDto> getDeskBooks(Long userId) {
@@ -51,10 +52,26 @@ public class BookshelfService {
     }
 
     @Transactional(readOnly = true)
+    public List<BookshelfSummaryDto> getDeskBooks(Long userId, int limit) { // 최대 N권
+        return bookshelfRepository.findReadingBooksByUserId(userId).stream()
+                .limit(limit)
+                .map(BookshelfSummaryDto::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<String> getReadingIsbns(Long userId) {
         return bookshelfRepository.findReadingBooksByUserId(userId).stream()
                 .map(shelf -> shelf.getBook().getIsbn())
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getReadingIsbns(Long userId, int limit) { // 최대 N권
+        return bookshelfRepository.findReadingBooksByUserId(userId).stream()
+                .limit(limit)
+                .map(shelf -> shelf.getBook().getIsbn())
+                .toList();
     }
 
 
