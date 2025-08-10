@@ -28,14 +28,19 @@ public class BookRecommendService {
 
     public List<RecommendedBookDto> getRecommendBooksOnly(Long userId){
         List<String> readingIsbns = bookshelfService.getReadingIsbns(userId, 3);
+        List<String> finishedIsbns = bookshelfService.getFinishedIsbns(userId);
         int readingCount = readingIsbns.size();
+
+        Set<String> exclude = new HashSet<>();
+        exclude.addAll(readingIsbns);
+        exclude.addAll(finishedIsbns);
 
         int maxRecommendCount = (readingCount >= 3) ? 2 : (5 - readingCount);
         if (maxRecommendCount <= 0) return List.of();
 
 
         List<EmotionRankingResponse> top3 = emotionAnalysisService.getTop3Emotions(userId);
-        Set<String> exclude = new HashSet<>(readingIsbns);
+
         List<RecommendedBookDto> result = new ArrayList<>();
 
 

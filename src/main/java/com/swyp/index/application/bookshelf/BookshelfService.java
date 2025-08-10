@@ -41,6 +41,15 @@ public class BookshelfService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getFinishedIsbns(Long userId) {
+        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6);
+        return bookshelfRepository.findFinishedBooksByUserId(userId, sixMonthsAgo).stream()
+                .map(shelf -> shelf.getBook().getIsbn())
+                .distinct()
+                .toList();
+    }
+
 
     //책상의 책 목록(읽는 중인 책)을 조회하는 기능
     @Transactional(readOnly = true)
