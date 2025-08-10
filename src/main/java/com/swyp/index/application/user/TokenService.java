@@ -27,7 +27,8 @@ public class TokenService {
 		jwtProvider.validateToken(refreshToken);
 
 		String id = jwtProvider.getId(refreshToken);
-		String storedRefreshToken = redisTemplate.opsForValue().get(id);
+		String key = "refreshToken:" + id;
+		String storedRefreshToken = redisTemplate.opsForValue().get(key);
 
 		log.info("user id: {}, refresh token: {}", id, refreshToken);
 		log.info("stored refresh token: {}", storedRefreshToken);
