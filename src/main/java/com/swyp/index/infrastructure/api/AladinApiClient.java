@@ -13,9 +13,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AladinApiClient {
 
-	private static final String QUERY_TYPE = "Title";
-	private static final String SORT_TYPE = "SalesPoint";
-	private static final String OUTPUT_FORMAT = "js";
+	private final String QUERY_TYPE = "Title";
+	private final String SORT_TYPE = "SalesPoint";
+	private final String OUTPUT_FORMAT = "js";
+	private final String COVER_SIZE = "MidBig";
 
 	@Value("${aladin.api.ttbkey}")
 	private String API_KEY;
@@ -42,6 +43,7 @@ public class AladinApiClient {
 				.queryParam("QueryType", QUERY_TYPE)
 				.queryParam("Sort", SORT_TYPE)
 				.queryParam("output", OUTPUT_FORMAT)
+				.queryParam("Cover", COVER_SIZE)
 				.build())
 			.retrieve()
 			.bodyToMono(String.class)
