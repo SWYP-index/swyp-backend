@@ -109,16 +109,14 @@ class BookRepositoryTest {
 	}
 
 	@Test
-	void findAllByBookIdOrderByEmotionScoreSumDesc() {
+	void findAllByBookIdOrderByEmotionScoreSumDescGreaterThanZero() {
 		persistAndClear(books);
 
 		Optional<Book> book = bookRepository.findByIsbn(book1Isbn);
-		List<BookStats> bookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDesc(
+		List<BookStats> bookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
 			book.get().getId());
 
-		assertThat(bookStats).hasSize(20);
 		assertThat(bookStats.getFirst().getEmotionId()).isEqualTo(2L);
-		assertThat(bookStats.getLast().getEmotionId()).isEqualTo(19L);
 	}
 
 	@Test

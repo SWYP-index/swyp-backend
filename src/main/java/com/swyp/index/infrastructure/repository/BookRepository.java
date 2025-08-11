@@ -32,7 +32,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
 	// 책 ID로 감정 통계 리스트 조회, 감정 통계의 감정 점수 내림차순 정렬
 	@Query("SELECT bs FROM Book b JOIN b.bookStatsMap bs WHERE b.id = :bookId AND bs.emotionScoreSum > 0 ORDER BY bs.emotionScoreSum DESC, bs.id ASC")
-	List<BookStats> findAllByBookIdOrderByEmotionScoreSumDesc(@Param("bookId") Long bookId);
+	List<BookStats> findAllByBookIdOrderByEmotionScoreSumDescGreaterThanZero(@Param("bookId") Long bookId);
 
 	// 책 ID로 감정 통계 리스트 조회, 감정 통계의 감정 점수 내림차순 정렬(페이징)
 	@Query("SELECT bs FROM Book b JOIN b.bookStatsMap bs WHERE b.id = :bookId AND bs.emotionScoreSum > 0 ORDER BY bs.emotionScoreSum DESC")

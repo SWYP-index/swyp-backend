@@ -46,7 +46,7 @@ public class BookQueryService {
 		Book book = bookRepository.findByIsbn(isbn)
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
-		List<BookStats> BookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDesc(
+		List<BookStats> BookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
 			book.getId());
 
 		return BookDto.from(book, BookStats);
