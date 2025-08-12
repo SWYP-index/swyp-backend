@@ -42,11 +42,11 @@ public class BookStats {
 	@Setter
 	private Long emotionId;
 
-	private Long emotionCount = 0L;
+	private long emotionCount;
 
-	private Long emotionScoreSum = 0L;
+	private long emotionScoreSum;
 
-	private Double emotionScoreAverage = 0.0;
+	private Double emotionScoreAverage;
 
 	@CreatedDate
 	@Column(updatable = false)
