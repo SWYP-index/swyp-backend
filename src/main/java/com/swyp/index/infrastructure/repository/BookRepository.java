@@ -21,8 +21,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	// 기록하기 기능을 위해 새로 추가
 	Optional<Book> findByIsbn(String isbn);
 
-	@Query(
-		"SELECT COUNT(b) FROM Book b JOIN b.bookStatsMap bs " + "WHERE KEY(bs) = :emotionId AND bs.emotionScoreSum > 0")
+	@Query("SELECT COUNT(b) FROM Book b JOIN b.bookStatsMap bs " + "WHERE KEY(bs) = :emotionId AND bs.emotionScoreSum > 0")
 	long countBooksByEmotionIdAndEmotionScoreSumGreaterThanZero(@Param("emotionId") Long emotionId);
 
 	// 감정으로 책을 조회, 해당 감정의 총 감정 점수 내림차순 정렬

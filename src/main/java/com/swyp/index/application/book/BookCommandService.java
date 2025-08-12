@@ -8,9 +8,14 @@ import java.util.Set;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookStats;
+import com.swyp.index.domain.bookshelf.RecordCreatedEvent.RecordCreatedEventEmotion;
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.api.AladinApiClient;
 import com.swyp.index.infrastructure.api.AladinSearchResponse;
 import com.swyp.index.infrastructure.redis.SearchCacheAdapter;
@@ -22,12 +27,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookCommandService {
 
 	private final AladinApiClient aladinApiClient;
 	private final SearchCacheAdapter cacheAdapter;
 	private final BookRepository bookRepository;
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public BookSearchResponse fetchBooksByTitleAndStoreIfAbsent(String title, int startIndex) {
 		Optional<List<String>> cachedIsbns = cacheAdapter.getIsbnsCache(title, startIndex);
 
@@ -58,6 +65,13 @@ public class BookCommandService {
 		List<BookDto> bookDtos = convertBookToDto(books);
 
 		return new BookSearchResponse(startIndex, response.totalResults(), bookDtos);
+	}
+
+	public void updateBookStats(Long bookId, List<RecordCreatedEventEmotion> emotions) {
+		Book book = bookRepository.findById(bookId)
+			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
+
+		book.addRecordToStats(emotions);
 	}
 
 	private List<BookDto> convertBookToDto(List<Book> books) {
