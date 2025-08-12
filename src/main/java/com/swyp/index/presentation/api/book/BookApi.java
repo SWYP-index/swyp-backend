@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swyp.index.application.book.BookCommandService;
 import com.swyp.index.application.book.BookQueryService;
+import com.swyp.index.application.user.UserService;
 import com.swyp.index.domain.user.User;
-import com.swyp.index.global.exception.CustomException;
-import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.global.security.CustomPrincipal;
-import com.swyp.index.infrastructure.repository.UserRepository;
 import com.swyp.index.presentation.dto.book.BookDto;
 import com.swyp.index.presentation.dto.book.BookSearchResponse;
 import com.swyp.index.presentation.dto.book.StatusResponse;
@@ -35,7 +33,7 @@ public class BookApi {
 
 	private final BookQueryService bookQueryService;
 	private final BookCommandService bookCommandService;
-	private final UserRepository userRepository;
+	private final UserService userService;
 
 	@Operation(summary = "제목 검색", description = "책 제목과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
 		+ "한 페이지당 결과값은 10개이고 검색 결과가 없거나 끝 인덱스를 초과한 경우 빈 리스트를 반환합니다.")
@@ -59,7 +57,6 @@ public class BookApi {
 	@Operation(summary = "상세 페이지", description = "책 정보, 해당 책의 감정 점수를 내림차순으로 반환")
 	@GetMapping("/{isbn}")
 	public ResponseEntity<BookDto> getBookDetail(@PathVariable String isbn) {
-
 		return ResponseEntity.ok(bookQueryService.getBookDetail(isbn));
 	}
 
@@ -67,8 +64,7 @@ public class BookApi {
 	@GetMapping("/{isbn}/me/status")
 	public ResponseEntity<StatusResponse> getUserStatus(@AuthenticationPrincipal CustomPrincipal principal,
 		@PathVariable String isbn) {
-		User user = userRepository.findById(principal.getId())
-			.orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+		User user = userService.getUser(principal.id());
 
 		String status = bookQueryService.getUserStats(user, isbn)
 			.map(bookshelf -> bookshelf.getStatus().name())
