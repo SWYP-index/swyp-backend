@@ -23,7 +23,6 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,12 +51,6 @@ public class Book {
 	@Embedded
 	private BookInfo bookInfo;
 
-	@Default
-	private Long totalEmotionCount = 0L;
-
-	@Default
-	private Long totalEmotionScoreSum = 0L;
-
 	public static Book from(BookItem bookItem) {
 		return Book.builder()
 			.isbn(bookItem.isbn())
@@ -76,7 +69,6 @@ public class Book {
 				this.bookStatsMap.put(emotionId, stats);
 			}
 		}
-
 	}
 
 	public void addRecordToStats(List<RecordCreatedEventEmotion> emotions) {
@@ -89,14 +81,27 @@ public class Book {
 
 			int score = emotion.score();
 
-			if (score < 1 || score > 10) {
-				throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-			}
-
-			totalEmotionCount += 1;
-			totalEmotionScoreSum += score;
+			validateEmotionScore(score);
 
 			bookStats.record(score);
 		});
+	}
+
+	public long getTotalEmotionCount() {
+		return bookStatsMap.values().stream()
+			.mapToLong(BookStats::getEmotionCount)
+			.sum();
+	}
+
+	public long getTotalEmotionScoreSum() {
+		return bookStatsMap.values().stream()
+			.mapToLong(BookStats::getEmotionScoreSum)
+			.sum();
+	}
+
+	private void validateEmotionScore(int score) {
+		if (score < 1 || score > 10) {
+			throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+		}
 	}
 }

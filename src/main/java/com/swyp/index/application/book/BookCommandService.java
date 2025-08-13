@@ -67,13 +67,12 @@ public class BookCommandService {
 		return new BookSearchResponse(startIndex, response.totalResults(), bookDtos);
 	}
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void updateBookStats(Long bookId, List<RecordCreatedEventEmotion> emotions) {
 		Book book = bookRepository.findById(bookId)
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
 		book.addRecordToStats(emotions);
-
-		bookRepository.save(book);
 	}
 
 	private List<BookDto> convertBookToDto(List<Book> books) {
