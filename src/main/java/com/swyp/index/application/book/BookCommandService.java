@@ -72,6 +72,8 @@ public class BookCommandService {
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
 		book.addRecordToStats(emotions);
+
+		bookRepository.save(book);
 	}
 
 	private List<BookDto> convertBookToDto(List<Book> books) {
