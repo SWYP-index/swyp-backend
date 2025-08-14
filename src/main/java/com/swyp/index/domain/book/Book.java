@@ -2,9 +2,11 @@ package com.swyp.index.domain.book;
 
 import static com.swyp.index.domain.bookshelf.RecordCreatedEvent.*;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
@@ -82,9 +84,23 @@ public class Book {
 			int score = emotion.score();
 
 			validateEmotionScore(score);
-
 			bookStats.record(score);
 		});
+	}
+
+	public List<BookStats> getTop3Stats() {
+		return this.getBookStatsMap().values().stream()
+			.filter(bs -> bs.getEmotionScoreSum() > 0)
+			.sorted(Comparator.comparingLong(BookStats::getEmotionScoreSum).reversed())
+			.limit(3)
+			.collect(Collectors.toList());
+	}
+
+	public List<BookStats> getStatsWithPositiveScore() {
+		return this.getBookStatsMap().values().stream()
+			.filter(bs -> bs.getEmotionScoreSum() > 0)
+			.sorted(Comparator.comparingLong(BookStats::getEmotionScoreSum).reversed())
+			.collect(Collectors.toList());
 	}
 
 	public long getTotalEmotionCount() {

@@ -1,8 +1,8 @@
 package com.swyp.index.application.book;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -32,43 +32,33 @@ public class BookQueryService {
 	public List<BookDto> getBooksByEmotion(String emotionName, int startIndex) {
 		Long emotionId = EmotionType.getIdByName(emotionName);
 
-		List<Book> books = bookRepository.findBooksByEmotionIdOrderByTotalEmotionScoreSumDescGreaterThanZero(emotionId,
+		List<Book> books = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDescGreaterThanZero(emotionId,
 			PageRequest.of(startIndex - 1, 10));
 
-		return convertBookToDto(books);
+		return books.stream().map(book -> BookDto.from(book, book.getTop3Stats())).collect(Collectors.toList());
 	}
 
-	public Long getTotalResultsByEmtoion(String emotionName) {
-		return bookRepository.countBooksByEmotionIdAndEmotionScoreSumGreaterThanZero(EmotionType.getIdByName(emotionName));
+	public Long getTotalResultsByEmotion(String emotionName) {
+		return bookRepository.countBooksByEmotionIdAndEmotionScoreSumGreaterThanZero(
+			EmotionType.getIdByName(emotionName));
 	}
 
 	public BookDto getBookDetail(String isbn) {
-		Book book = bookRepository.findByIsbn(isbn)
-			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
-
-		List<BookStats> BookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
-			book.getId());
+		Book book = bookRepository.findByIsbnWithStats(isbn).orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
+		List<BookStats> BookStats = book.getStatsWithPositiveScore();
 
 		return BookDto.from(book, BookStats);
 	}
 
 	public Optional<Bookshelf> getUserStats(User user, String isbn) {
-		Book book = bookRepository.findByIsbn(isbn)
-			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
+		Book book = bookRepository.findByIsbn(isbn).orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
 		return bookshelfRepository.findByUserAndBook(user, book);
 	}
 
-	private List<BookDto> convertBookToDto(List<Book> books) {
-		List<BookDto> bookDtos = new ArrayList<>();
+	public List<BookDto> getBookDtosByIsbnIn(List<String> isbns) {
+		List<Book> books = bookRepository.findAllByIsbnInWithStats(isbns);
 
-		for (Book book: books) {
-			List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
-				book.getId(), PageRequest.of(0, 3));
-
-			bookDtos.add(BookDto.from(book, bookStats));
-		}
-
-		return bookDtos;
+		return books.stream().map(book -> BookDto.from(book, book.getTop3Stats())).collect(Collectors.toList());
 	}
 }

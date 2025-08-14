@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.swyp.index.application.book.BookCommandService;
+import com.swyp.index.application.book.BookFacade;
 import com.swyp.index.application.book.BookQueryService;
 import com.swyp.index.application.user.UserService;
 import com.swyp.index.domain.user.User;
@@ -31,8 +31,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BookApi {
 
+	private final BookFacade bookFacade;
 	private final BookQueryService bookQueryService;
-	private final BookCommandService bookCommandService;
 	private final UserService userService;
 
 	@Operation(summary = "제목 검색", description = "책 제목과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
@@ -40,7 +40,7 @@ public class BookApi {
 	@GetMapping("/search/title")
 	public ResponseEntity<BookSearchResponse> searchBooksByTitle(@RequestParam String keyword,
 		@RequestParam int startIndex) {
-		return ResponseEntity.ok(bookCommandService.fetchBooksByTitleAndStoreIfAbsent(keyword, startIndex));
+		return ResponseEntity.ok(bookFacade.fetchBooksByTitleAndStoreIfAbsent(keyword, startIndex));
 	}
 
 	@Operation(summary = "감정 검색", description = "감정 이름과 시작 인덱스로 도서 검색, 시작 인덱스는 1부터 시작하여 페이지네이션을 지원합니다."
@@ -49,7 +49,7 @@ public class BookApi {
 	public ResponseEntity<BookSearchResponse> searchBooksByEmotion(@RequestParam String keyword,
 		@RequestParam int startIndex) {
 		List<BookDto> books = bookQueryService.getBooksByEmotion(keyword, startIndex);
-		Long totalResults = bookQueryService.getTotalResultsByEmtoion(keyword);
+		Long totalResults = bookQueryService.getTotalResultsByEmotion(keyword);
 
 		return ResponseEntity.ok(new BookSearchResponse(startIndex, totalResults, books));
 	}

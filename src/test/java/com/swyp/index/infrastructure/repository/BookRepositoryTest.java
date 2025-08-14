@@ -3,7 +3,6 @@ package com.swyp.index.infrastructure.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.book.BookFixture;
-import com.swyp.index.domain.book.BookStats;
 import com.swyp.index.domain.bookshelf.RecordCreatedEvent.RecordCreatedEventEmotion;
 
 import jakarta.persistence.EntityManager;
@@ -58,10 +56,10 @@ class BookRepositoryTest {
 	}
 
 	@Test
-	void findAllByIsbnIn() {
+	void findAllByIsbnInWithStats() {
 		persistAndClear(books);
 
-		List<Book> foundBooks = bookRepository.findAllByIsbnIn(List.of(book1Isbn, "0987654321"));
+		List<Book> foundBooks = bookRepository.findAllByIsbnInWithStats(List.of(book1Isbn, "0987654321"));
 
 		assertThat(foundBooks).hasSize(1);
 		assertThat(foundBooks.getFirst().getIsbn()).isEqualTo(book1Isbn);
@@ -92,45 +90,20 @@ class BookRepositoryTest {
 	}
 
 	@Test
-	void findBooksByEmotionIdOrderByTotalEmotionScoreSumDescGreaterThanZero() {
+	void findBooksByEmotionIdOrderByEmotionScoreSumDescGreaterThanZero() {
 		persistAndClear(books);
 
-		List<Book> foundBooks = bookRepository.findBooksByEmotionIdOrderByTotalEmotionScoreSumDescGreaterThanZero(1L,
+		List<Book> foundBooks = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDescGreaterThanZero(1L,
 			PageRequest.of(0, 10));
 
 		assertThat(foundBooks).hasSize(2);
 		assertThat(foundBooks.getFirst().getIsbn()).isEqualTo(book1Isbn);
 
-		List<Book> foundBooksByEmotionId2 = bookRepository.findBooksByEmotionIdOrderByTotalEmotionScoreSumDescGreaterThanZero(
+		List<Book> foundBooksByEmotionId2 = bookRepository.findBooksByEmotionIdOrderByEmotionScoreSumDescGreaterThanZero(
 			3L, PageRequest.of(0, 10));
 
 		assertThat(foundBooksByEmotionId2).hasSize(1);
 		assertThat(foundBooksByEmotionId2.getFirst().getIsbn()).isEqualTo(book2Isbn);
-	}
-
-	@Test
-	void findAllByBookIdOrderByEmotionScoreSumDescGreaterThanZero() {
-		persistAndClear(books);
-
-		Optional<Book> book = bookRepository.findByIsbn(book1Isbn);
-		List<BookStats> bookStats = bookRepository.findAllByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
-			book.get().getId());
-
-		assertThat(bookStats.getFirst().getEmotionId()).isEqualTo(2L);
-	}
-
-	@Test
-	void findTopByBookIdOrderByEmotionScoreSumDescGreaterThanZero() {
-		persistAndClear(books);
-
-		Optional<Book> book = bookRepository.findByIsbn(book1Isbn);
-		List<BookStats> bookStats = bookRepository.findTopByBookIdOrderByEmotionScoreSumDescGreaterThanZero(
-			book.get().getId(), PageRequest.of(0, 3));
-
-		assertThat(bookStats).hasSize(3);
-		assertThat(bookStats.getFirst().getEmotionId()).isEqualTo(2L);
-		assertThat(bookStats.get(1).getEmotionId()).isEqualTo(20L);
-		assertThat(bookStats.getLast().getEmotionId()).isEqualTo(1L);
 	}
 
 	private void persistAndClear(List<Book> books) {
