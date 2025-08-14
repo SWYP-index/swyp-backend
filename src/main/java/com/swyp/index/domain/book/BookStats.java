@@ -6,6 +6,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -56,8 +59,16 @@ public class BookStats {
 	private LocalDateTime updatedAt;
 
 	public void record(int score) {
+		validateEmotionScore(score);
+
 		this.emotionCount += 1;
 		this.emotionScoreSum += score;
 		this.emotionScoreAverage = (double) this.emotionScoreSum / this.emotionCount;
+	}
+
+	private void validateEmotionScore(int score) {
+		if (score < 1 || score > 10) {
+			throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+		}
 	}
 }

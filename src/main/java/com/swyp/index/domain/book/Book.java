@@ -81,10 +81,7 @@ public class Book {
 				throw new CustomException(ErrorCode.BOOK_STATS_NOT_FOUND);
 			}
 
-			int score = emotion.score();
-
-			validateEmotionScore(score);
-			bookStats.record(score);
+			bookStats.record(emotion.score());
 		});
 	}
 
@@ -113,11 +110,5 @@ public class Book {
 		return bookStatsMap.values().stream()
 			.mapToLong(BookStats::getEmotionScoreSum)
 			.sum();
-	}
-
-	private void validateEmotionScore(int score) {
-		if (score < 1 || score > 10) {
-			throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-		}
 	}
 }
