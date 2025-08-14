@@ -6,11 +6,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swyp.index.global.exception.CustomException;
+import com.swyp.index.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AladinApiClient {
 
 	private final String QUERY_TYPE = "Title";
@@ -35,19 +39,25 @@ public class AladinApiClient {
 	}
 
 	private String fetchApiResponse(String title, int startIndex) {
-		return webClient.get()
-			.uri(uriBuilder -> uriBuilder
-				.queryParam("ttbkey", API_KEY)
-				.queryParam("Query", title)
-				.queryParam("start", startIndex)
-				.queryParam("QueryType", QUERY_TYPE)
-				.queryParam("Sort", SORT_TYPE)
-				.queryParam("output", OUTPUT_FORMAT)
-				.queryParam("Cover", COVER_SIZE)
-				.build())
-			.retrieve()
-			.bodyToMono(String.class)
-			.block(); // 동기 호출 (주의 필요)
+		try {
+			return webClient.get()
+				.uri(uriBuilder -> uriBuilder
+					.queryParam("ttbkey", API_KEY)
+					.queryParam("Query", title)
+					.queryParam("start", startIndex)
+					.queryParam("QueryType", QUERY_TYPE)
+					.queryParam("Sort", SORT_TYPE)
+					.queryParam("output", OUTPUT_FORMAT)
+					.queryParam("Cover", COVER_SIZE)
+					.build())
+				.retrieve()
+				.bodyToMono(String.class)
+				.block(); // 동기 호출
+		} catch (Exception e) {
+			log.error("Unexpected error while calling Aladin API for title: {}", title, e);
+
+			throw new CustomException(ErrorCode.ALADIN_SERVER_ERROR);
+		}
 	}
 
 	private AladinSearchResponse parseResponse(String json) {

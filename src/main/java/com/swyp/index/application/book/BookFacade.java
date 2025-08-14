@@ -27,7 +27,6 @@ public class BookFacade {
 
 		if (cachedIsbns.isPresent()) {
 			int totalResults = cacheAdapter.getTotalResultsCache(title).orElse(0);
-
 			List<BookDto> bookDtos = bookQueryService.getBookDtosByIsbnIn(cachedIsbns.get());
 
 			return new BookSearchResponse(startIndex, totalResults, bookDtos);

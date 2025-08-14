@@ -47,7 +47,10 @@ public enum ErrorCode {
 	BOOKSHELF_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 책장에 추가된 책입니다."),
 
 	// 500
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에 오류가 발생했습니다.");
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에 오류가 발생했습니다."),
+
+	// 502
+	ALADIN_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "알라딘 API 호출에 오류가 발생했습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
