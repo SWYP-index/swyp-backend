@@ -65,7 +65,6 @@ public class BookApi {
 	public ResponseEntity<StatusResponse> getUserStatus(@AuthenticationPrincipal CustomPrincipal principal,
 		@PathVariable String isbn) {
 		User user = userService.getUser(principal.id());
-
 		String status = bookQueryService.getUserStats(user, isbn)
 			.map(bookshelf -> bookshelf.getStatus().name())
 			.orElse("NONE");
