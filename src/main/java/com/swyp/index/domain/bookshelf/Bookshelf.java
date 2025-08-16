@@ -94,6 +94,23 @@ public class Bookshelf {
         pageRecord.setBookshelf(this);
     }
 
+    /**
+     * 최종 감상평(finalNote)만 수정하는 메서드
+     */
+    public void updateFinalNote(String finalNote) {
+        this.finalNote = finalNote;
+    }
+
+    /**
+     * 완독 상태를 취소하고 '읽는 중' 상태로 되돌립니다.
+     */
+    public void cancelFinish() {
+        this.status = ReadingStatus.READING;
+        this.finishedAt = null;
+        this.finalNote = null;
+    }
+
+
 
     //독서를 완료 처리
     public void finish(String finalNote) {
@@ -104,7 +121,7 @@ public class Bookshelf {
 
     public void updateStatus(String status) {
         try {
-            this.status = ReadingStatus.valueOf(status);
+            this.status = ReadingStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CustomException(ErrorCode.INVALID_READING_STATUS);
         }
