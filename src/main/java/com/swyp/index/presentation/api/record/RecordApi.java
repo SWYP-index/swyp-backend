@@ -3,12 +3,10 @@ package com.swyp.index.presentation.api.record;
 import com.swyp.index.application.bookshelf.BookshelfService;
 import com.swyp.index.application.bookshelf.RecordService;
 import com.swyp.index.global.security.CustomPrincipal;
-import com.swyp.index.presentation.dto.record.CompletionRecordCreateRequest;
-import com.swyp.index.presentation.dto.record.CompletionRecordResponse;
-import com.swyp.index.presentation.dto.record.PageRecordCreateRequest;
-import com.swyp.index.presentation.dto.record.PageRecordResponse;
+import com.swyp.index.presentation.dto.record.*;
 //import com.swyp.index.presentation.dto.record.RecordResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -70,4 +68,103 @@ public class RecordApi {
     ) {
         return ResponseEntity.ok(recordService.createCompletionRecord(principal.getId(), request));
     }
+
+    /**
+     * 페이지 기록을 단건 조회합니다.
+     */
+    @Operation(summary = "페이지 기록 상세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+    })
+    @GetMapping("/pages/{recordId}")
+    public ResponseEntity<PageRecordResponse> getPageRecord(
+            @AuthenticationPrincipal CustomPrincipal principal,
+            @Parameter(description = "조회할 기록의 ID") @PathVariable Long recordId
+    ){
+        PageRecordResponse response = recordService.getPageRecord(principal.getId(), recordId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 페이지 기록을 수정합니다.
+     */
+    @Operation(summary = "페이지 기록 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 성공"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+    })
+    @PutMapping("/pages/{recordId}")
+    public ResponseEntity<Void> updatePageRecord(
+            @AuthenticationPrincipal CustomPrincipal principal,
+            @Parameter(description = "수정할 기록의 ID") @PathVariable Long recordId,
+            @Valid @RequestBody PageRecordUpdateRequest request
+    ) {
+        recordService.updatePageRecord(principal.getId(), recordId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "페이지 기록 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "삭제 성공"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음")
+    })
+    @DeleteMapping("/pages/{recordId}")
+    public ResponseEntity<Void> deletePageRecord(
+            @AuthenticationPrincipal CustomPrincipal principal,
+            @Parameter(description = "삭제할 기록의 ID") @PathVariable Long recordId
+    ) {
+        recordService.deletePageRecord(principal.getId(), recordId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "완독 기록 상세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "책장 또는 완독 기록을 찾을 수 없음")
+    })
+    @GetMapping("/completion/{bookshelfId}")
+    public ResponseEntity<CompletionRecordResponse> getCompletionRecord(
+            @AuthenticationPrincipal CustomPrincipal principal,
+            @Parameter(description = "조회할 책장의 ID") @PathVariable Long bookshelfId
+    ) {
+        CompletionRecordResponse response = recordService.getCompletionRecord(principal.getId(), bookshelfId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "완독 기록 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 성공"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "책장 또는 완독 기록을 찾을 수 없음")
+    })
+    @PutMapping("/completion/{bookshelfId}")
+    public ResponseEntity<Void> updateCompletionRecord(
+            @AuthenticationPrincipal CustomPrincipal principal,
+            @Parameter(description = "수정할 책장의 ID") @PathVariable Long bookshelfId,
+            @Valid @RequestBody CompletionRecordUpdateRequest request
+    ) {
+        recordService.updateCompletionRecord(principal.getId(), bookshelfId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "완독 기록 삭제 (완독 취소)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "삭제(완독 취소) 성공"),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
+            @ApiResponse(responseCode = "404", description = "책장 또는 완독 기록을 찾을 수 없음")
+    })
+    @DeleteMapping("/completion/{bookshelfId}")
+    public ResponseEntity<Void> deleteCompletionRecord(
+            @AuthenticationPrincipal CustomPrincipal principal,
+            @Parameter(description = "완독을 취소할 책장의 ID") @PathVariable Long bookshelfId
+    ) {
+        recordService.deleteCompletionRecord(principal.getId(), bookshelfId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

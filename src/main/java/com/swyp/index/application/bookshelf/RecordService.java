@@ -49,8 +49,8 @@ public class RecordService {
                 .findByUserAndBook(user, book)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOOKSHELF_NOT_FOUND));
 
-        // 3) 완독된 책이면 기록 불가
-        if (shelf.getStatus() == ReadingStatus.FINISHED) {
+        //완독된 책이면 기록 불가
+        if(shelf.getStatus()== ReadingStatus.FINISHED){
             throw new CustomException(ErrorCode.CANNOT_RECORD_FINISHED_BOOK);
         }
 
@@ -150,4 +150,137 @@ public class RecordService {
 
         return CompletionRecordResponse.from(savedPr, shelf);
     }
+
+    /**
+     * 특정 페이지 기록 단건 조회
+     */
+    @Transactional(readOnly = true)
+    public PageRecordResponse getPageRecord(Long userId, Long recordId){
+        PageRecord pageRecord = findRecordById(recordId);
+        checkRecordOwnership(userId, pageRecord);
+        return PageRecordResponse.from(pageRecord);
+    }
+
+    /**
+     * 페이지 기록 수정
+     */
+    @Transactional
+    public void updatePageRecord(Long userId, Long recordId, PageRecordUpdateRequest req) {
+        PageRecord pageRecord = findRecordById(recordId);
+        checkRecordOwnership(userId, pageRecord);
+        pageRecord.update(req.getPage(), req.getContent());
+        updateEmotionsForRecord(pageRecord, req.getEmotions());
+    }
+
+    /**
+     * 페이지 기록 삭제
+     */
+    @Transactional
+    public void deletePageRecord(Long userId, Long recordId){
+        PageRecord pageRecord = findRecordById(recordId);
+        checkRecordOwnership(userId, pageRecord);
+        pageRecordRepository.delete(pageRecord);
+    }
+
+
+    /**
+     * 완독 기록 조회
+     */
+    @Transactional(readOnly = true)
+    public CompletionRecordResponse getCompletionRecord(Long userId, Long bookshelfId) {
+        Bookshelf bookshelf = findBookshelfById(bookshelfId);
+        checkBookshelfOwnership(userId, bookshelf); // Bookshelf의 소유권 확인
+
+        PageRecord completionRecord = findCompletionRecordByBookshelf(bookshelf);
+
+        return CompletionRecordResponse.from(completionRecord, bookshelf);
+    }
+
+    /**
+     * 완독 기록 수정
+     */
+    @Transactional
+    public void updateCompletionRecord(Long userId, Long bookshelfId, CompletionRecordUpdateRequest req) {
+        Bookshelf bookshelf = findBookshelfById(bookshelfId);
+        checkBookshelfOwnership(userId, bookshelf);
+        PageRecord completionRecord = findCompletionRecordByBookshelf(bookshelf);
+
+        bookshelf.updateFinalNote(req.getFinalNote());
+        completionRecord.update(null, req.getContent());
+        updateEmotionsForRecord(completionRecord, req.getEmotions());
+    }
+
+    /**
+     * 완독 기록 삭제 (완독 취소)
+     */
+    @Transactional
+    public void deleteCompletionRecord(Long userId, Long bookshelfId) {
+        Bookshelf bookshelf = findBookshelfById(bookshelfId);
+        checkBookshelfOwnership(userId, bookshelf);
+
+        PageRecord completionRecord = findCompletionRecordByBookshelf(bookshelf);
+
+        // 1. PageRecord(내용, 감정) 삭제
+        pageRecordRepository.delete(completionRecord);
+
+        // 2. Bookshelf 상태를 READING으로 되돌리고 관련 정보 초기화
+        bookshelf.cancelFinish();
+    }
+
+    private PageRecord findRecordById(Long recordId){
+        return pageRecordRepository.findById(recordId)
+                .orElseThrow(()-> new CustomException(ErrorCode.RECORD_NOT_FOUND));
+    }
+
+    private Bookshelf findBookshelfById(Long bookshelfId) {
+        return bookshelfRepository.findById(bookshelfId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOOKSHELF_NOT_FOUND));
+    }
+
+    //기록의 소유권을 확인하는 private 헬퍼 메서드
+    private void checkRecordOwnership(Long userId, PageRecord pageRecord) {
+        if (!pageRecord.getBookshelf().getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+    }
+
+    private void checkBookshelfOwnership(Long userId, Bookshelf bookshelf) {
+        if (!bookshelf.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+    }
+
+    private PageRecord findCompletionRecordByBookshelf(Bookshelf bookshelf) {
+        // 먼저 책의 상태가 finished인지 확인
+        if (bookshelf.getStatus() != ReadingStatus.FINISHED) {
+            // FINISHED 상태가 아니면 완독 기록이 존재할 수 없으므로 에러를 발생시킵니다.
+            throw new CustomException(ErrorCode.COMPLETION_RECORD_NOT_FOUND_FOR_READING_BOOK); // (새로운 ErrorCode 추가 필요)
+        }
+        // finished 상태인 경우에만, 페이지가 null인 기록을 찾는다.
+        return bookshelf.getPageRecords().stream()
+                .filter(record -> record.getPage() == null)
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorCode.RECORD_NOT_FOUND));
+    }
+
+    private List<RecordEmotion> convertDtosToEmotions(List<EmotionDto> dtos) {
+        if (dtos == null || dtos.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return dtos.stream()
+                .map(dto -> {
+                    Emotion e = emotionRepository.findById(dto.getEmotionId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
+                    return RecordEmotion.builder().emotion(e).emotionScore(dto.getScore()).build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    private void updateEmotionsForRecord(PageRecord record, List<EmotionDto> dtos) {
+        record.getRecordEmotions().clear();
+        if (dtos != null && !dtos.isEmpty()) {
+            record.addRecordEmotions(convertDtosToEmotions(dtos));
+        }
+    }
+
 }

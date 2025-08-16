@@ -83,6 +83,11 @@ public class PageRecord {
         this.recordEmotions.addAll(recordEmotions);
         recordEmotions.forEach(e -> e.setPageRecord(this));
     }
+
+    public void update(Integer page, String content){
+        this.page = page;
+        this.content = content;
+    }
 }
 
 
