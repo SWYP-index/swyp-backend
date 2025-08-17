@@ -41,7 +41,7 @@ public enum ErrorCode {
 	BOOKSHELF_NOT_FOUND(HttpStatus.NOT_FOUND, "책장에 해당 책이 존재하지 않습니다."),
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 기록을 찾을 수 없습니다."),
 	EMOTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 감정을 찾을 수 없습니다."),
-	COMPLETION_RECORD_NOT_FOUND_FOR_READING_BOOK(HttpStatus.NOT_FOUND, "'읽는 중' 상태인 책에는 완독 기록이 존재하지 않습니다."),
+	COMPLETION_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "완독 상태인 책의 최종 기록을 찾을 수 없습니다."),
 
 	// 409
 	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
