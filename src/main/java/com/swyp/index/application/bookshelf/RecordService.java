@@ -254,7 +254,7 @@ public class RecordService {
         // 먼저 책의 상태가 finished인지 확인
         if (bookshelf.getStatus() != ReadingStatus.FINISHED) {
             // FINISHED 상태가 아니면 완독 기록이 존재할 수 없으므로 에러를 발생시킵니다.
-            throw new CustomException(ErrorCode.COMPLETION_RECORD_NOT_FOUND_FOR_READING_BOOK); // (새로운 ErrorCode 추가 필요)
+            throw new CustomException(ErrorCode.COMPLETION_RECORD_NOT_FOUND);
         }
         // finished 상태인 경우에만, 페이지가 null인 기록을 찾는다.
         return bookshelf.getPageRecords().stream()
