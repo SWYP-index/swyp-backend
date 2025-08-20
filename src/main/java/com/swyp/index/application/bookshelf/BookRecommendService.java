@@ -26,7 +26,7 @@ public class BookRecommendService {
     private final EmotionAnalysisService emotionAnalysisService;
     private final BookshelfService bookshelfService;
 
-    public List<RecommendedBookDto> getRecommendBooksOnly(Long userId){
+    public List<RecommendedBookDto> getRecommendBooksOnly(Long userId) {
         List<String> readingIsbns = bookshelfService.getReadingIsbns(userId, 3);
         List<String> finishedIsbns = bookshelfService.getFinishedIsbns(userId);
         int readingCount = readingIsbns.size();
@@ -35,8 +35,7 @@ public class BookRecommendService {
         exclude.addAll(readingIsbns);
         exclude.addAll(finishedIsbns);
 
-        int maxRecommendCount = (readingCount >= 3) ? 2 : (5 - readingCount);
-        if (maxRecommendCount <= 0) return List.of();
+        int maxRecommendCount = 5;
 
 
         List<EmotionRankingResponse> top3 = emotionAnalysisService.getTop3Emotions(userId);
@@ -44,42 +43,27 @@ public class BookRecommendService {
         List<RecommendedBookDto> result = new ArrayList<>();
 
 
-        if(readingCount >= 3){
-            result.addAll(pickTopBooks(top3, 0, 1, exclude));
-            result.addAll(pickTopBooks(top3, 1, 1, exclude));
-        } else if (readingCount == 2) {
-            result.addAll(pickTopBooks(top3, 0, 1, exclude));
-            result.addAll(pickTopBooks(top3, 1, 1, exclude));
-            result.addAll(pickTopBooks(top3, 2, 1, exclude));
-        } else if (readingCount == 1) {
-            result.addAll(pickTopBooks(top3, 0, 2, exclude));
-            result.addAll(pickTopBooks(top3, 1, 1, exclude));
-            result.addAll(pickTopBooks(top3, 2, 1, exclude));
-        } else if (readingCount == 0) {
-            // 책상 비어있으면 top1,2,3에서 총 5권까지
-            result.addAll(pickTopBooks(top3, 0, 2, exclude));
-            result.addAll(pickTopBooks(top3, 1, 2, exclude));
-            result.addAll(pickTopBooks(top3, 2, 1, exclude));
-        }
+        result.addAll(pickTopBooks(top3, 0, 2, exclude));
+        result.addAll(pickTopBooks(top3, 1, 2, exclude));
+        result.addAll(pickTopBooks(top3, 2, 1, exclude));
 
         return result.stream().limit(maxRecommendCount).toList();
 
-
     }
 
-    private List<RecommendedBookDto> pickTopBooks(List<EmotionRankingResponse> top3, int index, int count, Set<String> exclude){
-        if(index >= top3.size()) return List.of();
+    private List<RecommendedBookDto> pickTopBooks(List<EmotionRankingResponse> top3, int index, int count, Set<String> exclude) {
+        if (index >= top3.size()) return List.of();
 
         String emotionName = top3.get(index).emotionName();
         List<BookDto> books = bookQueryService.getBooksByEmotion(emotionName, 1);
 
         List<RecommendedBookDto> result = new ArrayList<>();
         for (BookDto dto : books) {
-            if(exclude.add(dto.getIsbn())){
+            if (exclude.add(dto.getIsbn())) {
                 Book book = bookRepository.findByIsbn(dto.getIsbn())
                         .orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
                 result.add(RecommendedBookDto.of(emotionName, book));
-                if(result.size() == count) break;
+                if (result.size() == count) break;
             }
         }
         return result;
