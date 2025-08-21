@@ -179,6 +179,11 @@ public class RecordService {
     public void deletePageRecord(Long userId, Long recordId){
         PageRecord pageRecord = findRecordById(recordId);
         checkRecordOwnership(userId, pageRecord);
+        //삭제할 기록의 부모인 Bookshelf를 가져온다
+        Bookshelf bookshelf = pageRecord.getBookshelf();
+        //부모의 리스트에서 먼저 제거하여 연관관계를 끊어준다.
+        bookshelf.removePageRecord(pageRecord);
+
         pageRecordRepository.delete(pageRecord);
     }
 
