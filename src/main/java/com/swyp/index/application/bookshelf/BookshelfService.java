@@ -91,7 +91,7 @@ public class BookshelfService {
     @Transactional(readOnly = true)
     public List<UnifiedRecordResponse> getRecordsByBookshelf(Long bookshelfId, Long userId) {
         // 1. 책장 정보 조회 및 사용자 권한 확인
-        Bookshelf bookshelf = bookshelfRepository.findById(bookshelfId)
+        Bookshelf bookshelf = bookshelfRepository.findByIdWithPageRecords(bookshelfId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOOKSHELF_NOT_FOUND));
 
         if (!bookshelf.getUser().getId().equals(userId)) {
@@ -102,6 +102,8 @@ public class BookshelfService {
         if (allRecords.isEmpty()) {
             return Collections.emptyList();
         }
+
+        bookshelfRepository.findPageRecordsWithEmotions(allRecords);
 
         List<UnifiedRecordResponse> responseList = new ArrayList<>();
         // 책의 상태를 기준으로 기록 타입 구분

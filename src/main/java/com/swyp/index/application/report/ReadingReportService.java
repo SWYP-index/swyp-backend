@@ -1,6 +1,7 @@
 package com.swyp.index.application.report;
 
 import com.swyp.index.domain.bookshelf.Bookshelf;
+import com.swyp.index.domain.bookshelf.PageRecord;
 import com.swyp.index.domain.bookshelf.ReadingStatus;
 import com.swyp.index.infrastructure.repository.BookshelfRepository;
 import com.swyp.index.infrastructure.repository.PageRecordRepository;
@@ -51,10 +52,10 @@ public class ReadingReportService {
                     //current page 계산(Reading 상태일 때만)
                     Integer currentPage = null;
                     if(bs.getStatus() == ReadingStatus.READING){
-                        currentPage = pageRecordRepository
-                                .findLatestPageByBookshelfId(bs.getId())
-                                .stream()
-                                .findFirst()
+                        currentPage = bs.getPageRecords().stream()
+                                .filter(pr -> pr.getPage() != null)
+                                .max(Comparator.comparing(PageRecord::getCreatedAt))
+                                .map(PageRecord::getPage)
                                 .orElse(null);
                     }
                     return ReadingReportResponse.of(bs, stats, currentPage);
