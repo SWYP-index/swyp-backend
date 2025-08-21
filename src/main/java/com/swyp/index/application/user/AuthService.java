@@ -39,6 +39,7 @@ public class AuthService {
 
 	// 회원가입을 위한 이메일 인증 코드를 생성하고 발송한다.
 	public void sendVerificationCode(String email) {
+		//이미 가입된 이메일인지 체크
 		if (userRepository.existsByEmailAndProvider(email, Provider.LOCAL)) {
 			throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
 		}

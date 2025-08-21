@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "통합 기록 조회 응답 DTO (페이지/완독 기록 겸용)")
 public class UnifiedRecordResponse {
 

@@ -68,14 +68,18 @@ public class AuthApi {
 	})
 	@PostMapping("/login")
 	public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+		//사용자 인증
 		User user = authService.login(request);
-
+		//리프레시 토큰 생성
 		String refreshToken = jwtProvider.generateRefreshToken(user.getId());
 
+		//리프레스 토큰 서버에 저장
 		tokenService.saveRefreshToken(user, refreshToken);
 
+		//리프레시 토큰을 쿠키에 담아 클라이언트에게 전달
 		response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createRefreshTokenCookie(refreshToken).toString());
 
+		//액세스 토큰과 사용자 정보를 body에 담아 클라이언트에게 전달
 		return ResponseEntity.ok(LoginResponse.from(jwtProvider.generateAccessToken(user.getId()), user));
 	}
 
