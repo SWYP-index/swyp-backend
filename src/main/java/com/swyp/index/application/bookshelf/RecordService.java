@@ -220,10 +220,13 @@ public class RecordService {
 
         PageRecord completionRecord = findCompletionRecordByBookshelf(bookshelf);
 
-        // 1. PageRecord(내용, 감정) 삭제
+        //db에서 삭제하기전에 bookshelf의 자식 목록에서 먼저 제거
+        bookshelf.removePageRecord(completionRecord);
+
+        //이제 db에서 기록을 삭제
         pageRecordRepository.delete(completionRecord);
 
-        // 2. Bookshelf 상태를 READING으로 되돌리고 관련 정보 초기화
+        // Bookshelf 상태를 READING으로 되돌리고 관련 정보 초기화
         bookshelf.cancelFinish();
     }
 

@@ -95,6 +95,14 @@ public class Bookshelf {
     }
 
     /**
+     * 페이지 기록을 제거하고 연관관계를 끊습니다.
+     */
+    public void removePageRecord(PageRecord pageRecord) {
+        this.pageRecords.remove(pageRecord);
+        pageRecord.setBookshelf(null);
+    }
+
+    /**
      * 최종 감상평(finalNote)만 수정하는 메서드
      */
     public void updateFinalNote(String finalNote) {
