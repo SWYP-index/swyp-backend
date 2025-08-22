@@ -1,6 +1,7 @@
 package com.swyp.index.application.bookshelf;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -267,7 +268,7 @@ public class RecordService {
         // finished 상태인 경우에만, 페이지가 null인 기록을 찾는다.
         return bookshelf.getPageRecords().stream()
                 .filter(record -> record.getPage() == null)
-                .findFirst()
+                .max(Comparator.comparing(PageRecord::getCreatedAt))
                 .orElseThrow(() -> new CustomException(ErrorCode.RECORD_NOT_FOUND));
     }
 
