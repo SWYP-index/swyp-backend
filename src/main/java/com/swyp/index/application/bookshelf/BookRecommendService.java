@@ -29,7 +29,6 @@ public class BookRecommendService {
     public List<RecommendedBookDto> getRecommendBooksOnly(Long userId) {
         List<String> readingIsbns = bookshelfService.getReadingIsbns(userId, 3);
         List<String> finishedIsbns = bookshelfService.getFinishedIsbns(userId);
-        int readingCount = readingIsbns.size();
 
         Set<String> exclude = new HashSet<>();
         exclude.addAll(readingIsbns);
