@@ -9,6 +9,7 @@ import com.swyp.index.domain.bookshelf.RecordEmotion;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 @Schema(description = "통합 기록 조회 응답 DTO (페이지/완독 기록 겸용)")
+@Slf4j
 public class UnifiedRecordResponse {
 
     @Schema(description = "기록의 고유 ID", example = "101")
@@ -45,6 +47,7 @@ public class UnifiedRecordResponse {
      * PageRecord를 '페이지 기록' DTO로 변환합니다. 상태는 READING으로 설정됩니다.
      */
     public static UnifiedRecordResponse fromPageRecord(PageRecord pageRecord) {
+
         return UnifiedRecordResponse.builder()
                 .recordId(pageRecord.getId())
                 .status(ReadingStatus.READING)
@@ -61,6 +64,7 @@ public class UnifiedRecordResponse {
      * 완독 시점의 PageRecord와 Bookshelf를 '완독 기록' DTO로 변환합니다. 상태는 FINISHED로 설정됩니다.
      */
     public static UnifiedRecordResponse fromCompletionRecord(PageRecord pageRecord, Bookshelf bookshelf) {
+
         return UnifiedRecordResponse.builder()
                 .recordId(pageRecord.getId())
                 .status(ReadingStatus.FINISHED)

@@ -14,6 +14,7 @@ import com.swyp.index.presentation.dto.bookshelf.BookshelfSummaryDto;
 import com.swyp.index.presentation.dto.record.*;
 //import com.swyp.index.presentation.dto.record.RecordResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookshelfService {
 
     private final BookshelfRepository bookshelfRepository;
@@ -105,13 +107,14 @@ public class BookshelfService {
 
         bookshelfRepository.findPageRecordsWithEmotions(allRecords);
 
+
         List<UnifiedRecordResponse> responseList = new ArrayList<>();
         // 책의 상태를 기준으로 기록 타입 구분
         if (bookshelf.getStatus() == ReadingStatus.FINISHED) {
-            // 완독 상태이면, page가 null인 '완독 기록'을 먼저 찾습니다.
+            // 완독 상태이면, page가 null인  기록들 중에서 가장 최신 기록을 완독 기록으로 찾는다.
             PageRecord completionRecord = allRecords.stream()
                     .filter(record -> record.getPage() == null)
-                    .findFirst()
+                    .max(Comparator.comparing(PageRecord::getCreatedAt))
                     .orElseThrow(() -> new CustomException(ErrorCode.COMPLETION_RECORD_NOT_FOUND)); // 완독인데 완독기록이 없는 에러
 
             //  '완독 기록'을 FINISHED 상태 DTO로 변환하여 추가합니다.
