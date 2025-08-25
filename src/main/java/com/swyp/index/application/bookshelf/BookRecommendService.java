@@ -42,8 +42,8 @@ public class BookRecommendService {
         List<RecommendedBookDto> result = new ArrayList<>();
 
 
-        result.addAll(pickTopBooks(top3, 0, 2, exclude));
-        result.addAll(pickTopBooks(top3, 1, 2, exclude));
+        result.addAll(pickTopBooks(top3, 0, 1, exclude));
+        result.addAll(pickTopBooks(top3, 1, 1, exclude));
         result.addAll(pickTopBooks(top3, 2, 1, exclude));
 
         return result.stream().limit(maxRecommendCount).toList();
