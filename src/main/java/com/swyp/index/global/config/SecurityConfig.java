@@ -42,7 +42,7 @@ public class SecurityConfig {
 				.requestMatchers("/actuator/**").permitAll()
 				.requestMatchers("/api/users/**", "/api/bookshelf/**", "/api/desk/**", "/api/books/**",
 					"/api/reports/**", "/api/addBookshelf/**", "/api/records/**", "/api/stats/**", "/api/calendar/**",
-					"/api/addFinishBookshelf/**").authenticated()
+					"/api/addFinishBookshelf/**","/api/wishlist/**").authenticated()
 				.anyRequest().permitAll())
 			.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(oAuth2SuccessHandler))
