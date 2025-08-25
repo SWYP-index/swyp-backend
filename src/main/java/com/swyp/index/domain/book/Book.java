@@ -91,7 +91,7 @@ public class Book {
 			BookStats bookStats = bookStatsMap.get(emotion.emotionId());
 
 			if(bookStats != null){
-				bookStats.record(emotion.score());
+				bookStats.retract(emotion.score());
 			}
 		});
 	}
