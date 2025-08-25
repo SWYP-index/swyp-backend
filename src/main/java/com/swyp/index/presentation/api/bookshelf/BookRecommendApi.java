@@ -30,7 +30,7 @@ public class BookRecommendApi {
 
     private final BookRecommendService bookRecommendService;
 
-    @Operation(summary = "사용자 맞춤 도서 추천", description = "사용자의 독서 기록과 감정을 기반으로 도서 5권을 추천합니다.")
+    @Operation(summary = "사용자 맞춤 도서 추천", description = "사용자의 독서 기록과 감정을 기반으로 도서 3권을 추천합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "추천 성공",
                     content = @Content(mediaType = "application/json",
