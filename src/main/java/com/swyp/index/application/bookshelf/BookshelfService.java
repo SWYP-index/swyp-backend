@@ -65,9 +65,8 @@ public class BookshelfService {
 
 
     @Transactional(readOnly = true)
-    public List<String> getReadingIsbns(Long userId, int limit) { // 최대 N권
+    public List<String> getReadingIsbns(Long userId) { // 최대 N권
         return bookshelfRepository.findReadingBooksByUserId(userId).stream()
-                .limit(limit)
                 .map(shelf -> shelf.getBook().getIsbn())
                 .toList();
     }
