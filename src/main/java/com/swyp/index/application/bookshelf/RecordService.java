@@ -182,6 +182,12 @@ public class RecordService {
         checkRecordOwnership(userId, pageRecord);
         //삭제할 기록의 부모인 Bookshelf를 가져온다
         Bookshelf bookshelf = pageRecord.getBookshelf();
+
+        if(!pageRecord.getRecordEmotions().isEmpty()) {
+            eventPublisher.publishEvent(
+                    RecordDeletedEvent.from(bookshelf.getBook().getId(), pageRecord.getRecordEmotions())
+            );
+        }
         //부모의 리스트에서 먼저 제거하여 연관관계를 끊어준다.
         bookshelf.removePageRecord(pageRecord);
 
@@ -226,6 +232,11 @@ public class RecordService {
 
         PageRecord completionRecord = findCompletionRecordByBookshelf(bookshelf);
 
+        if(!completionRecord.getRecordEmotions().isEmpty()) {
+            eventPublisher.publishEvent(
+                    RecordDeletedEvent.from(bookshelf.getBook().getId(), completionRecord.getRecordEmotions())
+            );
+        }
         //db에서 삭제하기전에 bookshelf의 자식 목록에서 먼저 제거
         bookshelf.removePageRecord(completionRecord);
 

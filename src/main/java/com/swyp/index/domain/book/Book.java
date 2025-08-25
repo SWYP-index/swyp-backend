@@ -1,13 +1,14 @@
 package com.swyp.index.domain.book;
 
 import static com.swyp.index.domain.bookshelf.RecordCreatedEvent.*;
-
+import static com.swyp.index.domain.bookshelf.RecordDeletedEvent.*;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.swyp.index.domain.bookshelf.RecordDeletedEvent;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.api.AladinSearchResponse.BookItem;
@@ -82,6 +83,16 @@ public class Book {
 			}
 
 			bookStats.record(emotion.score());
+		});
+	}
+
+	public void removeRecordFromStats(List<RecordDeletedEventEmotion> emotions) {
+		emotions.forEach(emotion -> {
+			BookStats bookStats = bookStatsMap.get(emotion.emotionId());
+
+			if(bookStats != null){
+				bookStats.record(emotion.score());
+			}
 		});
 	}
 

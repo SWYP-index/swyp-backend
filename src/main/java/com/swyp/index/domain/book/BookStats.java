@@ -66,9 +66,27 @@ public class BookStats {
 		this.emotionScoreAverage = (double) this.emotionScoreSum / this.emotionCount;
 	}
 
+	public void retract(int score){
+		validateEmotionScore(score);
+		if(this.emotionCount > 0){
+			this.emotionCount -= 1;
+		}
+		if(this.emotionScoreSum >= score){
+			this.emotionScoreSum -= score;
+		}
+
+		if(this.emotionCount > 0){
+			this.emotionScoreAverage = (double) this.emotionScoreSum / this.emotionCount;
+		}else{
+			this.emotionScoreAverage = 0.0;
+		}
+	}
+
 	private void validateEmotionScore(int score) {
 		if (score < 1 || score > 10) {
 			throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
 		}
 	}
+
+
 }

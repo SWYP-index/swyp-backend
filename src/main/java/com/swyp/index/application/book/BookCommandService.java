@@ -4,12 +4,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swyp.index.domain.book.Book;
 import com.swyp.index.domain.bookshelf.RecordCreatedEvent.RecordCreatedEventEmotion;
+import com.swyp.index.domain.bookshelf.RecordDeletedEvent.RecordDeletedEventEmotion;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.api.AladinSearchResponse;
@@ -30,6 +32,13 @@ public class BookCommandService {
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
 		book.addRecordToStats(emotions);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void decreaseBookStats(Long bookId, List<RecordDeletedEventEmotion> emotions) {
+		Book book = bookRepository.findById(bookId)
+			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
+		book.removeRecordFromStats(emotions);
 	}
 
 	public void saveBooksIfNotExists(AladinSearchResponse aladinSearchResponse) {
