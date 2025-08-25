@@ -42,12 +42,13 @@ public enum ErrorCode {
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 기록을 찾을 수 없습니다."),
 	EMOTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 감정을 찾을 수 없습니다."),
 	COMPLETION_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "완독 상태인 책의 최종 기록을 찾을 수 없습니다."),
+	WISHLIST_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "찜 목록에 해당 도서가 존재하지 않습니다."),
 
 	// 409
 	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
 	DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용 중인 닉네임입니다."),
 	BOOKSHELF_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 책장에 추가된 책입니다."),
-
+	WISHLIST_ITEM_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 찜 목록에 추가된 도서입니다."),
 	// 500
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에 오류가 발생했습니다."),
 
