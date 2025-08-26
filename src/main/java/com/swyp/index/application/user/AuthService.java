@@ -62,7 +62,7 @@ public class AuthService {
 		redisTemplate.opsForValue().set(VERIFIED_EMAIL_PREFIX + email, "true", AUTH_CODE_EXPIRATION);
 
 		// 인증 성공 시, 재사용을 막기 위해 Redis에서 해당 코드를 즉시 삭제
-		redisTemplate.delete(email);
+		redisTemplate.delete(AUTH_CODE_PREFIX + email);
 	}
 
 	// 이메일 인증을 완료한 사용자의 로컬 회원가입 처리
