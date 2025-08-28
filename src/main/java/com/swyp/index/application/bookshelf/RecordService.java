@@ -288,6 +288,7 @@ public class RecordService {
             return Collections.emptyList();
         }
         return dtos.stream()
+                .filter(dto->dto.getEmotionId() != 0L)
                 .map(dto -> {
                     Emotion e = emotionRepository.findById(dto.getEmotionId())
                             .orElseThrow(() -> new CustomException(ErrorCode.EMOTION_NOT_FOUND));
