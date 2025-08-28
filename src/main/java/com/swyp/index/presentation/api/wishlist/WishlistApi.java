@@ -73,8 +73,7 @@ public class WishlistApi{
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(type = "object", example = "{\"wished\": true}"))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 도서")
+                            schema = @Schema(type = "object", example = "{\"wished\": true}")))
     })
     @GetMapping("/status/{isbn}")
     public ResponseEntity<Map<String, Boolean>> checkWishStatus(
