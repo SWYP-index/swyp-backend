@@ -35,8 +35,7 @@ public class WishlistApi{
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "찜하기 성공"),
             @ApiResponse(responseCode = "400", description = "입력값 오류 (예: ISBN 누락)", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 도서", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "409", description = "이미 찜한 도서", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 도서", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
     public ResponseEntity<Void> addWish(@AuthenticationPrincipal CustomPrincipal principal, @RequestBody WishlistRequest request) {

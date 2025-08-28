@@ -30,7 +30,7 @@ public class WishlistService {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Book book = bookRepository.findByIsbn(isbn).orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
         if (wishlistRepository.existsByUserAndBook(user, book)) {
-            throw new CustomException(ErrorCode.WISHLIST_ITEM_ALREADY_EXISTS);
+            return;
         }
         wishlistRepository.save(new Wishlist(user, book));
     }
