@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 
+import com.swyp.index.domain.bookshelf.RecordUpdatedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,5 +55,13 @@ public class BookCommandService {
 			.toList();
 
 		bookRepository.saveAll(newBooks);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void recalculateBookStats(Long bookId, List<RecordUpdatedEvent.RecordEmotionInfo> oldEmotions, List<RecordUpdatedEvent.RecordEmotionInfo> newEmotions) {
+		Book book = bookRepository.findById(bookId)
+				.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
+
+		book.recalculateStats(oldEmotions, newEmotions);
 	}
 }

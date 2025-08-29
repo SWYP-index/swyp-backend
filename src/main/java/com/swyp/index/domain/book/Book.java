@@ -2,6 +2,7 @@ package com.swyp.index.domain.book;
 
 import static com.swyp.index.domain.bookshelf.RecordCreatedEvent.*;
 import static com.swyp.index.domain.bookshelf.RecordDeletedEvent.*;
+import com.swyp.index.domain.bookshelf.RecordUpdatedEvent.*;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.swyp.index.domain.bookshelf.RecordDeletedEvent;
+import com.swyp.index.domain.bookshelf.RecordUpdatedEvent;
 import com.swyp.index.global.exception.CustomException;
 import com.swyp.index.global.exception.ErrorCode;
 import com.swyp.index.infrastructure.api.AladinSearchResponse.BookItem;
@@ -92,6 +94,24 @@ public class Book {
 
 			if(bookStats != null){
 				bookStats.retract(emotion.score());
+			}
+		});
+	}
+
+	public void recalculateStats(List<RecordEmotionInfo> oldEmotions, List<RecordEmotionInfo> newEmotions){
+		//기존 감정 점수를 통계에서 뺀다.
+		oldEmotions.forEach(emotion -> {
+			BookStats bookStats = bookStatsMap.get(emotion.emotionId());
+			if(bookStats != null){
+				bookStats.retract(emotion.score());
+			}
+		});
+
+		//새로운 감정 점수를 통계에 더한다.
+		newEmotions.forEach(emotion -> {
+			BookStats bookStats = bookStatsMap.get(emotion.emotionId());
+			if(bookStats != null){
+				bookStats.record(emotion.score());
 			}
 		});
 	}

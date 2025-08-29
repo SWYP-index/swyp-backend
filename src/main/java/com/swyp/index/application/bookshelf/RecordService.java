@@ -1,5 +1,6 @@
 package com.swyp.index.application.bookshelf;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -169,8 +170,19 @@ public class RecordService {
     public void updatePageRecord(Long userId, Long recordId, PageRecordUpdateRequest req) {
         PageRecord pageRecord = findRecordById(recordId);
         checkRecordOwnership(userId, pageRecord);
+
+        //수정 전의 기존 감정 목록을 미리 복사
+        List<RecordEmotion> oldEmotions = new ArrayList<>(pageRecord.getRecordEmotions());
+
+        //페이지 내용과 감정 업데이트
         pageRecord.update(req.getPage(), req.getContent());
         updateEmotionsForRecord(pageRecord, req.getEmotions());
+
+        //수정 완료된 후, 변경 전과 변경 후의 감정 목록을 담아 이벤트 발행
+        List<RecordEmotion> newEmotions = pageRecord.getRecordEmotions();
+        eventPublisher.publishEvent(
+                RecordUpdatedEvent.of(pageRecord.getBookshelf().getBook().getId(), oldEmotions, newEmotions)
+        );
     }
 
     /**
@@ -216,10 +228,19 @@ public class RecordService {
         Bookshelf bookshelf = findBookshelfById(bookshelfId);
         checkBookshelfOwnership(userId, bookshelf);
         PageRecord completionRecord = findCompletionRecordByBookshelf(bookshelf);
+        //수정 전의 기존 감정 목록을 미리 복사
+        List<RecordEmotion> oldEmotions = new ArrayList<>(completionRecord.getRecordEmotions());
 
+        //최종 감상평, 내용, 감정을 업데이트
         bookshelf.updateFinalNote(req.getFinalNote());
         completionRecord.update(null, req.getContent());
         updateEmotionsForRecord(completionRecord, req.getEmotions());
+
+        //수정 완료된 후, 변경 전과 변경 후의 감정 목록을 담아 이벤트 발행
+        List<RecordEmotion> newEmotions = completionRecord.getRecordEmotions();
+        eventPublisher.publishEvent(
+                RecordUpdatedEvent.of(bookshelf.getBook().getId(), oldEmotions, newEmotions)
+        );
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.swyp.index.application.book;
 
 import com.swyp.index.domain.bookshelf.RecordDeletedEvent;
+import com.swyp.index.domain.bookshelf.RecordUpdatedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -22,5 +23,14 @@ public class BookStatsEventListener {
 	@TransactionalEventListener
 	public void handleBookRecordDeleted(RecordDeletedEvent event) {
 		bookCommandService.decreaseBookStats(event.bookId(), event.emotions());
+	}
+
+	@TransactionalEventListener
+	public void handleBookRecordUpdated(RecordUpdatedEvent event) {
+		bookCommandService.recalculateBookStats(
+				event.bookId(),
+				event.oldEmotions(),
+				event.newEmotions()
+		);
 	}
 }
