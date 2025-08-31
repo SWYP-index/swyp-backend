@@ -6,6 +6,7 @@ import java.util.Set;
 
 
 import com.swyp.index.domain.bookshelf.RecordUpdatedEvent;
+import com.swyp.index.infrastructure.repository.PageRecordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class BookCommandService {
 
 	private final BookRepository bookRepository;
+	private final PageRecordRepository pageRecordRepository;
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void updateBookStats(Long bookId, List<RecordCreatedEventEmotion> emotions) {
@@ -33,6 +35,9 @@ public class BookCommandService {
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
 		book.addRecordToStats(emotions);
+
+		long uniqueUserCount = pageRecordRepository.countDistinctUsersByBookId(bookId);
+		book.updateUserCount(uniqueUserCount);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -40,6 +45,9 @@ public class BookCommandService {
 		Book book = bookRepository.findById(bookId)
 			.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 		book.removeRecordFromStats(emotions);
+
+		long uniqueUserCount = pageRecordRepository.countDistinctUsersByBookId(bookId);
+		book.updateUserCount(uniqueUserCount);
 	}
 
 	public void saveBooksIfNotExists(AladinSearchResponse aladinSearchResponse) {
@@ -63,5 +71,8 @@ public class BookCommandService {
 				.orElseThrow(() -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
 
 		book.recalculateStats(oldEmotions, newEmotions);
+
+		long uniqueUserCount = pageRecordRepository.countDistinctUsersByBookId(bookId);
+		book.updateUserCount(uniqueUserCount);
 	}
 }
