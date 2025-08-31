@@ -48,6 +48,9 @@ public class BookDto {
 	@Schema(description = "이 책에 남긴 총 감정 기록 수", example = "42")
 	private Long totalEmotionCount;
 
+	@Schema(description = "이 책에 기록을 남긴 실제 사용자 수", example = "2")
+	private long userCount;
+
 	@Schema(description = "책 통계 정보 리스트")
 	private List<BookEmotionDto> emotions;
 
@@ -69,6 +72,7 @@ public class BookDto {
 			.publisher(info.getPublisher())
 			.category(info.getCategory())
 			.totalEmotionCount(book.getTotalEmotionCount())
+				.userCount(book.getUserCount())
 			.emotions(bookEmotionDtos)
 			.build();
 	}
