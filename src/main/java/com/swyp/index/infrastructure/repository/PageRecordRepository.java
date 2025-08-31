@@ -26,4 +26,7 @@ public interface PageRecordRepository extends JpaRepository<PageRecord, Long> {
            "WHERE pr.bookshelf.id = :bookshelfId " +
            "ORDER BY pr.createdAt DESC")
     List<Integer> findLatestPageByBookshelfId(@Param("bookshelfId") Long bookshelfId);
+
+    @Query("SELECT COUNT(DISTINCT pr.bookshelf.user.id) FROM PageRecord pr WHERE pr.bookshelf.book.id = :bookId")
+    long countDistinctUsersByBookId(@Param("bookId") Long bookId);
 }
