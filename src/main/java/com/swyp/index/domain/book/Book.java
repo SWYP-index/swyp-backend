@@ -56,6 +56,8 @@ public class Book {
 	@Embedded
 	private BookInfo bookInfo;
 
+	private long userCount;
+
 	public static Book from(BookItem bookItem) {
 		return Book.builder()
 			.isbn(bookItem.isbn())
@@ -141,5 +143,9 @@ public class Book {
 		return bookStatsMap.values().stream()
 			.mapToLong(BookStats::getEmotionScoreSum)
 			.sum();
+	}
+
+	public void updateUserCount(long userCount) {
+		this.userCount = userCount;
 	}
 }
