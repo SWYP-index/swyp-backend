@@ -1,0 +1,188 @@
+.
+├── Dockerfile
+├── README.md
+├── build.gradle
+├── docs
+│   └── 시스템 아키텍처.png
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradlew
+├── gradlew.bat
+├── settings.gradle
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── swyp
+│   │   │           └── index
+│   │   │               ├── IndexApplication.java
+│   │   │               ├── application
+│   │   │               │   ├── book
+│   │   │               │   │   ├── BookCommandService.java
+│   │   │               │   │   ├── BookFacade.java
+│   │   │               │   │   ├── BookQueryService.java
+│   │   │               │   │   └── BookStatsEventListener.java
+│   │   │               │   ├── bookshelf
+│   │   │               │   │   ├── BookRecommendService.java
+│   │   │               │   │   ├── BookshelfService.java
+│   │   │               │   │   ├── ReadingFinishService.java
+│   │   │               │   │   ├── ReadingStartService.java
+│   │   │               │   │   └── RecordService.java
+│   │   │               │   ├── report
+│   │   │               │   │   ├── CalendarService.java
+│   │   │               │   │   ├── EmotionAnalysisService.java
+│   │   │               │   │   ├── ReadingReportService.java
+│   │   │               │   │   └── StatsService.java
+│   │   │               │   ├── user
+│   │   │               │   │   ├── AuthService.java
+│   │   │               │   │   ├── CustomOAuth2UserService.java
+│   │   │               │   │   ├── CustomUserDetailsService.java
+│   │   │               │   │   ├── SmtpMailService.java
+│   │   │               │   │   ├── TokenService.java
+│   │   │               │   │   └── UserService.java
+│   │   │               │   └── wishlist
+│   │   │               │       └── WishlistService.java
+│   │   │               ├── domain
+│   │   │               │   ├── book
+│   │   │               │   │   ├── Book.java
+│   │   │               │   │   ├── BookInfo.java
+│   │   │               │   │   └── BookStats.java
+│   │   │               │   ├── bookshelf
+│   │   │               │   │   ├── Bookshelf.java
+│   │   │               │   │   ├── PageRecord.java
+│   │   │               │   │   ├── ReadingStatus.java
+│   │   │               │   │   ├── RecordCreatedEvent.java
+│   │   │               │   │   ├── RecordDeletedEvent.java
+│   │   │               │   │   ├── RecordEmotion.java
+│   │   │               │   │   └── RecordUpdatedEvent.java
+│   │   │               │   ├── emotion
+│   │   │               │   │   ├── Emotion.java
+│   │   │               │   │   ├── EmotionCategory.java
+│   │   │               │   │   └── EmotionType.java
+│   │   │               │   ├── user
+│   │   │               │   │   ├── GoogleUserInfo.java
+│   │   │               │   │   ├── KakaoUserInfo.java
+│   │   │               │   │   ├── NaverUserInfo.java
+│   │   │               │   │   ├── OAuth2UserInfo.java
+│   │   │               │   │   ├── Provider.java
+│   │   │               │   │   └── User.java
+│   │   │               │   └── wishlist
+│   │   │               │       └── Wishlist.java
+│   │   │               ├── global
+│   │   │               │   ├── common
+│   │   │               │   │   └── CookieUtil.java
+│   │   │               │   ├── config
+│   │   │               │   │   ├── JacksonConfig.java
+│   │   │               │   │   ├── OpenApiConfig.java
+│   │   │               │   │   ├── SecurityConfig.java
+│   │   │               │   │   └── WebConfig.java
+│   │   │               │   ├── exception
+│   │   │               │   │   ├── CustomAuthenticationEntryPoint.java
+│   │   │               │   │   ├── CustomException.java
+│   │   │               │   │   ├── ErrorCode.java
+│   │   │               │   │   ├── ErrorResponse.java
+│   │   │               │   │   └── GlobalExceptionHandler.java
+│   │   │               │   └── security
+│   │   │               │       ├── CustomPrincipal.java
+│   │   │               │       ├── JwtAuthenticationFilter.java
+│   │   │               │       ├── JwtProvider.java
+│   │   │               │       └── OAuth2SuccessHandler.java
+│   │   │               ├── infrastructure
+│   │   │               │   ├── api
+│   │   │               │   │   ├── AladinApiClient.java
+│   │   │               │   │   ├── AladinSearchResponse.java
+│   │   │               │   │   └── WebClientConfig.java
+│   │   │               │   ├── redis
+│   │   │               │   │   ├── RedisConfig.java
+│   │   │               │   │   └── SearchCacheAdapter.java
+│   │   │               │   └── repository
+│   │   │               │       ├── BookRepository.java
+│   │   │               │       ├── BookshelfRepository.java
+│   │   │               │       ├── EmotionRepository.java
+│   │   │               │       ├── PageRecordRepository.java
+│   │   │               │       ├── RecordEmotionRepository.java
+│   │   │               │       ├── UserEmotionStatProjection.java
+│   │   │               │       ├── UserRepository.java
+│   │   │               │       └── WishlistRepository.java
+│   │   │               └── presentation
+│   │   │                   ├── api
+│   │   │                   │   ├── book
+│   │   │                   │   │   └── BookApi.java
+│   │   │                   │   ├── bookshelf
+│   │   │                   │   │   ├── BookRecommendApi.java
+│   │   │                   │   │   ├── BookShelfApi.java
+│   │   │                   │   │   ├── DeskApi.java
+│   │   │                   │   │   ├── ReadingFinishApi.java
+│   │   │                   │   │   └── ReadingStartApi.java
+│   │   │                   │   ├── record
+│   │   │                   │   │   └── RecordApi.java
+│   │   │                   │   ├── report
+│   │   │                   │   │   ├── CalendarApi.java
+│   │   │                   │   │   ├── ReadingReportApi.java
+│   │   │                   │   │   └── StatsApi.java
+│   │   │                   │   ├── user
+│   │   │                   │   │   ├── AuthApi.java
+│   │   │                   │   │   └── UserApi.java
+│   │   │                   │   └── wishlist
+│   │   │                   │       └── WishlistApi.java
+│   │   │                   └── dto
+│   │   │                       ├── book
+│   │   │                       │   ├── BookDto.java
+│   │   │                       │   ├── BookInfoDto.java
+│   │   │                       │   ├── BookSearchResponse.java
+│   │   │                       │   ├── StatusResponse.java
+│   │   │                       │   └── UserBookEmotionStatDto.java
+│   │   │                       ├── bookshelf
+│   │   │                       │   ├── BookshelfCreateRequest.java
+│   │   │                       │   ├── BookshelfResponse.java
+│   │   │                       │   ├── BookshelfSummaryDto.java
+│   │   │                       │   └── RecommendedBookDto.java
+│   │   │                       ├── record
+│   │   │                       │   ├── CompletionRecordCreateRequest.java
+│   │   │                       │   ├── CompletionRecordResponse.java
+│   │   │                       │   ├── CompletionRecordUpdateRequest.java
+│   │   │                       │   ├── EmotionDto.java
+│   │   │                       │   ├── PageRecordCreateRequest.java
+│   │   │                       │   ├── PageRecordResponse.java
+│   │   │                       │   ├── PageRecordUpdateRequest.java
+│   │   │                       │   └── UnifiedRecordResponse.java
+│   │   │                       ├── report
+│   │   │                       │   ├── BookActivityDto.java
+│   │   │                       │   ├── DailyActivityDto.java
+│   │   │                       │   ├── EmotionRankingResponse.java
+│   │   │                       │   ├── MonthlyReadingStatsDto.java
+│   │   │                       │   └── ReadingReportResponse.java
+│   │   │                       ├── user
+│   │   │                       │   ├── EmailRequest.java
+│   │   │                       │   ├── EmailVerificationRequest.java
+│   │   │                       │   ├── LoginRequest.java
+│   │   │                       │   ├── LoginResponse.java
+│   │   │                       │   ├── SignUpRequest.java
+│   │   │                       │   ├── UserInfoResponse.java
+│   │   │                       │   └── UserResponse.java
+│   │   │                       └── wishlist
+│   │   │                           ├── WishlistRequest.java
+│   │   │                           └── WishlistResponseDto.java
+│   │   └── resources
+│   │       ├── application.yml
+│   │       └── data.sql
+│   └── test
+│       ├── java
+│       │   └── com
+│       │       └── swyp
+│       │           └── index
+│       │               ├── IndexApplicationTests.java
+│       │               ├── domain
+│       │               │   └── book
+│       │               │       ├── BookFixture.java
+│       │               │       └── BookTest.java
+│       │               └── infrastructure
+│       │                   └── repository
+│       │                       └── BookRepositoryTest.java
+│       └── resources
+│           └── application.yml
+└── tree.txt
+
+57 directories, 129 files
