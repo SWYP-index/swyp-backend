@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -62,7 +63,8 @@ public class EmotionAnalysisService {
                     Math.round(percentage * 10.0) / 10.0  //소수점 1자리 반 올림
             ));
         }
-
+        //  정렬 - 비중 높은 순
+        result.sort(Comparator.comparingDouble(UserBookEmotionStatDto::percentage).reversed());
         return result;
     }
 
